@@ -22,6 +22,8 @@
         "endOfLine": "auto"
       }
     ],
+    "no-underscore-dangle": "off",
+    "@typescript-eslint/naming-convention": "off",
     "import/prefer-default-export": "off",
     "import/newline-after-import": ["error", { "count": 1 }],
     "arrow-body-style": "off",
