@@ -72,6 +72,10 @@ class MongoDBCollection<Document extends MongoDocument> {
 
     return mongoDbFindOne;
   }
+
+  findById(id: string) {
+    return this.findOne({ _id: id as never }).exec();
+  }
 }
 
 export default MongoDBCollection;
