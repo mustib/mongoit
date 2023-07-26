@@ -21,9 +21,11 @@ type MongoQuerySort<Document extends _MongoDocument & UntypedObject> =
   | [keyof Document, SortDirection][];
 
 function convertDocumentIdToString(doc: _MongoDocument) {
-  const _id = doc._id.toString();
-  // eslint-disable-next-line no-param-reassign
-  doc._id = _id;
+  if ('_id' in doc) {
+    const _id = doc._id.toString();
+    // eslint-disable-next-line no-param-reassign
+    doc._id = _id;
+  }
   return doc;
 }
 
