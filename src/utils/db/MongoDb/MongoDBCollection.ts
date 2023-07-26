@@ -1,5 +1,6 @@
 import mergeTwoObjects from '../../mergeTwoObjects';
-import MongoDbFind from './MongoDbFind';
+import MongoDbFind from './MongoDbFind/MongoDbFind';
+import MongoDbFindOne from './MongoDbFind/MongoDbFindOne';
 
 import type { Collection, Document as MongoDocument, Filter } from 'mongodb';
 import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
@@ -7,6 +8,7 @@ import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
 class MongoDBCollection<Document extends MongoDocument> {
   protected static configOptions: Required<CollectionConfigOptions> = {
     findOptions: { limit: 20 },
+    findOneOptions: {},
   };
 
   static setConfigOptions(options: CollectionConfigOptions) {
@@ -54,6 +56,21 @@ class MongoDBCollection<Document extends MongoDocument> {
     const mongoDbFind = new MongoDbFind(this.collection, document, findOptions);
 
     return mongoDbFind;
+  }
+
+  findOne(
+    document?: Filter<Document & { _id?: string }>,
+    options?: CollectionConfigOptions['findOneOptions']
+  ) {
+    const findOptions = this.getConfigOption('findOneOptions', options);
+
+    const mongoDbFindOne = new MongoDbFindOne(
+      this.collection,
+      document,
+      findOptions
+    );
+
+    return mongoDbFindOne;
   }
 }
 

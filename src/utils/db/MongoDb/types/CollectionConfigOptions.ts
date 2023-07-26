@@ -9,4 +9,6 @@ export interface CollectionConfigOptions {
    * @default {limit: 20}
    */
   findOptions?: FindOptions<UntypedObject>;
+
+  findOneOptions?: Omit<FindOptions<UntypedObject>, 'limit'>;
 }
