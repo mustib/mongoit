@@ -38,6 +38,9 @@
       }
     ],
     "no-underscore-dangle": "off",
+    "no-plusplus": "off",
+    "class-methods-use-this": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/naming-convention": "off",
     "import/prefer-default-export": "off",
     "import/newline-after-import": ["error", { "count": 1 }],
