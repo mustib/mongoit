@@ -8,10 +8,17 @@ import type {
 } from '../types/MongoDBSchema';
 
 abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
-  default = {
+  private _default = {
     hasDefault: false,
     value: undefined as any,
   };
+
+  get default() {
+    let { value } = this._default;
+    const { hasDefault } = this._default;
+    if (typeof value === 'function') value = value();
+    return { value, hasDefault };
+  }
 
   validatorsData!: MongoDBSchemaValidators;
 
@@ -24,7 +31,7 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
   getDefaultValueObj() {
     const defaultValue = this.default.value;
     const valueObj: ValidatorValueObj = {
-      value: defaultValue,
+      value: typeof defaultValue === 'function' ? defaultValue() : defaultValue,
       hasAssignedValue: true,
       valueType: this.type,
     };
@@ -77,7 +84,10 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
       return;
     try {
       const defaultValue = schemaValue.default;
-      const defaultValueObj = this.assignOrConvertTheRightValue(defaultValue);
+      const isDynamicDefault = typeof defaultValue === 'function';
+      const defaultValueObj = this.assignOrConvertTheRightValue(
+        isDynamicDefault ? defaultValue() : defaultValue
+      );
 
       if (!defaultValueObj.hasAssignedValue) {
         throw new Error(
@@ -86,8 +96,10 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
       }
 
       this.validatorsData.validateValidators(defaultValueObj);
-      this.default.value = defaultValueObj.value;
-      this.default.hasDefault = true;
+      this._default.value = isDynamicDefault
+        ? defaultValue
+        : defaultValueObj.value;
+      this._default.hasDefault = true;
     } catch (error) {
       throw new Error(
         `Error while adding and validating default value for ${

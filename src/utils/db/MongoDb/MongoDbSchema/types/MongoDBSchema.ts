@@ -11,7 +11,7 @@ type RecursivePartial<T> = {
 
 type SharedSchemaTypeFields<Type> = {
   required?: ValidatorWithOptionalErrorMessage<boolean>;
-  default?: RecursivePartial<Type>;
+  default?: RecursivePartial<Type> | (() => RecursivePartial<Type>);
 };
 
 type ReplaceTypeField<Obj extends object> = {
