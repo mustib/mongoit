@@ -71,7 +71,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     options?: CollectionConfigOptions['findOptions']
   ) {
     const findOptions = this.getConfigOption('findOptions', options);
-    const mongoDbFind = new MongoDbFind(this.collection, document, findOptions);
+    const mongoDbFind = new MongoDbFind(this, document, findOptions);
 
     return mongoDbFind;
   }
@@ -82,11 +82,7 @@ class MongoDBCollection<Document extends MongoDocument> {
   ) {
     const findOptions = this.getConfigOption('findOneOptions', options);
 
-    const mongoDbFindOne = new MongoDbFindOne(
-      this.collection,
-      document,
-      findOptions
-    );
+    const mongoDbFindOne = new MongoDbFindOne(this, document, findOptions);
 
     return mongoDbFindOne;
   }

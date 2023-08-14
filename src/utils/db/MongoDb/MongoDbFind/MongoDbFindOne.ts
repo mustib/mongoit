@@ -1,14 +1,14 @@
 import AbstractMongoDbFind from './AbstractMongoDbFind';
 
-import type { Document as _MongoDocument, Collection, Filter } from 'mongodb';
-
+import type { Document as MongoDocument, Filter } from 'mongodb';
+import type MongoDBCollection from '../MongoDBCollection';
 import type { CollectionConfigOptions } from '../types/CollectionConfigOptions';
 
 class MongoDbFindOne<
-  Document extends _MongoDocument
+  Document extends MongoDocument
 > extends AbstractMongoDbFind<Document> {
   constructor(
-    protected collection: Promise<Collection<Document>>,
+    protected collection: MongoDBCollection<Document>,
     protected filterDocument?: Filter<Document & { _id?: string }>,
     protected options?: CollectionConfigOptions['findOneOptions']
   ) {
