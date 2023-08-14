@@ -1,15 +1,28 @@
 import mergeTwoObjects from '../../mergeTwoObjects';
 import MongoDbFind from './MongoDbFind/MongoDbFind';
 import MongoDbFindOne from './MongoDbFind/MongoDbFindOne';
+import MongoDbSchema from './MongoDbSchema/MongoDbSchema';
+import MongoDbInsert from './MongoDbInsert';
 
-import type { Collection, Document as MongoDocument, Filter } from 'mongodb';
+import type {
+  Collection,
+  Document as MongoDocument,
+  Filter,
+  OptionalUnlessRequiredId,
+} from 'mongodb';
+
 import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
+import type { MongoSchema } from './MongoDbSchema/types/MongoDBSchema';
 
 class MongoDBCollection<Document extends MongoDocument> {
   protected static configOptions: Required<CollectionConfigOptions> = {
     findOptions: { limit: 20 },
     findOneOptions: {},
+    insertOptions: {},
+    insertOneOptions: {},
   };
+
+  schema: MongoDbSchema<Document> | null = null;
 
   static setConfigOptions(options: CollectionConfigOptions) {
     mergeTwoObjects(
@@ -48,6 +61,11 @@ class MongoDBCollection<Document extends MongoDocument> {
     protected configOptions: CollectionConfigOptions = {}
   ) {}
 
+  createSchema(schema: MongoSchema<Document>) {
+    this.schema = new MongoDbSchema(schema);
+    return this;
+  }
+
   find(
     document?: Filter<Document & { _id?: string }>,
     options?: CollectionConfigOptions['findOptions']
@@ -75,6 +93,36 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   findById(id: string) {
     return this.findOne({ _id: id as never }).exec();
+  }
+
+  insert(
+    docs: OptionalUnlessRequiredId<Document>[],
+    options?: CollectionConfigOptions['insertOptions']
+  ) {
+    const _options = this.getConfigOption(
+      'insertOptions',
+      options
+    ) as MongoDbInsert<Document>['options'];
+
+    _options.insertType = 'insertMany';
+    const mongoDbInsert = new MongoDbInsert(this, docs, _options);
+
+    return mongoDbInsert;
+  }
+
+  insertOne(
+    document: OptionalUnlessRequiredId<Document>,
+    options?: CollectionConfigOptions['insertOneOptions']
+  ) {
+    const _options = this.getConfigOption(
+      'insertOneOptions',
+      options
+    ) as MongoDbInsert<Document>['options'];
+
+    _options.insertType = 'insertOne';
+    const mongoDbInsertOne = new MongoDbInsert(this, [document], _options);
+
+    return mongoDbInsertOne;
   }
 }
 

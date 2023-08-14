@@ -1,4 +1,14 @@
-import { FindOptions } from 'mongodb';
+import type {
+  BulkWriteOptions,
+  FindOptions,
+  InsertOneOptions,
+  Document as MongoDocument,
+} from 'mongodb';
+
+type InsertSharedOptions = {
+  returnInserted?: boolean;
+  interceptBeforeInserting?(doc: MongoDocument): void;
+};
 
 /**
  * an object that is used to predefine options for MongoDbCollection class
@@ -11,4 +21,12 @@ export interface CollectionConfigOptions {
   findOptions?: FindOptions<UntypedObject>;
 
   findOneOptions?: Omit<FindOptions<UntypedObject>, 'limit'>;
+
+  insertOptions?: InsertSharedOptions & {
+    nativeMongoInsertOptions?: BulkWriteOptions;
+  };
+
+  insertOneOptions?: InsertSharedOptions & {
+    nativeMongoInsertOptions?: InsertOneOptions;
+  };
 }
