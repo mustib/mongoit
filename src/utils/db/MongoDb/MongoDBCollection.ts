@@ -151,6 +151,10 @@ class MongoDBCollection<Document extends MongoDocument> {
 
     return mongoDbDelete;
   }
+
+  deleteById(id: string) {
+    return this.deleteOne({ _id: id as never }).exec();
+  }
 }
 
 export default MongoDBCollection;
