@@ -3,6 +3,7 @@ import MongoDbFind from './MongoDbFind/MongoDbFind';
 import MongoDbFindOne from './MongoDbFind/MongoDbFindOne';
 import MongoDbSchema from './MongoDbSchema/MongoDbSchema';
 import MongoDbInsert from './MongoDbInsert';
+import MongoDbDelete from './MongoDbDelete';
 
 import type {
   Collection,
@@ -20,6 +21,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     findOneOptions: {},
     insertOptions: {},
     insertOneOptions: {},
+    deleteOptions: {},
   };
 
   schema: MongoDbSchema<Document> | null = null;
@@ -81,7 +83,6 @@ class MongoDBCollection<Document extends MongoDocument> {
     options?: CollectionConfigOptions['findOneOptions']
   ) {
     const findOptions = this.getConfigOption('findOneOptions', options);
-
     const mongoDbFindOne = new MongoDbFindOne(this, document, findOptions);
 
     return mongoDbFindOne;
@@ -119,6 +120,36 @@ class MongoDBCollection<Document extends MongoDocument> {
     const mongoDbInsertOne = new MongoDbInsert(this, [document], _options);
 
     return mongoDbInsertOne;
+  }
+
+  delete(
+    document: Filter<Document & { _id?: string }>,
+    options?: CollectionConfigOptions['deleteOptions']
+  ) {
+    const _options = this.getConfigOption(
+      'deleteOptions',
+      options
+    ) as MongoDbDelete<Document>['options'];
+
+    _options.deleteType = 'deleteMany';
+    const mongoDbDelete = new MongoDbDelete(this, document, _options);
+
+    return mongoDbDelete;
+  }
+
+  deleteOne(
+    document: Filter<Document & { _id?: string }>,
+    options?: CollectionConfigOptions['deleteOptions']
+  ) {
+    const _options = this.getConfigOption(
+      'deleteOptions',
+      options
+    ) as MongoDbDelete<Document>['options'];
+
+    _options.deleteType = 'deleteOne';
+    const mongoDbDelete = new MongoDbDelete(this, document, _options);
+
+    return mongoDbDelete;
   }
 }
 

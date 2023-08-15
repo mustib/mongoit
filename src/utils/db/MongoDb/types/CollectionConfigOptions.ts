@@ -1,5 +1,6 @@
 import type {
   BulkWriteOptions,
+  DeleteOptions,
   FindOptions,
   InsertOneOptions,
   Document as MongoDocument,
@@ -28,5 +29,9 @@ export interface CollectionConfigOptions {
 
   insertOneOptions?: InsertSharedOptions & {
     nativeMongoInsertOptions?: InsertOneOptions;
+  };
+
+  deleteOptions?: {
+    nativeMongoDeleteOptions?: DeleteOptions;
   };
 }
