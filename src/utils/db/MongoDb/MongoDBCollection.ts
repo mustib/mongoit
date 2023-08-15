@@ -4,12 +4,14 @@ import MongoDbFindOne from './MongoDbFind/MongoDbFindOne';
 import MongoDbSchema from './MongoDbSchema/MongoDbSchema';
 import MongoDbInsert from './MongoDbInsert';
 import MongoDbDelete from './MongoDbDelete';
+import MongoDbUpdate from './MongoDbUpdate';
 
 import type {
   Collection,
   Document as MongoDocument,
   Filter,
   OptionalUnlessRequiredId,
+  UpdateFilter,
 } from 'mongodb';
 
 import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
@@ -22,6 +24,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     insertOptions: {},
     insertOneOptions: {},
     deleteOptions: {},
+    updateOptions: {},
   };
 
   schema: MongoDbSchema<Document> | null = null;
@@ -154,6 +157,48 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   deleteById(id: string) {
     return this.deleteOne({ _id: id as never }).exec();
+  }
+
+  update(
+    filterDocument: Filter<Document & { _id?: string }>,
+    updateDocument: UpdateFilter<Document>,
+    options?: CollectionConfigOptions['updateOptions']
+  ) {
+    const _options = this.getConfigOption(
+      'updateOptions',
+      options
+    ) as MongoDbUpdate<Document>['options'];
+
+    _options.updateType = 'updateMany';
+    const mongoDbUpdate = new MongoDbUpdate(
+      this,
+      filterDocument,
+      updateDocument,
+      _options
+    );
+
+    return mongoDbUpdate;
+  }
+
+  updateOne(
+    filterDocument: Filter<Document & { _id?: string }>,
+    updateDocument: UpdateFilter<Document>,
+    options?: CollectionConfigOptions['updateOptions']
+  ) {
+    const _options = this.getConfigOption(
+      'updateOptions',
+      options
+    ) as MongoDbUpdate<Document>['options'];
+
+    _options.updateType = 'updateOne';
+    const mongoDbUpdate = new MongoDbUpdate(
+      this,
+      filterDocument,
+      updateDocument,
+      _options
+    );
+
+    return mongoDbUpdate;
   }
 }
 

@@ -4,6 +4,7 @@ import type {
   FindOptions,
   InsertOneOptions,
   Document as MongoDocument,
+  UpdateOptions,
 } from 'mongodb';
 
 type InsertSharedOptions = {
@@ -33,5 +34,9 @@ export interface CollectionConfigOptions {
 
   deleteOptions?: {
     nativeMongoDeleteOptions?: DeleteOptions;
+  };
+
+  updateOptions?: {
+    nativeMongoUpdateOptions?: UpdateOptions;
   };
 }

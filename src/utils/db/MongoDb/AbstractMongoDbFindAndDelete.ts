@@ -49,7 +49,7 @@ abstract class AbstractMongoDbFindAndDelete<Document extends MongoDocument> {
     return this;
   }
 
-  abstract exec(...params: any[]): Promise<any>;
+  abstract exec(...params: any[]): any;
 }
 
 export default AbstractMongoDbFindAndDelete;
