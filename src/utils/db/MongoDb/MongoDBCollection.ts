@@ -11,11 +11,11 @@ import type {
   Document as MongoDocument,
   Filter,
   OptionalUnlessRequiredId,
-  UpdateFilter,
 } from 'mongodb';
 
 import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
 import type { MongoSchema } from './MongoDbSchema/types/MongoDBSchema';
+import type { UpdateFilterDocument } from './types/UpdateFilterDocument';
 
 class MongoDBCollection<Document extends MongoDocument> {
   protected static configOptions: Required<CollectionConfigOptions> = {
@@ -161,7 +161,7 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   update(
     filterDocument: Filter<Document & { _id?: string }>,
-    updateDocument: UpdateFilter<Document>,
+    updateDocument: UpdateFilterDocument<Document>,
     options?: CollectionConfigOptions['updateOptions']
   ) {
     const _options = this.getConfigOption(
@@ -182,7 +182,7 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   updateOne(
     filterDocument: Filter<Document & { _id?: string }>,
-    updateDocument: UpdateFilter<Document>,
+    updateDocument: UpdateFilterDocument<Document>,
     options?: CollectionConfigOptions['updateOptions']
   ) {
     const _options = this.getConfigOption(
@@ -199,6 +199,10 @@ class MongoDBCollection<Document extends MongoDocument> {
     );
 
     return mongoDbUpdate;
+  }
+
+  updateById(id: string, updateDocument: UpdateFilterDocument<Document>) {
+    return this.updateOne({ _id: id as never }, updateDocument).exec();
   }
 }
 
