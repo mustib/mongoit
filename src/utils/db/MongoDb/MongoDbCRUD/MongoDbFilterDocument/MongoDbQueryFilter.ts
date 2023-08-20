@@ -1,20 +1,20 @@
-import MongoDbSanitize from './MongoDbSanitize';
+import MongoDbSanitize from '../../MongoDbSanitize';
 
 import {
   allOperators,
   getFilteringOperatorsByTypes,
   filteringOperatorsTypesHandlersObject,
   filteringOperatorsAsKeysWithTypesAsValues,
-} from './utils/filteringOperators';
+} from '../../utils/filteringOperators';
 
-import type { FindFilterObject } from './types/FindFilterObject';
+import type { FilterQueryObject } from '../../types/FilterQueryObject';
 
 import type {
   Operators,
   FilterOperatorHandler,
-} from './utils/filteringOperators';
+} from '../../utils/filteringOperators';
 
-class MongoDbFindFilter {
+class MongoDbQueryFilter {
   filtered: UntypedObject[] = [];
 
   protected allowedTargetKeys: string[];
@@ -23,7 +23,7 @@ class MongoDbFindFilter {
 
   protected allowedOperators: Operators<'WithoutDollarSign'>[];
 
-  constructor(filter: FindFilterObject) {
+  constructor(filter: FilterQueryObject) {
     const { shouldSanitizeTarget, disableSanitizeWarning } = filter;
     let { allowedTargetKeys, target, allowedOperators = allOperators } = filter;
     const isSanitized = target instanceof MongoDbSanitize;
@@ -98,7 +98,6 @@ class MongoDbFindFilter {
   }
 
   private getOperatorValue(allowedTargetKey: string) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let operatorValue: any;
 
     if (this.target instanceof MongoDbSanitize) {
@@ -137,4 +136,4 @@ class MongoDbFindFilter {
   }
 }
 
-export default MongoDbFindFilter;
+export default MongoDbQueryFilter;

@@ -1,4 +1,4 @@
-import AbstractMongoDbFindAndDelete from '../AbstractMongoDbFindAndDelete';
+import AbstractMongoDbFilterDocument from '../MongoDbFilterDocument/AbstractMongoDbFilterDocument';
 
 import type {
   Document as MongoDocument,
@@ -6,7 +6,7 @@ import type {
   SortDirection,
 } from 'mongodb';
 
-import type { CollectionConfigOptions } from '../types/CollectionConfigOptions';
+import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
 
 type MongoQuerySort<Document extends MongoDocument & UntypedObject> =
   | {
@@ -26,7 +26,7 @@ function convertDocumentIdToString(doc: MongoDocument) {
 
 abstract class AbstractMongoDbFind<
   Document extends MongoDocument
-> extends AbstractMongoDbFindAndDelete<Document> {
+> extends AbstractMongoDbFilterDocument<Document> {
   protected query: Document[] = [];
 
   protected hasSorted = false;
@@ -52,7 +52,7 @@ abstract class AbstractMongoDbFind<
 
     const cursor = collection.find<Document & { _id: string }>(
       filterQuery,
-      this.options
+      this.options?.nativeMongoFindOptions
     );
 
     this.addSortToCursor(cursor);

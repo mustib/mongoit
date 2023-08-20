@@ -7,8 +7,8 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
-import type MongoDBCollection from './MongoDBCollection';
-import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
+import type MongoDBCollection from '../MongoDBCollection';
+import type { CollectionConfigOptions } from '../types/CollectionConfigOptions';
 
 class MongoDbInsert<Document extends MongoDocument> {
   constructor(
@@ -82,7 +82,7 @@ class MongoDbInsert<Document extends MongoDocument> {
 
     if (this.options.returnInserted === true) {
       return this.collection
-        .find({ $or: this.getInsertedIds(insertResult) as any })
+        .find({ $or: this.getInsertedIds(insertResult) } as never)
         .exec();
     }
 

@@ -12,10 +12,8 @@ import type {
   WithShorthandSchemaType,
 } from '../types/MongoDBSchema';
 
-const uniqueArrayValidatorsData: Omit<
-  SchemaTypeValidators<'array'>,
-  'minLength' | 'maxLength'
-> = {
+const validatorsData: SchemaTypeValidators<'array'> = {
+  ...arrayAndStringValidatorsData,
   length: {
     type: 'number',
     validator(value: any[], validatorValue) {
@@ -26,11 +24,6 @@ const uniqueArrayValidatorsData: Omit<
     },
   },
 };
-
-const validatorsData = Object.assign(
-  uniqueArrayValidatorsData,
-  arrayAndStringValidatorsData
-);
 
 class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
   nestedSchema: MongoSchemaTypesConstructors[] = [];
@@ -78,11 +71,7 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
     }
   }
 
-  assignOrConvertTheRightValue(_value: any): {
-    valueType: string;
-    hasAssignedValue: boolean;
-    value: any;
-  } {
+  assignOrConvertTheRightValue(_value: any) {
     const value = Array.isArray(_value) ? _value : [_value];
 
     const valueObj = {

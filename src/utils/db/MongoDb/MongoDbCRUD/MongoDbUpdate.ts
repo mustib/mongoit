@@ -1,18 +1,19 @@
-import AbstractMongoDbFindAndDelete from './AbstractMongoDbFindAndDelete';
+import AbstractMongoDbFilterDocument from './MongoDbFilterDocument/AbstractMongoDbFilterDocument';
 
-import type { Filter, Document as MongoDocument } from 'mongodb';
-import type MongoDBCollection from './MongoDBCollection';
-import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
-import type { UpdateFilterDocument } from './types/UpdateFilterDocument';
+import type { Document as MongoDocument } from 'mongodb';
+import type MongoDBCollection from '../MongoDBCollection';
+import type { CollectionConfigOptions } from '../types/CollectionConfigOptions';
+import type { UpdateFilterDocument } from '../types/UpdateFilterDocument';
+import type { FilterDocumentWithId } from '../types/FilterDocumentWithId';
 
 class MongoDbUpdate<
   Document extends MongoDocument
-> extends AbstractMongoDbFindAndDelete<Document> {
+> extends AbstractMongoDbFilterDocument<Document> {
   protected query: Document[] = [];
 
   constructor(
     protected collection: MongoDBCollection<Document>,
-    protected filterDocument: Filter<Document & { _id?: string }>,
+    protected filterDocument: FilterDocumentWithId<Document>,
     protected updateDocument: UpdateFilterDocument<Document>,
     protected options: CollectionConfigOptions['updateOptions'] & {
       updateType: 'updateMany' | 'updateOne';

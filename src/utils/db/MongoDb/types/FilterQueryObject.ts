@@ -3,7 +3,7 @@ import type {
   FilteringOperatorsTypes,
 } from '../utils/filteringOperators';
 
-export type FindFilterObject = {
+export type FilterQueryObject = {
   /**
    * @description a string separated by ', ' or an array of string containing key with optionally alias separated by ': ' as follow 'key: alias'
    * @example "key1: alias1, key2: alias2" || ["key1: alias1", "key2: alias2"]
@@ -15,6 +15,9 @@ export type FindFilterObject = {
    */
   target: UntypedObject;
 
+  /**
+   * @description an array of strings including allowed operators without dollar signs, or a string defining allowed operators by it's type
+   */
   allowedOperators?:
     | Operators<'WithoutDollarSign'>[]
     | keyof FilteringOperatorsTypes;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type MongoSanitize from '../utils/db/MongoDb/MongoDbSanitize';
 
 declare global {

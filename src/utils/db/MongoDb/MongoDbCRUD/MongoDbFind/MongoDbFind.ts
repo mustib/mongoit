@@ -1,15 +1,16 @@
 import AbstractMongoDbFind from './AbstractMongoDbFind';
 
-import type { Document as MongoDocument, Filter, FindCursor } from 'mongodb';
-import type MongoDBCollection from '../MongoDBCollection';
-import type { CollectionConfigOptions } from '../types/CollectionConfigOptions';
+import type { Document as MongoDocument, FindCursor } from 'mongodb';
+import type MongoDBCollection from '../../MongoDBCollection';
+import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
+import type { FilterDocumentWithId } from '../../types/FilterDocumentWithId';
 
 class MongoDbFind<
   Document extends MongoDocument
 > extends AbstractMongoDbFind<Document> {
   constructor(
     protected collection: MongoDBCollection<Document>,
-    protected filterDocument?: Filter<Document & { _id?: string }>,
+    protected filterDocument?: FilterDocumentWithId<Document>,
     protected options?: CollectionConfigOptions['findOptions']
   ) {
     super();

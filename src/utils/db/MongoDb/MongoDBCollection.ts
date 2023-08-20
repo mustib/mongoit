@@ -1,25 +1,25 @@
 import mergeTwoObjects from '../../mergeTwoObjects';
-import MongoDbFind from './MongoDbFind/MongoDbFind';
-import MongoDbFindOne from './MongoDbFind/MongoDbFindOne';
+import MongoDbFind from './MongoDbCRUD/MongoDbFind/MongoDbFind';
+import MongoDbFindOne from './MongoDbCRUD/MongoDbFind/MongoDbFindOne';
 import MongoDbSchema from './MongoDbSchema/MongoDbSchema';
-import MongoDbInsert from './MongoDbInsert';
-import MongoDbDelete from './MongoDbDelete';
-import MongoDbUpdate from './MongoDbUpdate';
+import MongoDbInsert from './MongoDbCRUD/MongoDbInsert';
+import MongoDbDelete from './MongoDbCRUD/MongoDbDelete';
+import MongoDbUpdate from './MongoDbCRUD/MongoDbUpdate';
 
 import type {
   Collection,
   Document as MongoDocument,
-  Filter,
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
 import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
 import type { MongoSchema } from './MongoDbSchema/types/MongoDBSchema';
 import type { UpdateFilterDocument } from './types/UpdateFilterDocument';
+import type { FilterDocumentWithId } from './types/FilterDocumentWithId';
 
 class MongoDBCollection<Document extends MongoDocument> {
   protected static configOptions: Required<CollectionConfigOptions> = {
-    findOptions: { limit: 20 },
+    findOptions: { nativeMongoFindOptions: { limit: 20 } },
     findOneOptions: {},
     insertOptions: {},
     insertOneOptions: {},
@@ -72,7 +72,7 @@ class MongoDBCollection<Document extends MongoDocument> {
   }
 
   find(
-    document?: Filter<Document & { _id?: string }>,
+    document?: FilterDocumentWithId<Document>,
     options?: CollectionConfigOptions['findOptions']
   ) {
     const findOptions = this.getConfigOption('findOptions', options);
@@ -82,7 +82,7 @@ class MongoDBCollection<Document extends MongoDocument> {
   }
 
   findOne(
-    document?: Filter<Document & { _id?: string }>,
+    document?: FilterDocumentWithId<Document>,
     options?: CollectionConfigOptions['findOneOptions']
   ) {
     const findOptions = this.getConfigOption('findOneOptions', options);
@@ -91,8 +91,8 @@ class MongoDBCollection<Document extends MongoDocument> {
     return mongoDbFindOne;
   }
 
-  findById(id: string) {
-    return this.findOne({ _id: id as never }).exec();
+  findById(id: string, options?: CollectionConfigOptions['findOneOptions']) {
+    return this.findOne({ _id: id } as never, options).exec();
   }
 
   insert(
@@ -105,6 +105,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     ) as MongoDbInsert<Document>['options'];
 
     _options.insertType = 'insertMany';
+
     const mongoDbInsert = new MongoDbInsert(this, docs, _options);
 
     return mongoDbInsert;
@@ -120,13 +121,14 @@ class MongoDBCollection<Document extends MongoDocument> {
     ) as MongoDbInsert<Document>['options'];
 
     _options.insertType = 'insertOne';
+
     const mongoDbInsertOne = new MongoDbInsert(this, [document], _options);
 
     return mongoDbInsertOne;
   }
 
   delete(
-    document: Filter<Document & { _id?: string }>,
+    document: FilterDocumentWithId<Document>,
     options?: CollectionConfigOptions['deleteOptions']
   ) {
     const _options = this.getConfigOption(
@@ -135,13 +137,14 @@ class MongoDBCollection<Document extends MongoDocument> {
     ) as MongoDbDelete<Document>['options'];
 
     _options.deleteType = 'deleteMany';
+
     const mongoDbDelete = new MongoDbDelete(this, document, _options);
 
     return mongoDbDelete;
   }
 
   deleteOne(
-    document: Filter<Document & { _id?: string }>,
+    document: FilterDocumentWithId<Document>,
     options?: CollectionConfigOptions['deleteOptions']
   ) {
     const _options = this.getConfigOption(
@@ -150,17 +153,18 @@ class MongoDBCollection<Document extends MongoDocument> {
     ) as MongoDbDelete<Document>['options'];
 
     _options.deleteType = 'deleteOne';
+
     const mongoDbDelete = new MongoDbDelete(this, document, _options);
 
     return mongoDbDelete;
   }
 
-  deleteById(id: string) {
-    return this.deleteOne({ _id: id as never }).exec();
+  deleteById(id: string, options?: CollectionConfigOptions['deleteOptions']) {
+    return this.deleteOne({ _id: id } as never, options).exec();
   }
 
   update(
-    filterDocument: Filter<Document & { _id?: string }>,
+    filterDocument: FilterDocumentWithId<Document>,
     updateDocument: UpdateFilterDocument<Document>,
     options?: CollectionConfigOptions['updateOptions']
   ) {
@@ -170,6 +174,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     ) as MongoDbUpdate<Document>['options'];
 
     _options.updateType = 'updateMany';
+
     const mongoDbUpdate = new MongoDbUpdate(
       this,
       filterDocument,
@@ -181,7 +186,7 @@ class MongoDBCollection<Document extends MongoDocument> {
   }
 
   updateOne(
-    filterDocument: Filter<Document & { _id?: string }>,
+    filterDocument: FilterDocumentWithId<Document>,
     updateDocument: UpdateFilterDocument<Document>,
     options?: CollectionConfigOptions['updateOptions']
   ) {
@@ -191,6 +196,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     ) as MongoDbUpdate<Document>['options'];
 
     _options.updateType = 'updateOne';
+
     const mongoDbUpdate = new MongoDbUpdate(
       this,
       filterDocument,
@@ -201,8 +207,12 @@ class MongoDBCollection<Document extends MongoDocument> {
     return mongoDbUpdate;
   }
 
-  updateById(id: string, updateDocument: UpdateFilterDocument<Document>) {
-    return this.updateOne({ _id: id as never }, updateDocument).exec();
+  updateById(
+    id: string,
+    updateDocument: UpdateFilterDocument<Document>,
+    options?: CollectionConfigOptions['updateOptions']
+  ) {
+    return this.updateOne({ _id: id } as never, updateDocument, options).exec();
   }
 }
 

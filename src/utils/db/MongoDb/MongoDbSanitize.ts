@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReplaceInString } from '../../../types/ReplaceInString';
 
 type SanitizeMongoKey<

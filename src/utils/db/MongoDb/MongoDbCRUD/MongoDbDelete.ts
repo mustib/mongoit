@@ -1,17 +1,18 @@
-import AbstractMongoDbFindAndDelete from './AbstractMongoDbFindAndDelete';
+import AbstractMongoDbFilterDocument from './MongoDbFilterDocument/AbstractMongoDbFilterDocument';
 
-import type { Filter, Document as MongoDocument } from 'mongodb';
-import type MongoDBCollection from './MongoDBCollection';
-import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
+import type { Document as MongoDocument } from 'mongodb';
+import type MongoDBCollection from '../MongoDBCollection';
+import type { CollectionConfigOptions } from '../types/CollectionConfigOptions';
+import type { FilterDocumentWithId } from '../types/FilterDocumentWithId';
 
 class MongoDbDelete<
   Document extends MongoDocument
-> extends AbstractMongoDbFindAndDelete<Document> {
+> extends AbstractMongoDbFilterDocument<Document> {
   protected query: Document[] = [];
 
   constructor(
     protected collection: MongoDBCollection<Document>,
-    protected filterDocument: Filter<Document & { _id?: string }>,
+    protected filterDocument: FilterDocumentWithId<Document>,
     protected options: CollectionConfigOptions['deleteOptions'] & {
       deleteType: 'deleteOne' | 'deleteMany';
     }

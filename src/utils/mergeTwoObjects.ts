@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 type MergedObjects<Target, Source> = Target extends Array<any>
   ? Source
   : Source extends Array<any>
