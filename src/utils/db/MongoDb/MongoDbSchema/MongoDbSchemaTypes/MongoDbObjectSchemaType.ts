@@ -5,7 +5,9 @@ import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
 import type {
   MongoSchemaTypesConstructors,
   ObjectSchemaType,
+  SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   SharedSchemaTypeFields,
+  ValidatorValueObj,
 } from '../types/MongoDBSchema';
 
 class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
@@ -44,27 +46,39 @@ class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
     });
   }
 
-  assignOrConvertTheRightValue(_value: any) {
-    let valueType = getTypeof(_value);
-    const value = valueType === 'object' ? _value : {};
-    let hasAssignedValue = false;
+  assignOrConvertTheRightValue(
+    _value: any,
+    options?: SchemaTypesConstructorsAssignOrConvertTheRightValueOptions
+  ) {
+    const value = getTypeof(_value) === 'object' ? _value : {};
+
+    const valueObj: ValidatorValueObj = {
+      value: {},
+      valueType: 'object',
+      hasAssignedValue: false,
+    };
 
     const nestedSchemaEntries = Object.entries(this.nestedSchema);
 
-    if (nestedSchemaEntries.length === 0)
-      return { valueType, hasAssignedValue, value };
+    if (nestedSchemaEntries.length === 0) return valueObj;
 
     nestedSchemaEntries.forEach(([schemaName, schema]) => {
-      const validatedFieldValue = schema.validateFieldValue(value[schemaName]);
+      let validatedFieldValue: ValidatorValueObj;
+
+      if (options?.onlyConvertTypeForNestedSchema === true) {
+        validatedFieldValue = schema.assignOrConvertTheRightValue(
+          value[schemaName],
+          options
+        );
+      } else validatedFieldValue = schema.validateFieldValue(value[schemaName]);
 
       if (validatedFieldValue.hasAssignedValue) {
-        value[schemaName] = validatedFieldValue.value;
-        hasAssignedValue = true;
-        valueType = 'object';
+        valueObj.value[schemaName] = validatedFieldValue.value;
+        valueObj.hasAssignedValue = true;
       }
     });
 
-    return { valueType, hasAssignedValue, value };
+    return valueObj;
   }
 }
 

@@ -9,7 +9,9 @@ import type {
   SchemaTypeData,
   SchemaTypeValidators,
   SharedSchemaTypeFields,
+  ValidatorValueObj,
   WithShorthandSchemaType,
+  SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
 } from '../types/MongoDBSchema';
 
 const validatorsData: SchemaTypeValidators<'array'> = {
@@ -46,6 +48,7 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
     }
 
     this.createNestedSchema(schemaValue, schemaFieldName);
+
     this.init('array', { schemaFieldName, schemaValue, validatorsData });
   }
 
@@ -71,7 +74,10 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
     }
   }
 
-  assignOrConvertTheRightValue(_value: any) {
+  assignOrConvertTheRightValue(
+    _value: any,
+    options?: SchemaTypesConstructorsAssignOrConvertTheRightValueOptions
+  ) {
     const value = Array.isArray(_value) ? _value : [_value];
 
     const valueObj = {
@@ -80,23 +86,31 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
       hasAssignedValue: false,
     };
 
+    const hasOneSchema = this.nestedSchema.length === 1;
+
     const validateAndAddValue = (
       nestedSchemaIndex: number,
       nestedSchemaValue: any
     ) => {
-      const validatedFieldValue =
-        this.nestedSchema[nestedSchemaIndex].validateFieldValue(
-          nestedSchemaValue
-        );
+      const SchemaTypeConstructor = this.nestedSchema[nestedSchemaIndex];
+      let validatedFieldValue: ValidatorValueObj;
 
-      if (validatedFieldValue.hasAssignedValue) {
+      if (options?.onlyConvertTypeForNestedSchema === true) {
+        validatedFieldValue =
+          SchemaTypeConstructor.assignOrConvertTheRightValue(
+            nestedSchemaValue,
+            options
+          );
+      } else
+        validatedFieldValue =
+          SchemaTypeConstructor.validateFieldValue(nestedSchemaValue);
+
+      if (validatedFieldValue.hasAssignedValue || !hasOneSchema) {
         valueObj.value.push(validatedFieldValue.value);
         valueObj.hasAssignedValue = true;
       }
-      return validatedFieldValue;
     };
 
-    const hasOneSchema = this.nestedSchema.length === 1;
     if (hasOneSchema) {
       const length = this.length.hasLength ? this.length.value : value.length;
       let i = 0;
@@ -108,13 +122,7 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
 
     if (!hasOneSchema) {
       for (let i = 0; i < this.nestedSchema.length; i++) {
-        const _valueObj = validateAndAddValue(i, value[i]);
-        if (!_valueObj.hasAssignedValue) {
-          if (this.default.hasDefault)
-            valueObj.value.push(this.default.value[i]);
-          else valueObj.value.push(undefined);
-          valueObj.hasAssignedValue = true;
-        }
+        validateAndAddValue(i, value[i]);
       }
     }
 

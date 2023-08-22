@@ -14,11 +14,31 @@ class MongoDbSchema<T extends MongoDocument> {
   constructor(schema: MongoSchema<T>) {
     Object.entries(schema).forEach(([_key, value]) => {
       const key = _key === '_typeField' ? 'type' : _key;
-      this.schema[key] = new (getSchemaTypeConstructor(value))(
-        key,
-        value as any
-      );
+      const SchemaTypeConstructor = getSchemaTypeConstructor(value);
+      this.schema[key] = new SchemaTypeConstructor(key, value as any);
     });
+  }
+
+  convertValuesToSchemaTypes(schema: UntypedObject) {
+    const converted: UntypedObject = {};
+    const schemaEntries = Object.entries(schema);
+
+    if (schemaEntries.length === 0) return converted;
+
+    schemaEntries.forEach(([key, value]) => {
+      if (!(key in this.schema)) return;
+
+      const SchemaTypeClass = this.schema[key];
+
+      const { hasAssignedValue, value: assignedValue } =
+        SchemaTypeClass.assignOrConvertTheRightValue(value, {
+          onlyConvertTypeForNestedSchema: true,
+        });
+
+      if (hasAssignedValue) converted[key] = assignedValue;
+    });
+
+    return converted;
   }
 
   validate(schema: UntypedObject, validationType: 'PARTIAL' | 'FULL' = 'FULL') {

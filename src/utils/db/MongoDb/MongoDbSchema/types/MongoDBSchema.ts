@@ -114,6 +114,10 @@ type MongoSchemaTypesConstructors =
   | MongoDbArraySchemaType
   | MongoDbObjectSchemaType;
 
+type SchemaTypesConstructorsAssignOrConvertTheRightValueOptions = {
+  onlyConvertTypeForNestedSchema?: boolean;
+};
+
 type GetSchemaTypeValidatorKeys<Type extends MongoSchemaTypes> =
   keyof (Type extends 'string'
     ? Omit<StringSchemaType, 'type'>
@@ -166,6 +170,7 @@ export type {
   MongoSchema,
   MongoSchemaTypes,
   MongoSchemaTypesConstructors,
+  SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   ValidatorValueObj,
   SchemaTypeData,
   SchemaTypeValidatorsTypes,

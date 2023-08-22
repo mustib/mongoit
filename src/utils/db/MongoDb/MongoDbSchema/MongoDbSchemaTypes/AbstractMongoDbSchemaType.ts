@@ -4,6 +4,7 @@ import MongoDBSchemaValidators from '../MongoDBSchemaValidator';
 import type {
   MongoSchemaTypes,
   SchemaTypeData,
+  SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   ValidatorValueObj,
 } from '../types/MongoDBSchema';
 
@@ -26,7 +27,10 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
 
   type!: Type;
 
-  abstract assignOrConvertTheRightValue(value: any): ValidatorValueObj;
+  abstract assignOrConvertTheRightValue(
+    value: any,
+    options?: SchemaTypesConstructorsAssignOrConvertTheRightValueOptions
+  ): ValidatorValueObj;
 
   getDefaultValueObj() {
     const defaultValue = this.default.value;
