@@ -166,6 +166,8 @@ type SchemaTypeData = {
     SharedSchemaTypeFields<any>;
 };
 
+type SchemaValidationType = 'PARTIAL' | 'FULL' | 'OFF';
+
 export type {
   MongoSchema,
   MongoSchemaTypes,
@@ -185,4 +187,5 @@ export type {
   ArraySchemaType,
   ObjectSchemaType,
   SharedSchemaTypeFields,
+  SchemaValidationType,
 };

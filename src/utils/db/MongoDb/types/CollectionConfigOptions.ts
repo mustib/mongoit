@@ -7,6 +7,8 @@ import type {
   UpdateOptions,
 } from 'mongodb';
 
+import type { SchemaValidationType } from '../MongoDbSchema/types/MongoDBSchema';
+
 type InsertSharedOptions = {
   /**
    * @description a boolean indicates whether to return back the inserted documents or not
@@ -18,6 +20,18 @@ type InsertSharedOptions = {
    * @param doc the document that will be inserted
    */
   interceptBeforeInserting?(doc: MongoDocument): void;
+
+  /**
+   * @default "FULL"
+   * @description one of three values "FULL" or "PARTIAL" or "OFF"
+   *
+   * FULL means all schema fields will be validated from provided fields
+   *
+   * PARTIAL means only provided fields will be validated from schema
+   *
+   * OFF means no validation
+   */
+  schemaValidationType?: SchemaValidationType;
 };
 
 /**

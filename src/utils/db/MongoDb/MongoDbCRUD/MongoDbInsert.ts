@@ -32,6 +32,7 @@ class MongoDbInsert<Document extends MongoDocument> {
       typeof this.options.interceptBeforeInserting === 'function';
 
     const hasSchema = this.collection.schema !== null;
+    const { schemaValidationType } = this.options;
 
     if (!hasInterception && !hasSchema) return insertDocuments;
 
@@ -44,13 +45,19 @@ class MongoDbInsert<Document extends MongoDocument> {
 
     if (!hasInterception && hasSchema) {
       return insertDocuments.map((doc) => {
-        this.collection.schema!.validate(doc);
-        return doc;
-      });
+        const validatedDoc = this.collection.schema!.validate(
+          doc,
+          schemaValidationType
+        );
+        return validatedDoc;
+      }) as any;
     }
 
     return insertDocuments.map((doc) => {
-      const validatedDoc = this.collection.schema!.validate(doc);
+      const validatedDoc = this.collection.schema!.validate(
+        doc,
+        schemaValidationType
+      );
       this.options.interceptBeforeInserting?.(validatedDoc);
       return validatedDoc;
     }) as any;

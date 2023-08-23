@@ -4,6 +4,7 @@ import getSchemaTypeConstructor from './utils/getSchemaTypeConstructor';
 import type {
   MongoSchema,
   MongoSchemaTypesConstructors,
+  SchemaValidationType,
 } from './types/MongoDBSchema';
 
 class MongoDbSchema<T extends MongoDocument> {
@@ -41,7 +42,12 @@ class MongoDbSchema<T extends MongoDocument> {
     return converted;
   }
 
-  validate(schema: UntypedObject, validationType: 'PARTIAL' | 'FULL' = 'FULL') {
+  validate(
+    schema: UntypedObject,
+    validationType: SchemaValidationType = 'FULL'
+  ) {
+    if (validationType === 'OFF') return schema;
+
     const validated: UntypedObject = {};
     const schemaEntries = Object.entries(this.schema);
 
