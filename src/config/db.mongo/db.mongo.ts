@@ -1,11 +1,9 @@
 import { MongoClient, Db } from 'mongodb';
+import envVars from '../envVars';
 
-const mongoClient = new MongoClient(
-  process.env.DB_MONGO_CONNECTION_URI_DEV as string,
-  {
-    appName: 'Home Furniture',
-  }
-);
+const mongoClient = new MongoClient(envVars.MONGO_CONNECTION_URI as string, {
+  appName: 'Home Furniture',
+});
 
 // eslint-disable-next-line import/no-mutable-exports
 let mongoDB: Db | undefined;

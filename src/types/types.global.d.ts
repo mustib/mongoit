@@ -4,17 +4,6 @@ declare global {
   declare interface UntypedObject {
     [key: string]: any;
   }
-
-  declare namespace NodeJS {
-    /*
-      Environment Variables Types Support (process.env)
-    */
-    declare interface ProcessEnv {
-      [key: string]: string | undefined;
-      PORT: string | undefined;
-      NODE_ENV: 'production' | 'development' | undefined;
-    }
-  }
 }
 
 /*
