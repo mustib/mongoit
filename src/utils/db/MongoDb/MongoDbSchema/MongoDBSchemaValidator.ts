@@ -3,6 +3,7 @@ import getTypeof from '../../../getTypeof';
 import type {
   StringSchemaType,
   NumberSchemaType,
+  BooleanSchemaType,
   DateSchemaType,
   ArraySchemaType,
   ObjectSchemaType,
@@ -39,6 +40,16 @@ class MongoDBSchemaValidators {
     },
     validator(value, validatorValue) {
       return value === validatorValue;
+    },
+  };
+
+  static customValidatorData: SchemaTypeValidatorsData = {
+    type: 'function',
+    defaultErrorMessage(value, validatorValue, field) {
+      return `custom validation for ${field} field failed`;
+    },
+    validator(value, validatorValue: (value: any) => boolean) {
+      return validatorValue(value);
     },
   };
 
@@ -138,6 +149,7 @@ class MongoDBSchemaValidators {
       | WithShorthandSchemaType<
           | StringSchemaType
           | NumberSchemaType
+          | BooleanSchemaType
           | DateSchemaType
           | ArraySchemaType<any>
         >
@@ -160,6 +172,13 @@ class MongoDBSchemaValidators {
     }
 
     const validatorsDataEntries = Object.entries(validatorsData);
+
+    if ('validator' in schemaValue) {
+      validatorsDataEntries.push([
+        'validator',
+        MongoDBSchemaValidators.customValidatorData,
+      ]);
+    }
 
     validatorsDataEntries.forEach(([validatorName, validatorData]) => {
       if (!(validatorName in schemaValue)) return;

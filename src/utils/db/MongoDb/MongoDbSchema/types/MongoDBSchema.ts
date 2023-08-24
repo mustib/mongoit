@@ -13,6 +13,7 @@ type RecursivePartial<T> = {
 type SharedSchemaTypeFields<Type> = {
   required?: ValidatorWithOptionalErrorMessage<boolean>;
   default?: RecursivePartial<Type> | (() => RecursivePartial<Type>);
+  validator?: ValidatorWithOptionalErrorMessage<(value: Type) => boolean>;
 };
 
 type ReplaceTypeField<Obj extends object> = {
@@ -154,10 +155,13 @@ type ValidatorValueObj = {
 type SchemaTypeValidatorsData = {
   type: SchemaTypeValidatorsTypes;
   defaultErrorMessage(value: any, validatorValue: any, field: string): string;
-  validator(value: any, validatorValue: string | number | boolean): boolean;
+  validator(
+    value: any,
+    validatorValue: string | number | boolean | ((value: any) => boolean)
+  ): boolean;
 };
 
-type SchemaTypeValidatorsTypes = 'string' | 'number' | 'boolean';
+type SchemaTypeValidatorsTypes = 'string' | 'number' | 'boolean' | 'function';
 
 type SchemaTypeValidators<T extends MongoSchemaTypes = any> = {
   [key in T extends MongoSchemaTypes
