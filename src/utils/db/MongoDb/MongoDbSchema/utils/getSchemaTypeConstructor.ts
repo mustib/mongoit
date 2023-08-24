@@ -4,6 +4,7 @@ import { MongoSchema, MongoSchemaTypes } from '../types/MongoDBSchema';
 import getTypeof from '../../../../getTypeof';
 import MongoDbStringSchemaType from '../MongoDbSchemaTypes/MongoDbStringSchemaType';
 import MongoDbNumberSchemaType from '../MongoDbSchemaTypes/MongoDbNumberSchemaType';
+import MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchemaType';
 import MongoDbDateSchemaType from '../MongoDbSchemaTypes/MongoDbDateSchemaType';
 import _MongoDbArraySchemaType = require('../MongoDbSchemaTypes/MongoDbArraySchemaType');
 import _MongoDbObjectSchemaType = require('../MongoDbSchemaTypes/MongoDbObjectSchemaType');
@@ -15,6 +16,7 @@ const MongoDbObjectSchemaType = _MongoDbObjectSchemaType.default;
 const schemaTypeConstructorsObject = {
   string: MongoDbStringSchemaType,
   number: MongoDbNumberSchemaType,
+  bool: MongoDbBooleanSchemaType,
   date: MongoDbDateSchemaType,
   array: MongoDbArraySchemaType,
   object: MongoDbObjectSchemaType,

@@ -1,6 +1,7 @@
 import type { Document } from 'mongodb';
 import type MongoDbStringSchemaType from '../MongoDbSchemaTypes/MongoDbStringSchemaType';
 import type MongoDbNumberSchemaType from '../MongoDbSchemaTypes/MongoDbNumberSchemaType';
+import type MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchemaType';
 import type MongoDbDateSchemaType from '../MongoDbSchemaTypes/MongoDbDateSchemaType';
 import type MongoDbArraySchemaType from '../MongoDbSchemaTypes/MongoDbArraySchemaType';
 import type MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSchemaType';
@@ -45,6 +46,10 @@ type NumberSchemaType = {
   max?: ValidatorWithOptionalErrorMessage<number>;
 };
 
+type BooleanSchemaType = {
+  type: 'bool';
+};
+
 type DateSchemaType = {
   type: 'date';
 };
@@ -58,12 +63,14 @@ type ObjectSchemaType<Type extends object> = {
   type: Required<ReplaceTypeField<Type>>;
 };
 
-type PrimitiveFields = string | number | Date;
+type PrimitiveFields = string | number | Date | boolean;
 
 type SchemaPrimitiveField<Field extends PrimitiveFields> = Field extends string
   ? StringSchemaType
   : Field extends number
   ? NumberSchemaType
+  : Field extends boolean
+  ? BooleanSchemaType
   : Field extends Date
   ? DateSchemaType
   : never;
@@ -105,11 +112,18 @@ type MongoSchema<Schema extends Document> = Schema extends Array<any>
         : never;
     }>;
 
-type MongoSchemaTypes = 'string' | 'number' | 'date' | 'array' | 'object';
+type MongoSchemaTypes =
+  | 'string'
+  | 'number'
+  | 'date'
+  | 'array'
+  | 'object'
+  | 'bool';
 
 type MongoSchemaTypesConstructors =
   | MongoDbStringSchemaType
   | MongoDbNumberSchemaType
+  | MongoDbBooleanSchemaType
   | MongoDbDateSchemaType
   | MongoDbArraySchemaType
   | MongoDbObjectSchemaType;
@@ -158,6 +172,7 @@ type SchemaTypeData = {
     | WithShorthandSchemaType<
         | StringSchemaType
         | NumberSchemaType
+        | BooleanSchemaType
         | DateSchemaType
         | ArraySchemaType<any>
       >
@@ -183,6 +198,7 @@ export type {
   WithShorthandSchemaType,
   StringSchemaType,
   NumberSchemaType,
+  BooleanSchemaType,
   DateSchemaType,
   ArraySchemaType,
   ObjectSchemaType,
