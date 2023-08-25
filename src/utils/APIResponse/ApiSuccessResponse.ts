@@ -38,10 +38,5 @@ class ApiSuccessResponse extends ApiResponse {
     this.injectedResponseBody.data = data;
     return this;
   }
-
-  setMessage(message: string) {
-    this.message = message;
-    return this;
-  }
 }
 export default ApiSuccessResponse;

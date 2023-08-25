@@ -15,6 +15,11 @@ abstract class ApiResponse {
     this.res.statusMessage = statusMessage;
   }
 
+  setMessage(message: string) {
+    this.message = message;
+    return this;
+  }
+
   send() {
     const responseBody: UntypedObject = {
       ...this.injectedResponseBody,
