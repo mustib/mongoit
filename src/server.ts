@@ -1,3 +1,4 @@
+import './config/mongoDbConnect';
 import { envVars } from './config';
 import app from './app';
 
