@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 import MongoDBCollection from './MongoDBCollection';
 import MongoSanitize from './MongoDbSanitize';
 
-import type { NextFunction, Request } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 import type {
   CollectionOptions,
@@ -64,7 +64,7 @@ class MongoDb<Collections extends string[] = string[]> {
   /**
    * @description an express middleware that is used to sanitize only the needed props from req.body, req.query and req.params by adding sanitizeMongo property to the request object, sanitizeMongo is an object containing three properties body, query and params, and each of them has a get method that takes no arguments to sanitize all fields or take an array of keys to retrieve that keys values from the original request object and sanitize them
    */
-  static sanitize(req: Request, _: never, next: NextFunction) {
+  static sanitize(req: Request, _: Response, next: NextFunction) {
     req.sanitizeMongo = {
       body: new MongoSanitize(req.body),
       query: new MongoSanitize(req.query),

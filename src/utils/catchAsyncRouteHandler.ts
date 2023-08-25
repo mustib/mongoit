@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 
-function catchAsyncRouteHandler(
-  routeHandler: (req: Request, res: Response) => Promise<void>
+function catchAsyncRouteHandler<ReqBody>(
+  routeHandler: (
+    req: Request<any, any, ReqBody>,
+    res: Response
+  ) => Promise<void>
 ) {
   const wrapper = async (req: Request, res: Response, next: NextFunction) => {
     try {
