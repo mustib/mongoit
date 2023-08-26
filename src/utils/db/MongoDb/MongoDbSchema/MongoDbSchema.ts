@@ -20,6 +20,17 @@ class MongoDbSchema<T extends MongoDocument> {
     });
   }
 
+  getSchemaTypeByKey(key: string) {
+    const keys = key.split('.');
+    let schema: any = this.schema[keys[0]];
+
+    for (let i = 1; i < keys.length && schema !== undefined; i++) {
+      schema = schema.nestedSchema[keys[i] as never];
+    }
+
+    return schema as MongoSchemaTypesConstructors | undefined;
+  }
+
   convertValuesToSchemaTypes(schema: UntypedObject) {
     const converted: UntypedObject = {};
     const schemaEntries = Object.entries(schema);
