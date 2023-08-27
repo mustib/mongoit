@@ -1,19 +1,9 @@
 import AbstractMongoDbFilterDocument from '../MongoDbFilterDocument/AbstractMongoDbFilterDocument';
 
-import type {
-  Document as MongoDocument,
-  FindCursor,
-  SortDirection,
-} from 'mongodb';
+import type { Document as MongoDocument } from 'mongodb';
 
 import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
-
-type MongoQuerySort<Document extends MongoDocument & UntypedObject> =
-  | {
-      [key in keyof Document]: SortDirection;
-    }
-  | [keyof Document, SortDirection]
-  | [keyof Document, SortDirection][];
+import type { SortQueryObject } from '../../types/FilterQueryObject';
 
 function convertDocumentIdToString(doc: MongoDocument) {
   if ('_id' in doc) {
@@ -24,27 +14,18 @@ function convertDocumentIdToString(doc: MongoDocument) {
   return doc;
 }
 
+const sortDirections = ['asc', 'desc', 'ascending', 'descending', '1', '-1'];
+
 abstract class AbstractMongoDbFind<
   Document extends MongoDocument
 > extends AbstractMongoDbFilterDocument<Document> {
   protected query: Document[] = [];
 
-  protected hasSorted = false;
-
-  protected sortObject: {
-    sort?: MongoQuerySort<Document>;
-    direction?: SortDirection;
-  } = {};
+  protected sortObject?: UntypedObject;
 
   protected abstract options?: CollectionConfigOptions[
     | 'findOptions'
     | 'findOneOptions'];
-
-  private addSortToCursor(cursor: FindCursor) {
-    if (this.hasSorted) {
-      cursor.sort(this.sortObject.sort as never, this.sortObject.direction);
-    }
-  }
 
   protected async createCursor() {
     const collection = await this.collection.collection;
@@ -55,16 +36,49 @@ abstract class AbstractMongoDbFind<
       this.options?.nativeMongoFindOptions
     );
 
-    this.addSortToCursor(cursor);
+    if (this.sortObject !== undefined) {
+      cursor.sort(this.sortObject);
+    }
+
     cursor.map(convertDocumentIdToString);
 
     return cursor;
   }
 
-  sort(sort: MongoQuerySort<Document>, direction: SortDirection = 1) {
-    this.hasSorted = true;
-    this.sortObject.sort = sort;
-    this.sortObject.direction = direction;
+  sort(sortQueryObject: SortQueryObject<Document>) {
+    const { target } = sortQueryObject;
+
+    if (typeof target !== 'string') return this;
+
+    const allowedTargetKeys = (
+      typeof sortQueryObject.allowedTargetKeys === 'string'
+        ? sortQueryObject.allowedTargetKeys.split(', ')
+        : sortQueryObject.allowedTargetKeys
+    ) as undefined | string[];
+
+    const sortArray = target.split(',');
+
+    this.sortObject = sortArray.reduce((result, sort) => {
+      const [sortKey, sortDirection] = sort.split(':');
+
+      if (!sortDirections.includes(sortDirection)) return result;
+
+      if (allowedTargetKeys !== undefined) {
+        for (let i = 0; i < allowedTargetKeys.length; i++) {
+          const [key, alias = key] = allowedTargetKeys[i].split(': ');
+          if (key === sortKey) {
+            // eslint-disable-next-line no-param-reassign
+            result[alias] = sortDirection;
+            break;
+          }
+        }
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        result[sortKey] = sortDirection;
+      }
+      return result;
+    }, {} as UntypedObject);
+
     return this;
   }
 }

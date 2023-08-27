@@ -61,7 +61,7 @@ class MongoDbQueryFilter {
 
     this.allowedTargetKeys =
       allowedTargetKeys !== undefined
-        ? allowedTargetKeys
+        ? (allowedTargetKeys as string[])
         : Object.keys(filter.target);
 
     this.target = target as never;
