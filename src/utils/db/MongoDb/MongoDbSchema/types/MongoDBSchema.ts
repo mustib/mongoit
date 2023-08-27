@@ -79,37 +79,38 @@ type SchemaPrimitiveField<Field extends PrimitiveFields> = Field extends string
 type ReferenceFields = Array<any> | object;
 
 type SchemaReferenceField<Field extends ReferenceFields> = {
-  [key in keyof Field]: Field[key] extends PrimitiveFields
+  [key in keyof Required<Field>]: Required<Field>[key] extends PrimitiveFields
     ? WithShorthandSchemaType<
-        SchemaPrimitiveField<Field[key]> & SharedSchemaTypeFields<Field[key]>
+        SchemaPrimitiveField<Required<Field>[key]> &
+          SharedSchemaTypeFields<Required<Field>[key]>
       >
-    : Field[key] extends Array<any>
+    : Required<Field>[key] extends Array<any>
     ? WithShorthandSchemaType<
-        ArraySchemaType<SchemaReferenceField<Field[key]>> &
-          SharedSchemaTypeFields<Field[key]>
+        ArraySchemaType<SchemaReferenceField<Required<Field>[key]>> &
+          SharedSchemaTypeFields<Required<Field>[key]>
       >
-    : Field[key] extends object
-    ? SharedSchemaTypeFields<Field[key]> &
-        ObjectSchemaType<SchemaReferenceField<Field[key]>>
+    : Required<Field>[key] extends object
+    ? SharedSchemaTypeFields<Required<Field>[key]> &
+        ObjectSchemaType<SchemaReferenceField<Required<Field>[key]>>
     : never;
 };
 
 type MongoSchema<Schema extends Document> = Schema extends Array<any>
   ? never
   : ReplaceTypeField<{
-      [key in keyof Schema]: Schema[key] extends PrimitiveFields
+      [key in keyof Required<Schema>]: Required<Schema>[key] extends PrimitiveFields
         ? WithShorthandSchemaType<
-            SharedSchemaTypeFields<Schema[key]> &
-              SchemaPrimitiveField<Schema[key]>
+            SharedSchemaTypeFields<Required<Schema>[key]> &
+              SchemaPrimitiveField<Required<Schema>[key]>
           >
-        : Schema[key] extends Array<any>
+        : Required<Schema>[key] extends Array<any>
         ? WithShorthandSchemaType<
-            SharedSchemaTypeFields<Schema[key]> &
-              ArraySchemaType<SchemaReferenceField<Schema[key]>>
+            SharedSchemaTypeFields<Required<Schema>[key]> &
+              ArraySchemaType<SchemaReferenceField<Required<Schema>[key]>>
           >
-        : Schema[key] extends object
-        ? SharedSchemaTypeFields<Schema[key]> &
-            ObjectSchemaType<SchemaReferenceField<Schema[key]>>
+        : Required<Schema>[key] extends object
+        ? SharedSchemaTypeFields<Required<Schema>[key]> &
+            ObjectSchemaType<SchemaReferenceField<Required<Schema>[key]>>
         : never;
     }>;
 
