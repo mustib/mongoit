@@ -8,6 +8,7 @@ import {
 } from '../../utils/filteringOperators';
 
 import type { FilterQueryObject } from '../../types/FilterQueryObject';
+import type MongoDbSchema from '../../MongoDbSchema/MongoDbSchema';
 
 import type {
   Operators,
@@ -23,10 +24,21 @@ class MongoDbQueryFilter {
 
   protected allowedOperators: Operators<'WithoutDollarSign'>[];
 
-  constructor(filter: FilterQueryObject) {
-    const { shouldSanitizeTarget, disableSanitizeWarning } = filter;
+  protected shouldUseSchema = false;
+
+  constructor(
+    filter: FilterQueryObject,
+    protected schema: MongoDbSchema<UntypedObject> | null
+  ) {
+    const { shouldSanitizeTarget, disableSanitizeWarning, shouldUseSchema } =
+      filter;
+
     let { allowedTargetKeys, target, allowedOperators = allOperators } = filter;
     const isSanitized = target instanceof MongoDbSanitize;
+
+    if (shouldUseSchema !== false && schema !== undefined) {
+      this.shouldUseSchema = true;
+    }
 
     if (shouldSanitizeTarget === true && !isSanitized) {
       target = new MongoDbSanitize(target as UntypedObject);
@@ -47,18 +59,30 @@ class MongoDbQueryFilter {
       allowedOperators = operatorsByType;
     }
 
-    this.allowedTargetKeys = allowedTargetKeys;
+    this.allowedTargetKeys =
+      allowedTargetKeys !== undefined
+        ? allowedTargetKeys
+        : Object.keys(filter.target);
+
     this.target = target as never;
     this.allowedOperators = allowedOperators;
 
     this.startFiltering();
   }
 
+  protected convertToSchemaType(key: string, value: any) {
+    return this.shouldUseSchema
+      ? this.schema?.convertValueToSchemaTypeByKey(key, value)
+      : value;
+  }
+
   addEqualOperator(key: string, value: unknown) {
+    const _value = this.convertToSchemaType(key, value);
+
     const filtered = filteringOperatorsTypesHandlersObject.asValue(
       '$eq',
       key,
-      value
+      _value
     ) as UntypedObject;
 
     this.filtered.push(filtered);
@@ -79,7 +103,10 @@ class MongoDbQueryFilter {
     ] as FilterOperatorHandler;
 
     const mongoOperator = `$${operator}` as Operators<'WithDollarSign'>;
-    const filtered = operatorHandler(mongoOperator, key, value);
+
+    const _value = this.convertToSchemaType(key, value);
+
+    const filtered = operatorHandler(mongoOperator, key, _value);
 
     this.filtered.push(filtered as UntypedObject);
   }

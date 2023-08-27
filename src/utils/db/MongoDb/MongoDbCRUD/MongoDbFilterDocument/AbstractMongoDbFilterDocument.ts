@@ -40,7 +40,7 @@ abstract class AbstractMongoDbFilterDocument<Document extends MongoDocument> {
   }
 
   filter(filter: FilterQueryObject) {
-    const { filtered } = new MongoDbQueryFilter(filter);
+    const { filtered } = new MongoDbQueryFilter(filter, this.collection.schema);
 
     if (filtered.length > 0) {
       if (this.query.length === 0) this.query = filtered as Document[];
