@@ -31,6 +31,31 @@ class MongoDbSchema<T extends MongoDocument> {
     return schema as MongoSchemaTypesConstructors | undefined;
   }
 
+  convertValueToSchemaTypeByKey(key: string, value: any) {
+    const schema = this.getSchemaTypeByKey(key);
+
+    if (schema === undefined) return value;
+
+    if (Array.isArray(value) && schema.type !== 'array') {
+      const _value = value.map((v: unknown) => {
+        const { hasAssignedValue, value: _value2 } =
+          schema.assignOrConvertTheRightValue(v, {
+            onlyConvertTypeForNestedSchema: true,
+          });
+
+        return hasAssignedValue ? _value2 : value;
+      });
+
+      return _value;
+    }
+
+    const { hasAssignedValue, value: _value } =
+      schema.assignOrConvertTheRightValue(value, {
+        onlyConvertTypeForNestedSchema: true,
+      });
+    return hasAssignedValue ? _value : value;
+  }
+
   convertValuesToSchemaTypes(schema: UntypedObject) {
     const converted: UntypedObject = {};
     const schemaEntries = Object.entries(schema);
