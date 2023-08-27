@@ -1,6 +1,6 @@
 import AbstractMongoDbFind from './AbstractMongoDbFind';
 
-import type { Document as MongoDocument, FindCursor } from 'mongodb';
+import type { Document as MongoDocument } from 'mongodb';
 import type MongoDBCollection from '../../MongoDBCollection';
 import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
 import type { FilterDocumentWithId } from '../../types/FilterDocumentWithId';
@@ -16,32 +16,38 @@ class MongoDbFind<
     super();
   }
 
-  protected hasPaginated = false;
+  protected paginationObject?: {
+    resultsPerPage: number;
+    skipCount: number;
+  };
 
-  protected paginationObject: { pageNumber?: number; resultsPerPage?: number } =
-    {};
+  toPage(pageNumber = 1, _resultsPerPage?: number) {
+    if (Number.isNaN(+pageNumber)) return this;
 
-  private addPaginateToCursor(cursor: FindCursor) {
-    if (this.hasPaginated) {
-      const page = this.paginationObject.pageNumber as number;
-      const results = this.paginationObject.resultsPerPage as number;
-      const skip = (page - 1) * results;
-      cursor.limit(results);
-      cursor.skip(skip);
-    }
-  }
+    const resultsPerPage = Number.isNaN(+(_resultsPerPage as any))
+      ? 20
+      : +(_resultsPerPage as number);
 
-  toPage(pageNumber = 1, resultsPerPage = 20) {
-    this.hasPaginated = true;
-    this.paginationObject.pageNumber = pageNumber;
-    this.paginationObject.resultsPerPage = resultsPerPage;
+    const skipCount = (pageNumber - 1) * resultsPerPage;
+
+    this.paginationObject = {
+      resultsPerPage,
+      skipCount,
+    };
+
     return this;
   }
 
   // TODO: Implement cursor paradigms. REFERENCE https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/read-operations/cursor/
   async exec() {
     const cursor = await this.createCursor();
-    this.addPaginateToCursor(cursor);
+
+    if (this.paginationObject !== undefined) {
+      const { resultsPerPage, skipCount } = this.paginationObject;
+      cursor.limit(resultsPerPage);
+      cursor.skip(skipCount);
+    }
+
     const documents = await cursor.toArray();
     cursor.close();
 
