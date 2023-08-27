@@ -3,6 +3,7 @@ import {
   ApiSuccessResponse,
   catchAsyncRouteHandler,
 } from '../../../utils';
+
 import productModel from '../product.model';
 
 const deleteProduct = catchAsyncRouteHandler(async (req, res) => {

@@ -1,7 +1,34 @@
 import { ApiSuccessResponse, catchAsyncRouteHandler } from '../../../utils';
+import productModel from '../product.model';
 
-const getProducts = catchAsyncRouteHandler(async (req, res) => {
-  ApiSuccessResponse.send(res);
-});
+import type { ProductSearchQuery, ProductSchema } from '../product.types';
+import type {
+  FilterQueryObject,
+  SortQueryObject,
+} from '../../../utils/db/MongoDb/types/FilterQueryObject';
+
+const getProducts = catchAsyncRouteHandler<ProductSchema, ProductSearchQuery>(
+  async (req, res) => {
+    const productFilter: FilterQueryObject<ProductSearchQuery> = {
+      allowedTargetKeys: ['price', 'stockQ: stockQuantity'],
+      target: req.sanitizeMongo.query,
+      allowedOperators: ['gt', 'lt', 'gte', 'lte'],
+    };
+
+    const productSort: SortQueryObject<ProductSearchQuery> = {
+      target: req.query.sort,
+      allowedTargetKeys: ['price'],
+    };
+
+    const products = await productModel
+      .find()
+      .filter(productFilter)
+      .sort(productSort)
+      .toPage(req.query.page, req.query.resPerPage)
+      .exec();
+
+    ApiSuccessResponse.send(res, products);
+  }
+);
 
 export default getProducts;

@@ -1,5 +1,7 @@
 import { ApiSuccessResponse, catchAsyncRouteHandler } from '../../../utils';
-import productModel, { type ProductSchema } from '../product.model';
+import productModel from '../product.model';
+
+import type { ProductSchema } from '../product.types';
 
 const addProduct = catchAsyncRouteHandler<ProductSchema>(async (req, res) => {
   const productObj = req.sanitizeMongo.body.get([

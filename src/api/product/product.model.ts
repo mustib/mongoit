@@ -1,12 +1,5 @@
 import { MongoDb } from '../../utils';
-
-export type ProductSchema = {
-  name: string;
-  price: number;
-  description: string;
-  image: string;
-  stockQuantity: number;
-};
+import type { ProductSchema } from './product.types';
 
 const mongoDb = MongoDb.getMongoDb('main');
 const productCollection = mongoDb.getCollection<ProductSchema>('products');
