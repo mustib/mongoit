@@ -271,7 +271,8 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   updateById(
     id: string,
-    updateDocument: UpdateFilterDocument<Document>,
+    updateDocument: UpdateFilterDocument<Document> &
+      _useFieldsFromSchema<Document>,
     options?: CollectionConfigOptions['updateOptions']
   ) {
     return this.updateOne({ _id: id } as never, updateDocument, options).exec();
