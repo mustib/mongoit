@@ -16,8 +16,14 @@ abstract class AbstractMongoDbFilterDocument<Document extends MongoDocument> {
 
   protected abstract filterDocument?: FilterDocumentWithId<Document>;
 
+  private filterDocumentAddedToQuery = false;
+
   private addFilterDocumentToQuery() {
-    if (typeof this.filterDocument !== 'object') return;
+    if (
+      typeof this.filterDocument !== 'object' ||
+      this.filterDocumentAddedToQuery
+    )
+      return;
 
     // convert id from a string to ObjectID in the filtered documents
     if ('_id' in this.filterDocument) {
@@ -29,6 +35,7 @@ abstract class AbstractMongoDbFilterDocument<Document extends MongoDocument> {
     }
 
     this.query.push(this.filterDocument as Document);
+    this.filterDocumentAddedToQuery = true;
   }
 
   protected createFilterQuery() {
