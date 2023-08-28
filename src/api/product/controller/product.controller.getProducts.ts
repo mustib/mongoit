@@ -20,14 +20,26 @@ const getProducts = catchAsyncRouteHandler<ProductSchema, ProductSearchQuery>(
       allowedTargetKeys: ['price'],
     };
 
+    let allResults!: number;
+
     const products = await productModel
-      .find()
+      .find(
+        {},
+        {
+          countDocuments(count: number) {
+            allResults = count;
+          },
+        }
+      )
       .filter(productFilter)
       .sort(productSort)
       .toPage(req.query.page, req.query.resPerPage)
       .exec();
 
-    ApiSuccessResponse.send(res, products);
+    new ApiSuccessResponse(res)
+      .setData(products)
+      .addToResBody({ results: products.length, allResults })
+      .send();
   }
 );
 
