@@ -38,6 +38,15 @@ class MongoDbFind<
     return this;
   }
 
+  private async countDocuments() {
+    if (this.options?.countDocuments === undefined) return;
+
+    const collection = await this.collection.collection;
+    const query = { $and: this.query };
+    const count = await collection.countDocuments(query);
+    this.options.countDocuments(count);
+  }
+
   // TODO: Implement cursor paradigms. REFERENCE https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/read-operations/cursor/
   async exec() {
     const cursor = await this.createCursor();
@@ -48,6 +57,7 @@ class MongoDbFind<
       cursor.skip(skipCount);
     }
 
+    await this.countDocuments();
     const documents = await cursor.toArray();
     cursor.close();
 
