@@ -35,7 +35,7 @@ class ApiSuccessResponse extends ApiResponse {
   }
 
   setData(data: UntypedObject | UntypedObject[] | null) {
-    this.injectedResponseBody.data = data;
+    this.addToResBody({ data });
     return this;
   }
 }

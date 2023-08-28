@@ -3,7 +3,12 @@ import { Response } from 'express';
 abstract class ApiResponse {
   protected abstract message?: string;
 
-  protected injectedResponseBody: UntypedObject = {};
+  private injectedResponseBody: UntypedObject = {};
+
+  addToResBody(data: UntypedObject) {
+    Object.assign(this.injectedResponseBody, data);
+    return this;
+  }
 
   constructor(
     protected res: Response,
