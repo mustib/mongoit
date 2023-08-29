@@ -3,11 +3,11 @@ import {
   ApiSuccessResponse,
   catchAsyncRouteHandler,
 } from '../../../utils';
-import productModel from '../product.model';
+import productModel from '../productModel';
 
-import type { ProductSchema } from '../product.types';
+import type { ProductSchema } from '../productTypes';
 
-const updateProduct = catchAsyncRouteHandler<ProductSchema>(
+const updateProductById = catchAsyncRouteHandler<ProductSchema>(
   async (req, res) => {
     const { id } = req.params;
 
@@ -35,4 +35,4 @@ const updateProduct = catchAsyncRouteHandler<ProductSchema>(
   }
 );
 
-export default updateProduct;
+export default updateProductById;

@@ -9,7 +9,7 @@ type ProductSchema = {
 type ProductSearchQuery = {
   price: number;
   stockQ: number; // stockQuantity
-  page: number; // page
+  page: number;
   resPerPage: number; // resultsPerPage
   sort: string;
 };

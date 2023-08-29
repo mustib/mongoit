@@ -3,8 +3,8 @@ import {
   addProduct,
   getProducts,
   getProductById,
-  updateProduct,
-  deleteProduct,
+  updateProductById,
+  deleteProductById,
 } from './controller';
 
 const router = Router();
@@ -14,7 +14,7 @@ router.route('/').post(addProduct).get(getProducts);
 router
   .route('/:id')
   .get(getProductById)
-  .patch(updateProduct)
-  .delete(deleteProduct);
+  .patch(updateProductById)
+  .delete(deleteProductById);
 
 export default router;

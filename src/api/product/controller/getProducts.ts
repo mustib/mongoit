@@ -3,9 +3,9 @@ import {
   ApiSuccessResponse,
   catchAsyncRouteHandler,
 } from '../../../utils';
-import productModel from '../product.model';
+import productModel from '../productModel';
 
-import type { ProductSearchQuery, ProductSchema } from '../product.types';
+import type { ProductSearchQuery, ProductSchema } from '../productTypes';
 import type {
   FilterQueryObject,
   SortQueryObject,

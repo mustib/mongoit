@@ -4,9 +4,9 @@ import {
   catchAsyncRouteHandler,
 } from '../../../utils';
 
-import productModel from '../product.model';
+import productModel from '../productModel';
 
-const deleteProduct = catchAsyncRouteHandler(async (req, res) => {
+const deleteProductById = catchAsyncRouteHandler(async (req, res) => {
   const { id } = req.params;
 
   const { deletedCount } = await productModel.deleteById(id);
@@ -19,4 +19,4 @@ const deleteProduct = catchAsyncRouteHandler(async (req, res) => {
   new ApiFailResponse(res).setMessage('Product has not found').notFound();
 });
 
-export default deleteProduct;
+export default deleteProductById;

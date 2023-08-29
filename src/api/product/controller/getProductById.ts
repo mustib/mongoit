@@ -3,7 +3,7 @@ import {
   ApiSuccessResponse,
   catchAsyncRouteHandler,
 } from '../../../utils';
-import productModel from '../product.model';
+import productModel from '../productModel';
 
 const getProductById = catchAsyncRouteHandler(async (req, res) => {
   const productId = req.params.id;

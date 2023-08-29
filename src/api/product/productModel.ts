@@ -1,5 +1,5 @@
 import { MongoDb } from '../../utils';
-import type { ProductSchema } from './product.types';
+import type { ProductSchema } from './productTypes';
 
 const mongoDb = MongoDb.getMongoDb('main');
 const productCollection = mongoDb.getCollection<ProductSchema>('products');
