@@ -42,7 +42,7 @@ type Tail<T extends any[]> = ((...t: T) => void) extends (
 
 class MongoDBCollection<Document extends MongoDocument> {
   protected static configOptions: Required<CollectionConfigOptions> = {
-    findOptions: { nativeMongoFindOptions: { limit: 20 } },
+    findOptions: {},
     findOneOptions: {},
     insertOptions: {},
     insertOneOptions: {},

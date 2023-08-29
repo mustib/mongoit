@@ -16,9 +16,10 @@ class MongoDbFindOne<
     super();
   }
 
+  protected cursorLimit = 1;
+
   async exec() {
     const cursor = await this.createCursor();
-    cursor.limit(1);
     const doc = await cursor.next();
     cursor.close();
 

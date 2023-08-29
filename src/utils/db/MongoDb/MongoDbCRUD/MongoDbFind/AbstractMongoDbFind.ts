@@ -27,6 +27,8 @@ abstract class AbstractMongoDbFind<
     | 'findOptions'
     | 'findOneOptions'];
 
+  protected abstract readonly cursorLimit: number;
+
   protected async createCursor() {
     const collection = await this.collection.collection;
     const filterQuery = this.createFilterQuery();
@@ -40,6 +42,7 @@ abstract class AbstractMongoDbFind<
       cursor.sort(this.sortObject);
     }
 
+    cursor.limit(this.cursorLimit);
     cursor.map(convertDocumentIdToString);
 
     return cursor;

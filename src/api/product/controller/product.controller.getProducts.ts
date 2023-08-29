@@ -1,4 +1,8 @@
-import { ApiSuccessResponse, catchAsyncRouteHandler } from '../../../utils';
+import {
+  ApiFailResponse,
+  ApiSuccessResponse,
+  catchAsyncRouteHandler,
+} from '../../../utils';
 import productModel from '../product.model';
 
 import type { ProductSearchQuery, ProductSchema } from '../product.types';
@@ -20,25 +24,36 @@ const getProducts = catchAsyncRouteHandler<ProductSchema, ProductSearchQuery>(
       allowedTargetKeys: ['price'],
     };
 
-    let allResults!: number;
-
-    const products = await productModel
-      .find(
-        {},
-        {
-          countDocuments(count: number) {
-            allResults = count;
-          },
-        }
-      )
+    const {
+      allResultsCount,
+      documents,
+      currentResultsCount,
+      pageNumber,
+      remainingResults,
+      resultsPerPage,
+      numberOfPages,
+    } = await productModel
+      .find()
       .filter(productFilter)
       .sort(productSort)
       .toPage(req.query.page, req.query.resPerPage)
       .exec();
 
+    if (pageNumber > numberOfPages && currentResultsCount > 0) {
+      new ApiFailResponse(res).setMessage('product page not found').notFound();
+      return;
+    }
+
     new ApiSuccessResponse(res)
-      .setData(products)
-      .addToResBody({ results: products.length, allResults })
+      .setData(documents)
+      .addToResBody({
+        currentResultsCount,
+        allResultsCount,
+        pageNumber,
+        remainingResults,
+        resultsPerPage,
+        numberOfPages,
+      })
       .send();
   }
 );

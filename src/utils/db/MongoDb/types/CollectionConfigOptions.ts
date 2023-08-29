@@ -41,14 +41,8 @@ export interface CollectionConfigOptions {
   findOptions?: {
     /**
      * @description native mongo collection find options that is used when using collection.find @example collection.find(document, options)
-     * @default {limit: 20}
      */
     nativeMongoFindOptions?: FindOptions<UntypedObject>;
-
-    /**
-     * @description a function that will be called with the result of calling collection.countDocuments() method from native mongo collection, which specifies the number of documents that matches the filter query
-     */
-    countDocuments?(count: number): void;
   };
 
   findOneOptions?: {

@@ -5,63 +5,100 @@ import type MongoDBCollection from '../../MongoDBCollection';
 import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
 import type { FilterDocumentWithId } from '../../types/FilterDocumentWithId';
 
+type MongoDbFindExecOptions = {
+  returnDetails?: boolean;
+};
+
+type MongoDbFindExecReturn<Options extends MongoDbFindExecOptions> = Promise<
+  Options['returnDetails'] extends false
+    ? {
+        documents: (Document & {
+          _id: string;
+        })[];
+      }
+    : ReturnType<(typeof MongoDbFind)['prototype']['execDetails']>
+>;
+
 class MongoDbFind<
   Document extends MongoDocument
 > extends AbstractMongoDbFind<Document> {
+  protected cursorLimit = 20;
+
+  protected pageNumber = 1;
+
+  protected get cursorSkipCount() {
+    return (this.pageNumber - 1) * this.cursorLimit;
+  }
+
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected filterDocument?: FilterDocumentWithId<Document>,
     protected options?: CollectionConfigOptions['findOptions']
   ) {
     super();
+
+    const cursorLimit = options?.nativeMongoFindOptions?.limit;
+
+    if (cursorLimit !== undefined && cursorLimit > 0)
+      this.cursorLimit = cursorLimit;
   }
 
-  protected paginationObject?: {
-    resultsPerPage: number;
-    skipCount: number;
-  };
+  toPage(pageNumber = this.pageNumber, _resultsPerPage = this.cursorLimit) {
+    if (+pageNumber < 1) return this;
 
-  toPage(pageNumber = 1, _resultsPerPage?: number) {
-    if (Number.isNaN(+pageNumber)) return this;
+    this.pageNumber = +pageNumber;
 
-    const resultsPerPage = Number.isNaN(+(_resultsPerPage as any))
-      ? 20
-      : +(_resultsPerPage as number);
-
-    const skipCount = (pageNumber - 1) * resultsPerPage;
-
-    this.paginationObject = {
-      resultsPerPage,
-      skipCount,
-    };
+    this.cursorLimit =
+      +_resultsPerPage > 0 ? +_resultsPerPage : this.cursorLimit;
 
     return this;
   }
 
   private async countDocuments() {
-    if (this.options?.countDocuments === undefined) return;
-
     const collection = await this.collection.collection;
-    const query = { $and: this.query };
+    const query = this.createFilterQuery();
     const count = await collection.countDocuments(query);
-    this.options.countDocuments(count);
+
+    return count;
+  }
+
+  protected async execDetails(
+    documents: (Document & {
+      _id: string;
+    })[]
+  ) {
+    const allResultsCount = await this.countDocuments();
+    const currentResultsCount = documents.length;
+    const { pageNumber, cursorLimit: resultsPerPage } = this;
+    const remainingResults =
+      allResultsCount - (this.cursorSkipCount + currentResultsCount);
+    const numberOfPages = Math.ceil(allResultsCount / resultsPerPage);
+
+    return {
+      allResultsCount,
+      currentResultsCount,
+      documents,
+      pageNumber,
+      resultsPerPage,
+      remainingResults,
+      numberOfPages,
+    };
   }
 
   // TODO: Implement cursor paradigms. REFERENCE https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/read-operations/cursor/
-  async exec() {
+  async exec<Options extends MongoDbFindExecOptions>(
+    options?: Options
+  ): MongoDbFindExecReturn<Options> {
     const cursor = await this.createCursor();
-
-    if (this.paginationObject !== undefined) {
-      const { resultsPerPage, skipCount } = this.paginationObject;
-      cursor.limit(resultsPerPage);
-      cursor.skip(skipCount);
-    }
-
-    await this.countDocuments();
+    cursor.skip(this.cursorSkipCount);
     const documents = await cursor.toArray();
     cursor.close();
 
-    return documents;
+    if (options?.returnDetails === false) return { documents } as never;
+
+    const execDetails = await this.execDetails(documents);
+
+    return execDetails as never;
   }
 }
 
