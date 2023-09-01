@@ -3,9 +3,7 @@ import {
   ApiSuccessResponse,
   catchAsyncRouteHandler,
 } from '../../../utils';
-import productModel from '../productModel';
-
-import type { ProductSchema } from '../productTypes';
+import productModel, { type ProductSchema } from '../productModel';
 
 const updateProductById = catchAsyncRouteHandler<ProductSchema>(
   async (req, res) => {

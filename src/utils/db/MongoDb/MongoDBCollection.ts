@@ -2,7 +2,8 @@ import mergeTwoObjects from '../../mergeTwoObjects';
 import MongoDbFind from './MongoDbCRUD/MongoDbFind/MongoDbFind';
 import MongoDbFindOne from './MongoDbCRUD/MongoDbFind/MongoDbFindOne';
 import MongoDbSchema from './MongoDbSchema/MongoDbSchema';
-import MongoDbInsert from './MongoDbCRUD/MongoDbInsert';
+import MongoDbInsert from './MongoDbCRUD/MongoDbInsert/MongoDbInsert';
+import MongoDbInsertOne from './MongoDbCRUD/MongoDbInsert/MongoDbInsertOne';
 import MongoDbDelete from './MongoDbCRUD/MongoDbDelete';
 import MongoDbUpdate from './MongoDbCRUD/MongoDbUpdate';
 
@@ -147,12 +148,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     docs: OptionalUnlessRequiredId<Document>[],
     options?: CollectionConfigOptions['insertOptions']
   ) {
-    const _options = this.getConfigOption(
-      'insertOptions',
-      options
-    ) as MongoDbInsert<Document>['options'];
-
-    _options.insertType = 'insertMany';
+    const _options = this.getConfigOption('insertOptions', options);
 
     const mongoDbInsert = new MongoDbInsert(this, docs, _options);
 
@@ -161,16 +157,15 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   insertOne(
     document: OptionalUnlessRequiredId<Document>,
-    options?: CollectionConfigOptions['insertOneOptions']
+    options?: CollectionConfigOptions<Document>['insertOneOptions']
   ) {
-    const _options = this.getConfigOption(
-      'insertOneOptions',
-      options
-    ) as MongoDbInsert<Document>['options'];
+    const _options = this.getConfigOption('insertOneOptions', options);
 
-    _options.insertType = 'insertOne';
-
-    const mongoDbInsertOne = new MongoDbInsert(this, [document], _options);
+    const mongoDbInsertOne = new MongoDbInsertOne<Document>(
+      this,
+      document,
+      _options
+    );
 
     return mongoDbInsertOne;
   }

@@ -1,12 +1,23 @@
 import { MongoDb } from '../../utils';
-import type { ProductSchema } from './productTypes';
 
 const mongoDb = MongoDb.getMongoDb('main');
 const productCollection = mongoDb.getCollection<ProductSchema>('products');
 
-productCollection.setConfigOptions({
-  insertOneOptions: { returnInserted: true },
-});
+export type ProductSchema = {
+  name: string;
+  price: number;
+  description: string;
+  image?: string;
+  stockQuantity?: number;
+};
+
+export type ProductSearchQuery = {
+  price: number;
+  stockQ: number; // stockQuantity
+  page: number;
+  resPerPage: number; // resultsPerPage
+  sort: string;
+};
 
 productCollection.createSchema({
   name: {

@@ -9,17 +9,13 @@ import type {
 
 import type { SchemaValidationType } from '../MongoDbSchema/types/MongoDBSchema';
 
-type InsertSharedOptions = {
+type InsertSharedOptions<Document extends MongoDocument = MongoDocument> = {
   /**
-   * @description a boolean indicates whether to return back the inserted documents or not
-   */
-  returnInserted?: boolean;
-
-  /**
-   * @description a function that will be called for each document before inserting it to mongo and it will be passed the document that is ready for inserting
+   * @description a function that will be called for each document before inserting it to mongo, it will be passed the document that is ready for inserting and it's returning result will be inserted into the database
    * @param doc the document that will be inserted
+   * @returns the document to be inserted
    */
-  interceptBeforeInserting?(doc: MongoDocument): void;
+  interceptBeforeInserting?(doc: Document): Document;
 
   /**
    * @default "FULL"
@@ -37,29 +33,31 @@ type InsertSharedOptions = {
 /**
  * an object that is used to predefine options for MongoDbCollection class
  */
-export interface CollectionConfigOptions {
+export interface CollectionConfigOptions<
+  Document extends MongoDocument = MongoDocument
+> {
   findOptions?: {
     /**
      * @description native mongo collection find options that is used when using collection.find @example collection.find(document, options)
      */
-    nativeMongoFindOptions?: FindOptions<UntypedObject>;
+    nativeMongoFindOptions?: FindOptions<Document>;
   };
 
   findOneOptions?: {
     /**
      * @description the same options as nativeMongoFindOptions for findOptions but with a limit set to 1
      */
-    nativeMongoFindOptions?: Omit<FindOptions<UntypedObject>, 'limit'>;
+    nativeMongoFindOptions?: Omit<FindOptions<Document>, 'limit'>;
   };
 
-  insertOptions?: InsertSharedOptions & {
+  insertOptions?: InsertSharedOptions<Document> & {
     /**
      * @description native mongo collection insert options that is used when using collection.insertMany @example collection.insertMany([insertDocuments], options)
      */
     nativeMongoInsertOptions?: BulkWriteOptions;
   };
 
-  insertOneOptions?: InsertSharedOptions & {
+  insertOneOptions?: InsertSharedOptions<Document> & {
     /**
      * @description native mongo collection insert options that is used when using collection.insertOne @example collection.insertOne(insertDocument, options)
      */
