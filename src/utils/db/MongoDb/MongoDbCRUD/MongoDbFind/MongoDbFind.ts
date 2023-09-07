@@ -1,3 +1,4 @@
+import getTypeof from '../../../../getTypeof';
 import AbstractMongoDbFind from './AbstractMongoDbFind';
 
 import type { Document as MongoDocument } from 'mongodb';
@@ -43,10 +44,12 @@ class MongoDbFind<
       this.cursorLimit = cursorLimit;
   }
 
-  toPage(pageNumber = this.pageNumber, _resultsPerPage = this.cursorLimit) {
-    if (+pageNumber < 1) return this;
+  toPage(_pageNumber: number, _resultsPerPage = this.cursorLimit) {
+    const pageNumber = +_pageNumber;
 
-    this.pageNumber = +pageNumber;
+    if (getTypeof(pageNumber) !== 'number' || pageNumber < 1) return this;
+
+    this.pageNumber = pageNumber;
 
     this.cursorLimit =
       +_resultsPerPage > 0 ? +_resultsPerPage : this.cursorLimit;
