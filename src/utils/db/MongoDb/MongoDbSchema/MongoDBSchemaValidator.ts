@@ -1,4 +1,6 @@
 import getTypeof from '../../../getTypeof';
+import AppError from '../../../AppError/AppError';
+import AppErrorRoot from '../../../AppError/AppErrorRoot';
 
 import type {
   StringSchemaType,
@@ -110,37 +112,35 @@ class MongoDBSchemaValidators {
     let errorMessage = '';
 
     if (typeof validatorObj.message === 'function') {
-      const isDefaultErrorMessage =
-        validatorObj.message.name === 'defaultErrorMessage';
-      const _errorMessage = validatorObj.message(
+      errorMessage = validatorObj.message(
         value,
         validatorValue,
         this.schemaFieldName
       );
-
-      errorMessage = `${
-        isDefaultErrorMessage
-          ? `Schema validation error for ${this.schemaFieldName} field, `
-          : ''
-      }${_errorMessage}`;
     } else errorMessage = validatorObj.message;
 
-    throw new Error(errorMessage);
+    AppError.throw('Validation', errorMessage);
   }
 
   validateValidators(valueObj: ValidatorValueObj) {
-    if (this.requiredValidator.value === true) {
-      this.validateValidator(
-        valueObj.hasAssignedValue,
-        this.requiredValidator as ValidatorArray['1']
-      );
-    }
+    AppErrorRoot.aggregate((tryCatch) => {
+      if (this.requiredValidator.value === true) {
+        tryCatch(() => {
+          this.validateValidator(
+            valueObj.hasAssignedValue,
+            this.requiredValidator as ValidatorArray['1']
+          );
+        });
+      }
 
-    if (!valueObj.hasAssignedValue) return;
+      if (!valueObj.hasAssignedValue) return;
 
-    for (let i = 0; i < this.validators.length; i++) {
-      this.validateValidator(valueObj.value, this.validators[i][1]);
-    }
+      for (let i = 0; i < this.validators.length; i++) {
+        tryCatch(() => {
+          this.validateValidator(valueObj.value, this.validators[i][1]);
+        });
+      }
+    });
   }
 
   createValidators(

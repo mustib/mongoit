@@ -1,4 +1,5 @@
 import getTypeof from '../../../../getTypeof';
+import AppErrorRoot from '../../../../AppError/AppErrorRoot';
 import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
 
@@ -62,20 +63,25 @@ class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
 
     if (nestedSchemaEntries.length === 0) return valueObj;
 
-    nestedSchemaEntries.forEach(([schemaName, schema]) => {
-      let validatedFieldValue: ValidatorValueObj;
+    AppErrorRoot.aggregate((tryCatch) => {
+      nestedSchemaEntries.forEach(([schemaName, schema]) => {
+        tryCatch(() => {
+          let validatedFieldValue: ValidatorValueObj;
 
-      if (options?.onlyConvertTypeForNestedSchema === true) {
-        validatedFieldValue = schema.assignOrConvertTheRightValue(
-          value[schemaName],
-          options
-        );
-      } else validatedFieldValue = schema.validateFieldValue(value[schemaName]);
+          if (options?.onlyConvertTypeForNestedSchema === true) {
+            validatedFieldValue = schema.assignOrConvertTheRightValue(
+              value[schemaName],
+              options
+            );
+          } else
+            validatedFieldValue = schema.validateFieldValue(value[schemaName]);
 
-      if (validatedFieldValue.hasAssignedValue) {
-        valueObj.value[schemaName] = validatedFieldValue.value;
-        valueObj.hasAssignedValue = true;
-      }
+          if (validatedFieldValue.hasAssignedValue) {
+            valueObj.value[schemaName] = validatedFieldValue.value;
+            valueObj.hasAssignedValue = true;
+          }
+        });
+      });
     });
 
     return valueObj;

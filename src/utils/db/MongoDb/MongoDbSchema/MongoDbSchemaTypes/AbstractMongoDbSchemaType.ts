@@ -1,3 +1,4 @@
+import AppError from '../../../../AppError/AppError';
 import getTypeof from '../../../../getTypeof';
 import MongoDBSchemaValidators from '../MongoDBSchemaValidator';
 
@@ -62,8 +63,9 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
       valueType !== 'undefined' &&
       valueType !== this.type
     ) {
-      throw new Error(
-        `Schema type error for ${this.schemaFieldName} field, ${valueType} type can not be assigned to ${this.type}`
+      AppError.throw(
+        'Type',
+        `${valueType} type can not be assigned to ${this.type} in ${this.schemaFieldName} field`
       );
     }
 

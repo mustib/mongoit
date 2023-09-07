@@ -1,4 +1,5 @@
 import { Document as MongoDocument } from 'mongodb';
+import AppErrorRoot from '../../../AppError/AppErrorRoot';
 import getSchemaTypeConstructor from './utils/getSchemaTypeConstructor';
 
 import type {
@@ -89,14 +90,18 @@ class MongoDbSchema<T extends MongoDocument> {
 
     if (schemaEntries.length === 0) return validated;
 
-    schemaEntries.forEach(([schemaNameKey, SchemaTypeClass]) => {
-      const keyIsNotDefined = !(schemaNameKey in schema);
-      if (keyIsNotDefined && validationType === 'PARTIAL') return;
+    AppErrorRoot.aggregate((tryCatch) => {
+      schemaEntries.forEach(([schemaNameKey, SchemaTypeClass]) => {
+        const keyIsNotDefined = !(schemaNameKey in schema);
 
-      const { hasAssignedValue, value } = SchemaTypeClass.validateFieldValue(
-        schema[schemaNameKey]
-      );
-      if (hasAssignedValue) validated[schemaNameKey] = value;
+        if (keyIsNotDefined && validationType === 'PARTIAL') return;
+
+        tryCatch(() => {
+          const { hasAssignedValue, value } =
+            SchemaTypeClass.validateFieldValue(schema[schemaNameKey]);
+          if (hasAssignedValue) validated[schemaNameKey] = value;
+        });
+      });
     });
 
     return validated;

@@ -1,4 +1,5 @@
 import getTypeof from '../../../../getTypeof';
+import AppErrorRoot from '../../../../AppError/AppErrorRoot';
 import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor';
 import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
@@ -88,27 +89,31 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
 
     const hasOneSchema = this.nestedSchema.length === 1;
 
+    const appErrorRoot = new AppErrorRoot();
+
     const validateAndAddValue = (
       nestedSchemaIndex: number,
       nestedSchemaValue: any
     ) => {
-      const SchemaTypeConstructor = this.nestedSchema[nestedSchemaIndex];
-      let validatedFieldValue: ValidatorValueObj;
+      appErrorRoot.tryCatch(() => {
+        const SchemaTypeConstructor = this.nestedSchema[nestedSchemaIndex];
+        let validatedFieldValue: ValidatorValueObj;
 
-      if (options?.onlyConvertTypeForNestedSchema === true) {
-        validatedFieldValue =
-          SchemaTypeConstructor.assignOrConvertTheRightValue(
-            nestedSchemaValue,
-            options
-          );
-      } else
-        validatedFieldValue =
-          SchemaTypeConstructor.validateFieldValue(nestedSchemaValue);
+        if (options?.onlyConvertTypeForNestedSchema === true) {
+          validatedFieldValue =
+            SchemaTypeConstructor.assignOrConvertTheRightValue(
+              nestedSchemaValue,
+              options
+            );
+        } else
+          validatedFieldValue =
+            SchemaTypeConstructor.validateFieldValue(nestedSchemaValue);
 
-      if (validatedFieldValue.hasAssignedValue || !hasOneSchema) {
-        valueObj.value.push(validatedFieldValue.value);
-        valueObj.hasAssignedValue = true;
-      }
+        if (validatedFieldValue.hasAssignedValue || !hasOneSchema) {
+          valueObj.value.push(validatedFieldValue.value);
+          valueObj.hasAssignedValue = true;
+        }
+      });
     };
 
     if (hasOneSchema) {
@@ -125,6 +130,8 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
         validateAndAddValue(i, value[i]);
       }
     }
+
+    appErrorRoot.end();
 
     return valueObj;
   }
