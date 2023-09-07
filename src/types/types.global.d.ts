@@ -4,6 +4,8 @@ declare global {
   declare interface UntypedObject {
     [key: string]: any;
   }
+
+  declare type Func = (...args: any[]) => any;
 }
 
 /*
