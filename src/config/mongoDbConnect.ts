@@ -1,4 +1,4 @@
-import { MongoDb } from '../utils';
+import MongoDb from '../utils/db/MongoDb/MongoDb';
 import envVars from './envVars';
 
 // eslint-disable-next-line no-new
