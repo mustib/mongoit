@@ -13,7 +13,7 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
-import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
+import type { CollectionCrudOptions } from './types/CollectionConfigOptions';
 import type { MongoSchema } from './MongoDbSchema/types/MongoDBSchema';
 import type { UpdateFilterDocument } from './types/UpdateFilterDocument';
 import type { FilterDocumentWithId } from './types/FilterDocumentWithId';
@@ -42,7 +42,7 @@ type Tail<T extends any[]> = ((...t: T) => void) extends (
   : never;
 
 class MongoDBCollection<Document extends MongoDocument> {
-  protected static configOptions: Required<CollectionConfigOptions> = {
+  protected static crudOptions: Required<CollectionCrudOptions> = {
     findOptions: {},
     findOneOptions: {},
     insertOptions: {},
@@ -53,17 +53,17 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   schema: MongoDbSchema<Document> | null = null;
 
-  static setConfigOptions(options: CollectionConfigOptions) {
+  static setCrudOptions(options: CollectionCrudOptions) {
     mergeTwoObjects(
-      MongoDBCollection.configOptions,
+      MongoDBCollection.crudOptions,
       options as UntypedObject,
       true
     );
   }
 
-  setConfigOptions(options: CollectionConfigOptions) {
+  setCrudOptions(options: CollectionCrudOptions) {
     mergeTwoObjects(
-      this.configOptions as UntypedObject,
+      this.crudOptions as UntypedObject,
       options as UntypedObject,
       true
     );
@@ -71,23 +71,23 @@ class MongoDBCollection<Document extends MongoDocument> {
     return this;
   }
 
-  protected getConfigOption<T extends keyof CollectionConfigOptions>(
+  protected getConfigOption<T extends keyof CollectionCrudOptions>(
     option: T,
-    possibleOption: CollectionConfigOptions[T] | undefined
-  ): CollectionConfigOptions[T] {
+    possibleOption: CollectionCrudOptions[T] | undefined
+  ): CollectionCrudOptions[T] {
     if (typeof possibleOption === 'object') return possibleOption;
 
     const configOption =
-      option in this.configOptions
-        ? this.configOptions[option]
-        : MongoDBCollection.configOptions[option];
+      option in this.crudOptions
+        ? this.crudOptions[option]
+        : MongoDBCollection.crudOptions[option];
 
     return configOption;
   }
 
   constructor(
     readonly collection: Promise<Collection<Document>>,
-    protected configOptions: CollectionConfigOptions = {}
+    protected crudOptions: CollectionCrudOptions = {}
   ) {}
 
   createSchema(schema: MongoSchema<Document>) {
@@ -118,7 +118,7 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   find(
     document?: FilterDocumentWithId<Document> & _useFieldsFromSchema<Document>,
-    options?: CollectionConfigOptions['findOptions']
+    options?: CollectionCrudOptions['findOptions']
   ) {
     this.prepareSchemaFields(document);
 
@@ -130,7 +130,7 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   findOne(
     document?: FilterDocumentWithId<Document> & _useFieldsFromSchema<Document>,
-    options?: CollectionConfigOptions['findOneOptions']
+    options?: CollectionCrudOptions['findOneOptions']
   ) {
     this.prepareSchemaFields(document);
 
@@ -140,13 +140,13 @@ class MongoDBCollection<Document extends MongoDocument> {
     return mongoDbFindOne;
   }
 
-  findById(id: string, options?: CollectionConfigOptions['findOneOptions']) {
+  findById(id: string, options?: CollectionCrudOptions['findOneOptions']) {
     return this.findOne({ _id: id } as never, options).exec();
   }
 
   insert(
     docs: OptionalUnlessRequiredId<Document>[],
-    options?: CollectionConfigOptions['insertOptions']
+    options?: CollectionCrudOptions['insertOptions']
   ) {
     const _options = this.getConfigOption('insertOptions', options);
 
@@ -157,7 +157,7 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   insertOne(
     document: OptionalUnlessRequiredId<Document>,
-    options?: CollectionConfigOptions<Document>['insertOneOptions']
+    options?: CollectionCrudOptions<Document>['insertOneOptions']
   ) {
     const _options = this.getConfigOption('insertOneOptions', options);
 
@@ -172,7 +172,7 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   delete(
     document: FilterDocumentWithId<Document> & _useFieldsFromSchema<Document>,
-    options?: CollectionConfigOptions['deleteOptions']
+    options?: CollectionCrudOptions['deleteOptions']
   ) {
     const _options = this.getConfigOption(
       'deleteOptions',
@@ -190,7 +190,7 @@ class MongoDBCollection<Document extends MongoDocument> {
 
   deleteOne(
     document: FilterDocumentWithId<Document> & _useFieldsFromSchema<Document>,
-    options?: CollectionConfigOptions['deleteOptions']
+    options?: CollectionCrudOptions['deleteOptions']
   ) {
     const _options = this.getConfigOption(
       'deleteOptions',
@@ -206,7 +206,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     return mongoDbDelete;
   }
 
-  deleteById(id: string, options?: CollectionConfigOptions['deleteOptions']) {
+  deleteById(id: string, options?: CollectionCrudOptions['deleteOptions']) {
     return this.deleteOne({ _id: id } as never, options).exec();
   }
 
@@ -215,7 +215,7 @@ class MongoDBCollection<Document extends MongoDocument> {
       _useFieldsFromSchema<Document>,
     updateDocument: UpdateFilterDocument<Document> &
       _useFieldsFromSchema<Document>,
-    options?: CollectionConfigOptions['updateOptions']
+    options?: CollectionCrudOptions['updateOptions']
   ) {
     const _options = this.getConfigOption(
       'updateOptions',
@@ -242,7 +242,7 @@ class MongoDBCollection<Document extends MongoDocument> {
       _useFieldsFromSchema<Document>,
     updateDocument: UpdateFilterDocument<Document> &
       _useFieldsFromSchema<Document>,
-    options?: CollectionConfigOptions['updateOptions']
+    options?: CollectionCrudOptions['updateOptions']
   ) {
     const _options = this.getConfigOption(
       'updateOptions',
@@ -268,7 +268,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     id: string,
     updateDocument: UpdateFilterDocument<Document> &
       _useFieldsFromSchema<Document>,
-    options?: CollectionConfigOptions['updateOptions']
+    options?: CollectionCrudOptions['updateOptions']
   ) {
     return this.updateOne({ _id: id } as never, updateDocument, options).exec();
   }

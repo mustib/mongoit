@@ -13,7 +13,7 @@ import type {
 } from './MongoInsertTypes';
 
 import type MongoDBCollection from '../../MongoDBCollection';
-import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
 
 type InsertType = 'insertOne' | 'insertMany';
 
@@ -35,9 +35,9 @@ abstract class AbstractMongoDbInsert<
   protected abstract insertDocuments: InsertDocumentsType<Type, Document>;
 
   protected abstract options: Type extends 'insertMany'
-    ? CollectionConfigOptions['insertOptions']
+    ? CollectionCrudOptions['insertOptions']
     : Type extends 'insertOne'
-    ? CollectionConfigOptions['insertOneOptions']
+    ? CollectionCrudOptions['insertOneOptions']
     : never;
 
   protected abstract interceptInsertion(): InsertDocumentsType<Type, Document>;

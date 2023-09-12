@@ -2,7 +2,7 @@ import AbstractMongoDbFilterDocument from './MongoDbFilterDocument/AbstractMongo
 
 import type { Document as MongoDocument } from 'mongodb';
 import type MongoDBCollection from '../MongoDBCollection';
-import type { CollectionConfigOptions } from '../types/CollectionConfigOptions';
+import type { CollectionCrudOptions } from '../types/CollectionConfigOptions';
 import type { FilterDocumentWithId } from '../types/FilterDocumentWithId';
 
 class MongoDbDelete<
@@ -13,7 +13,7 @@ class MongoDbDelete<
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected filterDocument: FilterDocumentWithId<Document>,
-    protected options: CollectionConfigOptions['deleteOptions'] & {
+    protected options: CollectionCrudOptions['deleteOptions'] & {
       deleteType: 'deleteOne' | 'deleteMany';
     }
   ) {

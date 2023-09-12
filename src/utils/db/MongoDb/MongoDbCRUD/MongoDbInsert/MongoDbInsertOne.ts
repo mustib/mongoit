@@ -8,7 +8,7 @@ import type {
 } from 'mongodb';
 
 import type MongoDBCollection from '../../MongoDBCollection';
-import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
 import type { ExecOptions, InsertOneExecReturn } from './MongoInsertTypes';
 
 class MongoDbInsertOne<
@@ -17,7 +17,7 @@ class MongoDbInsertOne<
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected insertDocuments: OptionalUnlessRequiredId<Document>,
-    protected options: CollectionConfigOptions['insertOneOptions']
+    protected options: CollectionCrudOptions['insertOneOptions']
   ) {
     super();
   }

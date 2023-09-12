@@ -3,7 +3,7 @@ import AbstractMongoDbFind from './AbstractMongoDbFind';
 
 import type { Document as MongoDocument } from 'mongodb';
 import type MongoDBCollection from '../../MongoDBCollection';
-import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
 import type { FilterDocumentWithId } from '../../types/FilterDocumentWithId';
 
 type MongoDbFindExecOptions = {
@@ -34,7 +34,7 @@ class MongoDbFind<
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected filterDocument?: FilterDocumentWithId<Document>,
-    protected options?: CollectionConfigOptions['findOptions']
+    protected options?: CollectionCrudOptions['findOptions']
   ) {
     super();
 

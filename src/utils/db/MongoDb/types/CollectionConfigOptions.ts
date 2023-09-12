@@ -1,5 +1,6 @@
 import type {
   BulkWriteOptions,
+  CollectionOptions,
   DeleteOptions,
   FindOptions,
   InsertOneOptions,
@@ -8,6 +9,18 @@ import type {
 } from 'mongodb';
 
 import type { SchemaValidationType } from '../MongoDbSchema/types/MongoDBSchema';
+
+export type CollectionConfigOptions = {
+  /**
+   * @description native mongo collection options object
+   */
+  nativeMongoCollectionOptions?: CollectionOptions;
+
+  /**
+   * @description config options for MongoDbCollection class
+   */
+  MongoDbCollectionConfigOptions?: CollectionCrudOptions;
+};
 
 type InsertSharedOptions<Document extends MongoDocument = MongoDocument> = {
   /**
@@ -31,9 +44,9 @@ type InsertSharedOptions<Document extends MongoDocument = MongoDocument> = {
 };
 
 /**
- * an object that is used to predefine options for MongoDbCollection class
+ * an object that is used to predefine CRUD options for MongoDbCollection class
  */
-export interface CollectionConfigOptions<
+export interface CollectionCrudOptions<
   Document extends MongoDocument = MongoDocument
 > {
   findOptions?: {

@@ -2,7 +2,7 @@ import AbstractMongoDbFilterDocument from '../MongoDbFilterDocument/AbstractMong
 
 import type { Document as MongoDocument } from 'mongodb';
 
-import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
 import type { SortQueryObject } from '../../types/FilterQueryObject';
 
 function convertDocumentIdToString(doc: MongoDocument) {
@@ -23,7 +23,7 @@ abstract class AbstractMongoDbFind<
 
   protected sortObject?: UntypedObject;
 
-  protected abstract options?: CollectionConfigOptions[
+  protected abstract options?: CollectionCrudOptions[
     | 'findOptions'
     | 'findOneOptions'];
 

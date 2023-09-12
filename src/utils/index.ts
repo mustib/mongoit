@@ -6,3 +6,4 @@ export { default as MongoDb } from './db/MongoDb/MongoDb';
 export { default as AppErrorRoot } from './AppError/AppErrorRoot';
 export { default as AppError } from './AppError/AppError';
 export { default as AbstractAppError } from './AppError/AbstractAppError';
+export { default as logger } from './logger';

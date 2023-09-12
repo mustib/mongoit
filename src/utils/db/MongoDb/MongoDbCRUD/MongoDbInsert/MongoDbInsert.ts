@@ -9,7 +9,7 @@ import type {
 
 import type MongoDBCollection from '../../MongoDBCollection';
 import type { ExecOptions, InsertManyExecReturn } from './MongoInsertTypes';
-import type { CollectionConfigOptions } from '../../types/CollectionConfigOptions';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
 
 class MongoDbInsert<
   Document extends MongoDocument
@@ -17,7 +17,7 @@ class MongoDbInsert<
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected insertDocuments: OptionalUnlessRequiredId<Document>[],
-    protected options: CollectionConfigOptions['insertOptions']
+    protected options: CollectionCrudOptions['insertOptions']
   ) {
     super();
   }

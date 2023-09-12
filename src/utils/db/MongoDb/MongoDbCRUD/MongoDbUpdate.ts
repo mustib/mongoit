@@ -2,7 +2,7 @@ import AbstractMongoDbFilterDocument from './MongoDbFilterDocument/AbstractMongo
 
 import type { Document as MongoDocument } from 'mongodb';
 import type MongoDBCollection from '../MongoDBCollection';
-import type { CollectionConfigOptions } from '../types/CollectionConfigOptions';
+import type { CollectionCrudOptions } from '../types/CollectionConfigOptions';
 import type { UpdateFilterDocument } from '../types/UpdateFilterDocument';
 import type { FilterDocumentWithId } from '../types/FilterDocumentWithId';
 
@@ -15,7 +15,7 @@ class MongoDbUpdate<
     protected collection: MongoDBCollection<Document>,
     protected filterDocument: FilterDocumentWithId<Document>,
     protected updateDocument: UpdateFilterDocument<Document>,
-    protected options: CollectionConfigOptions['updateOptions'] & {
+    protected options: CollectionCrudOptions['updateOptions'] & {
       updateType: 'updateMany' | 'updateOne';
     }
   ) {

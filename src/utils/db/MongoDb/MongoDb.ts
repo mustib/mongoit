@@ -6,7 +6,6 @@ import MongoSanitize from './MongoDbSanitize';
 import type { NextFunction, Request, Response } from 'express';
 
 import type {
-  CollectionOptions,
   Db,
   DbOptions,
   MongoClientOptions,
@@ -35,18 +34,6 @@ type MongoConnectionOptions = {
    * @description id used when retrieving instantiated MongoDb
    */
   dbID?: string | number;
-};
-
-type MongoCollectionOptions = {
-  /**
-   * @description native mongo collection options object
-   */
-  nativeMongoCollectionOptions?: CollectionOptions;
-
-  /**
-   * @description config options for MongoDbCollection class
-   */
-  MongoDbCollectionConfigOptions?: CollectionConfigOptions;
 };
 
 class MongoDb<Collections extends string[] = string[]> {
@@ -184,7 +171,7 @@ class MongoDb<Collections extends string[] = string[]> {
    */
   getCollection<Schema extends MongoDocument & { _id?: string }>(
     name: Collections[number],
-    options?: MongoCollectionOptions
+    options?: CollectionConfigOptions
   ) {
     const db = this.dbAsPromise;
     const collection = db.then((_db) =>
