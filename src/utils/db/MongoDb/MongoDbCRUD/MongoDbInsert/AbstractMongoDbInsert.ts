@@ -42,12 +42,13 @@ abstract class AbstractMongoDbInsert<
 
   protected abstract interceptInsertion(): InsertDocumentsType<Type, Document>;
 
-  protected abstract validateAndInterceptInsertion(): InsertDocumentsType<
-    Type,
-    Document
-  >;
+  protected abstract validateAndInterceptInsertion():
+    | InsertDocumentsType<Type, Document>
+    | Promise<InsertDocumentsType<Type, Document>>;
 
-  protected getInsertDocuments(): InsertDocumentsType<Type, Document> {
+  protected async getInsertDocuments(): Promise<
+    InsertDocumentsType<Type, Document>
+  > {
     const hasInterception =
       typeof this.options?.interceptBeforeInserting === 'function';
 

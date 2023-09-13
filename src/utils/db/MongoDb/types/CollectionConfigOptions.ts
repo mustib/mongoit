@@ -28,7 +28,7 @@ type InsertSharedOptions<Document extends MongoDocument = MongoDocument> = {
    * @param doc the document that will be inserted
    * @returns the document to be inserted
    */
-  interceptBeforeInserting?(doc: Document): Document;
+  interceptBeforeInserting?(doc: Document): Document | Promise<Document>;
 
   /**
    * @default "FULL"

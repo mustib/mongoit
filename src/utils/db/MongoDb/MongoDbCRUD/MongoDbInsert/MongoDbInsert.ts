@@ -65,7 +65,7 @@ class MongoDbInsert<
     options?: Options
   ): Promise<InsertManyExecReturn<Options, Document>> {
     const collection = await this.collection.collection;
-    const insertDocument = this.getInsertDocuments();
+    const insertDocument = await this.getInsertDocuments();
 
     const insertResult = await collection.insertMany(
       insertDocument,

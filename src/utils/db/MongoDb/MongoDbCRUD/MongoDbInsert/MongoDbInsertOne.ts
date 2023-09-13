@@ -58,7 +58,7 @@ class MongoDbInsertOne<
     options?: Options
   ): Promise<InsertOneExecReturn<Options, Document>> {
     const collection = await this.collection.collection;
-    const insertDocument = this.getInsertDocuments();
+    const insertDocument = await this.getInsertDocuments();
 
     const insertResult = await collection.insertOne(
       insertDocument,
