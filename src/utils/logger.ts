@@ -1,6 +1,7 @@
 import path from 'path';
 import winston, { format, type LoggerOptions } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
+import { envVars } from '../config';
 import MongoDbLogger from './db/MongoDb/MongoDbLogger';
 
 const levels: LoggerOptions['levels'] = {
@@ -32,5 +33,19 @@ const logger = winston.createLogger({
     }),
   ],
 });
+
+if (envVars.NODE_ENV !== 'production') {
+  logger.add(
+    new winston.transports.Console({
+      handleExceptions: true,
+      handleRejections: true,
+      log(info, next) {
+        // eslint-disable-next-line no-console
+        console.log('%o', info);
+        next();
+      },
+    })
+  );
+}
 
 export default logger;
