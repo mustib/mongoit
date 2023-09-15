@@ -39,6 +39,11 @@ type ArrayAndStringShared = {
 
 type StringSchemaType = {
   type: 'string';
+  caseType?:
+    | 'upperCase'
+    | 'lowerCase'
+    | 'capitalize'
+    | ((value: string) => string);
 } & ArrayAndStringShared;
 
 type NumberSchemaType = {

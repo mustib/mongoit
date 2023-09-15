@@ -22,7 +22,7 @@ const minLength: SchemaTypeValidators<'string' | 'array'>['minLength'] = {
 
 const arrayAndStringValidatorsData: Omit<
   SchemaTypeValidators<'string' | 'array'>,
-  'length'
+  'length' | 'caseType'
 > = {
   maxLength,
   minLength,
