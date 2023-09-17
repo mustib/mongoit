@@ -61,7 +61,7 @@ class MongoDBCollection<Document extends MongoDocument> {
     );
   }
 
-  setCrudOptions(options: CollectionCrudOptions) {
+  setCrudOptions(options: CollectionCrudOptions<Document>) {
     mergeTwoObjects(
       this.crudOptions as UntypedObject,
       options as UntypedObject,
