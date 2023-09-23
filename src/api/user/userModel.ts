@@ -22,14 +22,17 @@ usersCollection.createSchema({
     type: {
       first: {
         type: 'string',
-        required: [true, 'user first name is a required field'],
-        maxLength: [15, 'first name is a maximum length is 15 characters'],
+        required: [true, `user's first name is a required field`],
+        maxLength: [
+          15,
+          `maximum length for user's first name is 15 characters`,
+        ],
         caseType: 'capitalize',
       },
       last: {
         type: 'string',
-        required: [true, 'user first name is a required field'],
-        maxLength: [15, 'first name is a maximum length is 15 characters'],
+        required: [true, `user's last name is a required field`],
+        maxLength: [15, `maximum length for user's last name is 15 characters`],
         caseType: 'capitalize',
       },
     },
