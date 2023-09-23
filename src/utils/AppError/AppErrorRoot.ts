@@ -36,6 +36,14 @@ class AppErrorRoot extends AbstractAppError {
     this.length++;
   }
 
+  protected pushRoot(appErrorRoot: AppErrorRoot) {
+    const appErrorRootEntries = Object.entries(appErrorRoot.errors);
+
+    appErrorRootEntries.forEach(([errType, error]) => {
+      this.push(errType as AppErrorTypes, error.errors);
+    });
+  }
+
   toString(indentation = 4) {
     const errorsString = Object.values(this.errors)
       .map((error) => error.toString(indentation))
@@ -44,30 +52,12 @@ class AppErrorRoot extends AbstractAppError {
     return errorsString;
   }
 
-  tryCatch(tryCatchFunc: () => void): void;
-
-  tryCatch(catchErrorTypes: AppErrorTypes[], tryCatchFunc: () => void): void;
-
-  tryCatch(
-    _catchErrorTypes: AppErrorTypes[] | (() => void),
-    _tryCatchFunc?: Func
-  ) {
-    const catchErrorTypes = Array.isArray(_catchErrorTypes)
-      ? _catchErrorTypes
-      : undefined;
-
-    const tryCatchFunc = (
-      typeof _catchErrorTypes === 'function' ? _catchErrorTypes : _tryCatchFunc
-    ) as () => void;
-
+  tryCatch(tryCatchFunc: () => void) {
     try {
       tryCatchFunc();
     } catch (error) {
-      const shouldCatchAppError =
-        error instanceof AppError &&
-        (catchErrorTypes === undefined || catchErrorTypes.includes(error.type));
-
-      if (shouldCatchAppError) this.push(error.type, error.errors);
+      if (error instanceof AppError) this.push(error.type, error.errors);
+      else if (error instanceof AppErrorRoot) this.pushRoot(error);
       else {
         if (getTypeof(error) === 'object') {
           Error.captureStackTrace(error as object, this.tryCatch);
