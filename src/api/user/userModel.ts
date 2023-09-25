@@ -71,6 +71,8 @@ usersCollection.createSchema({
 });
 
 function validateEmail(email: string) {
+  if (typeof email !== 'string') return false;
+
   /* 
     VALIDATION ACCORDING TO 
     https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html#email-address-validation

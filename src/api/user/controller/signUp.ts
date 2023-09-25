@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { ApiSuccessResponse, catchAsyncRouteHandler } from '../../../utils';
 import userModel, { type UserSchema } from '../userModel';
+import { createUserSession } from '../../session';
 
 async function interceptBeforeInserting(doc: UserSchema): Promise<UserSchema> {
   // eslint-disable-next-line no-param-reassign
@@ -20,13 +21,19 @@ const signUp = catchAsyncRouteHandler<UserSchema>(async (req, res) => {
     email: req.body.email,
   };
 
-  await userModel
-    .insertOne(userData, { interceptBeforeInserting })
-    .exec({ returnInserted: false });
+  // -------------------------------------------
+  // TODO IMPROVEMENT: start mongodb transaction
+  // -------------------------------------------
 
-  new ApiSuccessResponse(res)
-    .setMessage('user has been added successfully')
-    .send();
+  const user = await userModel
+    .insertOne(userData, {
+      interceptBeforeInserting,
+    })
+    .exec();
+
+  await createUserSession(req, res, user);
+
+  new ApiSuccessResponse(res).setData(user).send();
 });
 
 export default signUp;
