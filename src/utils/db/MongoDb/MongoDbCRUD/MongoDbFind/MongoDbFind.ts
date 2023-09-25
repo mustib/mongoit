@@ -10,7 +10,10 @@ type MongoDbFindExecOptions = {
   returnDetails?: boolean;
 };
 
-type MongoDbFindExecReturn<Options extends MongoDbFindExecOptions> = Promise<
+type MongoDbFindExecReturn<
+  Options extends MongoDbFindExecOptions,
+  Document extends MongoDocument
+> = Promise<
   Options['returnDetails'] extends false
     ? {
         documents: (Document & {
@@ -91,7 +94,7 @@ class MongoDbFind<
   // TODO: Implement cursor paradigms. REFERENCE https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/read-operations/cursor/
   async exec<Options extends MongoDbFindExecOptions>(
     options?: Options
-  ): MongoDbFindExecReturn<Options> {
+  ): MongoDbFindExecReturn<Options, Document> {
     const cursor = await this.createCursor();
     cursor.skip(this.cursorSkipCount);
     const documents = await cursor.toArray();

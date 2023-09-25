@@ -1,6 +1,5 @@
 import {
   InsertOneResult,
-  WithId,
   Document as MongoDocument,
   InsertManyResult,
 } from 'mongodb';
@@ -17,11 +16,15 @@ export type InsertOneExecReturn<
   Document extends MongoDocument
 > = Options['returnInserted'] extends false
   ? InsertOneResult<Document>
-  : WithId<Document>;
+  : Document & {
+      _id: string;
+    };
 
 export type InsertManyExecReturn<
   Options extends ExecOptions,
   Document extends MongoDocument
 > = Options['returnInserted'] extends true
-  ? WithId<Document>[]
+  ? (Document & {
+      _id: string;
+    })[]
   : InsertManyResult<Document>;

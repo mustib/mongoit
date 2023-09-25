@@ -66,9 +66,9 @@ class MongoDbInsertOne<
     );
 
     if (options?.returnInserted !== false) {
-      const insertedDocument = collection.findOne(
-        this.getInsertedIds(insertResult)
-      );
+      const insertedDocument = this.collection
+        .findOne(this.getInsertedIds(insertResult))
+        .exec();
       return insertedDocument as never;
     }
 
