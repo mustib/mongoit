@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import cookieParser = require('cookie-parser');
 import { MongoDb } from './utils';
 import apiRouter from './api';
 import expressErrorHandler from './middlewares/expressErrorHandler';
@@ -13,6 +14,7 @@ if (envVars.NODE_ENV !== 'production') {
 }
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(MongoDb.sanitize);
 app.use('/api', apiRouter);
 app.use(expressErrorHandler);

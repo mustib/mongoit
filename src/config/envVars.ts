@@ -12,14 +12,16 @@ type EnvVars = {
   PORT: number;
   NODE_ENV: 'production' | 'development';
   MONGO_CONNECTION_URI: string;
+  SSL_KEY: Buffer | Buffer[];
+  SSL_CERT: Buffer;
 };
 
-type EnvVarMapValue = DotEnvVars | (() => string);
+type EnvVarMapValue<T> = DotEnvVars | (() => T);
 
 type EnvVarsMap = {
   [Var in keyof EnvVars]: {
     whenNodeEnvIs: {
-      [Env in EnvVars['NODE_ENV'] | 'anyEnv']?: EnvVarMapValue;
+      [Env in EnvVars['NODE_ENV'] | 'anyEnv']?: EnvVarMapValue<EnvVars[Var]>;
     };
     type?: EnvVars[Var] extends string
       ? 'string'
@@ -71,6 +73,18 @@ const envVarsMap: EnvVarsMap = {
   PORT: {
     type: 'number',
     whenNodeEnvIs: { development: 'PORT_DEV', production: 'PORT_PROD' },
+  },
+  SSL_KEY: {
+    whenNodeEnvIs: {
+      development: () =>
+        readFileSync(path.join(__dirname, '..', '..', 'cert', 'key.pem')),
+    },
+  },
+  SSL_CERT: {
+    whenNodeEnvIs: {
+      development: () =>
+        readFileSync(path.join(__dirname, '..', '..', 'cert', 'cert.pem')),
+    },
   },
 };
 
