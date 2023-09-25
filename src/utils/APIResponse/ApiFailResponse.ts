@@ -8,6 +8,11 @@ class ApiFailResponse extends ApiResponse {
     super(res, 400, 'fail');
   }
 
+  unAuthorized() {
+    this.statusCode = 401;
+    this.send();
+  }
+
   notFound() {
     this.statusCode = 404;
     this.send();
