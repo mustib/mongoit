@@ -9,3 +9,4 @@ export { default as AbstractAppError } from './AppError/AbstractAppError';
 export { default as logger } from './logger';
 export { default as capitalize } from './capitalize';
 export { default as getUserAgentData } from './getUserAgentData';
+export { default as sendMail } from './sendMail';

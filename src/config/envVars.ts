@@ -6,7 +6,12 @@ type DotEnvVars =
   | 'PORT_DEV'
   | 'PORT_PROD'
   | 'MONGO_CONNECTION_URI_DEV'
-  | 'MONGO_CONNECTION_URI_PROD';
+  | 'MONGO_CONNECTION_URI_PROD'
+  | 'EMAIL_HOST_DEV'
+  | 'EMAIL_PORT_DEV'
+  | 'EMAIL_USER_DEV'
+  | 'EMAIL_PASS_DEV'
+  | 'EMAIL_SECURE_DEV';
 
 type EnvVars = {
   PORT: number;
@@ -14,6 +19,11 @@ type EnvVars = {
   MONGO_CONNECTION_URI: string;
   SSL_KEY: Buffer | Buffer[];
   SSL_CERT: Buffer;
+  EMAIL_HOST: string;
+  EMAIL_PORT: number;
+  EMAIL_USER: string;
+  EMAIL_PASS: string;
+  EMAIL_SECURE: boolean;
 };
 
 type EnvVarMapValue<T> = DotEnvVars | (() => T);
@@ -27,6 +37,8 @@ type EnvVarsMap = {
       ? 'string'
       : EnvVars[Var] extends number
       ? 'number'
+      : EnvVars[Var] extends boolean
+      ? 'bool'
       : never;
   };
 };
@@ -86,6 +98,34 @@ const envVarsMap: EnvVarsMap = {
         readFileSync(path.join(__dirname, '..', '..', 'cert', 'cert.pem')),
     },
   },
+  EMAIL_HOST: {
+    whenNodeEnvIs: {
+      development: 'EMAIL_HOST_DEV',
+    },
+  },
+  EMAIL_PORT: {
+    whenNodeEnvIs: {
+      development: 'EMAIL_PORT_DEV',
+    },
+    type: 'number',
+  },
+  EMAIL_PASS: {
+    whenNodeEnvIs: {
+      development: 'EMAIL_PASS_DEV',
+    },
+  },
+  EMAIL_USER: {
+    whenNodeEnvIs: {
+      development: 'EMAIL_USER_DEV',
+    },
+  },
+  EMAIL_SECURE: {
+    whenNodeEnvIs: {
+      development: 'EMAIL_SECURE_DEV',
+      anyEnv: () => true,
+    },
+    type: 'bool',
+  },
 };
 
 function getEnvVars() {
@@ -108,25 +148,42 @@ function getEnvVars() {
       // get currentEnvVarValue if it is a function otherwise get it from dotEnvVars
       if (typeof currentEnvVarValue === 'function')
         currentEnvVarValue = currentEnvVarValue();
-      else currentEnvVarValue = dotEnvVars[currentEnvVarValue as never];
+      else {
+        currentEnvVarValue = dotEnvVars[currentEnvVarValue as never];
 
-      // Convert currentEnvVarValue type if specified
-      if (type !== undefined) {
-        switch (type) {
-          case 'string':
-            currentEnvVarValue = currentEnvVarValue?.toString();
-            if (currentEnvVarValue === '')
-              throw new Error(
-                `${envVarName} in envVars assigned empty string value`
-              );
-            break;
-          case 'number':
-            currentEnvVarValue = +currentEnvVarValue;
-            if (Number.isNaN(currentEnvVarValue))
-              throw new Error(`${envVarName} in envVars assigned NAN value`);
-            break;
-          default:
-            throw new Error(`${type} type in envVars is not supported`);
+        // make sure to convert type only if currentEnvVarValue not a function
+        // Convert currentEnvVarValue type if specified
+        if (type !== undefined) {
+          switch (type) {
+            case 'string':
+              currentEnvVarValue = currentEnvVarValue?.toString();
+              if (currentEnvVarValue === '')
+                throw new Error(
+                  `${envVarName} in envVars assigned empty string value`
+                );
+              break;
+            case 'number':
+              currentEnvVarValue = +currentEnvVarValue;
+              if (Number.isNaN(currentEnvVarValue))
+                throw new Error(`${envVarName} in envVars assigned NAN value`);
+              break;
+            case 'bool':
+              switch (currentEnvVarValue) {
+                case 'true':
+                  currentEnvVarValue = true;
+                  break;
+                case 'false':
+                  currentEnvVarValue = false;
+                  break;
+                default:
+                  throw new Error(
+                    `${currentEnvVarValue} is not a valid boolean value for ${envVarName} in envVars`
+                  );
+              }
+              break;
+            default:
+              throw new Error(`${type} type in envVars is not supported`);
+          }
         }
       }
 
