@@ -11,7 +11,11 @@ type DotEnvVars =
   | 'EMAIL_PORT_DEV'
   | 'EMAIL_USER_DEV'
   | 'EMAIL_PASS_DEV'
-  | 'EMAIL_SECURE_DEV';
+  | 'EMAIL_SECURE_DEV'
+  | 'EMAIL_VERIFICATION_SECRET'
+  | 'HOST_URL'
+  | 'EMAIL_VERIFICATION_EXPIRE'
+  | 'EMAIL_VERIFICATION_PATH';
 
 type EnvVars = {
   PORT: number;
@@ -24,6 +28,10 @@ type EnvVars = {
   EMAIL_USER: string;
   EMAIL_PASS: string;
   EMAIL_SECURE: boolean;
+  EMAIL_VERIFICATION_SECRET: string;
+  HOST_URL: string;
+  EMAIL_VERIFICATION_EXPIRE: string;
+  EMAIL_VERIFICATION_PATH: string;
 };
 
 type EnvVarMapValue<T> = DotEnvVars | (() => T);
@@ -125,6 +133,18 @@ const envVarsMap: EnvVarsMap = {
       anyEnv: () => true,
     },
     type: 'bool',
+  },
+  EMAIL_VERIFICATION_SECRET: {
+    whenNodeEnvIs: { anyEnv: 'EMAIL_VERIFICATION_SECRET' },
+  },
+  HOST_URL: {
+    whenNodeEnvIs: { anyEnv: 'HOST_URL' },
+  },
+  EMAIL_VERIFICATION_EXPIRE: {
+    whenNodeEnvIs: { anyEnv: 'EMAIL_VERIFICATION_EXPIRE' },
+  },
+  EMAIL_VERIFICATION_PATH: {
+    whenNodeEnvIs: { anyEnv: 'EMAIL_VERIFICATION_PATH' },
   },
 };
 
