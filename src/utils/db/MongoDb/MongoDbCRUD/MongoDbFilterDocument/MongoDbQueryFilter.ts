@@ -41,7 +41,7 @@ class MongoDbQueryFilter {
     }
 
     if (shouldSanitizeTarget === true && !isSanitized) {
-      target = new MongoDbSanitize(target as UntypedObject);
+      target = new MongoDbSanitize({ target }, 'target');
     } else if (!isSanitized && disableSanitizeWarning !== true) {
       const messageWithYellowBackgroundAndBlackText =
         '\x1b[43m\x1b[30m WARNING: find filter is not an instance of MongoDbSanitize \x1b[0m';

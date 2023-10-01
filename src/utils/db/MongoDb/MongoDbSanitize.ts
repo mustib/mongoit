@@ -1,3 +1,4 @@
+import getTypeof from '../../getTypeof';
 import type { ReplaceInString } from '../../../types/ReplaceInString';
 
 type SanitizeMongoKey<
@@ -37,16 +38,32 @@ type SanitizeMongoDocument<
     : SanitizeMongoDocumentKeyValue<Document, Key>;
 };
 
-class MongoSanitize<T extends UntypedObject> {
+class MongoSanitize<
+  T extends UntypedObject,
+  // NOTE: R & P are just needed for constructor parameters to support types and intelligence
+  R extends UntypedObject = any,
+  P extends keyof R extends infer K
+    ? K extends string
+      ? K
+      : never
+    : never = any
+> {
   protected sanitizedFields: Partial<SanitizeMongoDocument<T>> = {};
 
   protected hasSanitizedAll = false;
 
-  protected isValidSource: boolean;
+  protected get isValidSource(): boolean {
+    return getTypeof(this.source) === 'object';
+  }
 
-  constructor(protected source: T) {
-    if (typeof source === 'object') this.isValidSource = true;
-    else this.isValidSource = false;
+  declare source: T;
+
+  constructor(rootObject: R, prop: P) {
+    Object.defineProperty(this, 'source', {
+      get() {
+        return rootObject[prop];
+      },
+    });
   }
 
   static sanitizeKey(key: string | number | symbol) {
@@ -139,9 +156,9 @@ class MongoSanitize<T extends UntypedObject> {
     return this.sanitizedFields;
   }
 
-  get<Keys extends keyof T = keyof T>(
-    props?: (keyof SanitizeMongoDocument<{ [key in Keys]: T[key] }>)[]
-  ): SanitizeMongoDocument<{ [key in Keys]: T[key] }> {
+  get<
+    Keys extends (keyof SanitizeMongoDocument<{ [key in keyof T]: T[key] }>)[]
+  >(props?: Keys): SanitizeMongoDocument<{ [key in Keys[number]]: T[key] }> {
     if (!this.isValidSource) return {} as any;
 
     if (typeof props === 'undefined') return this.sanitizeAllFields() as any;

@@ -53,9 +53,9 @@ class MongoDb<Collections extends string[] = string[]> {
    */
   static sanitize(req: Request, _: Response, next: NextFunction) {
     req.sanitizeMongo = {
-      body: new MongoSanitize(req.body),
-      query: new MongoSanitize(req.query),
-      params: new MongoSanitize(req.params),
+      body: new MongoSanitize(req, 'body'),
+      query: new MongoSanitize(req, 'query'),
+      params: new MongoSanitize(req, 'params'),
     };
 
     next();
