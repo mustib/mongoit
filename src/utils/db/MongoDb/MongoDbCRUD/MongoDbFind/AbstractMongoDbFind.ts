@@ -23,7 +23,7 @@ abstract class AbstractMongoDbFind<
 
   protected sortObject?: UntypedObject;
 
-  protected abstract options?: CollectionCrudOptions[
+  protected abstract options?: CollectionCrudOptions<Document>[
     | 'findOptions'
     | 'findOneOptions'];
 

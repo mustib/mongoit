@@ -20,7 +20,7 @@ type MongoDbFindExecReturn<
           _id: string;
         })[];
       }
-    : ReturnType<(typeof MongoDbFind)['prototype']['execDetails']>
+    : ReturnType<MongoDbFind<Document>['execDetails']>
 >;
 
 class MongoDbFind<
@@ -37,7 +37,7 @@ class MongoDbFind<
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected filterDocument?: FilterDocumentWithId<Document>,
-    protected options?: CollectionCrudOptions['findOptions']
+    protected options?: CollectionCrudOptions<Document>['findOptions']
   ) {
     super();
 

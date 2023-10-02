@@ -17,7 +17,7 @@ class MongoDbInsert<
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected insertDocuments: OptionalUnlessRequiredId<Document>[],
-    protected options: CollectionCrudOptions['insertOptions']
+    protected options: CollectionCrudOptions<Document>['insertOptions']
   ) {
     super();
   }
@@ -26,7 +26,7 @@ class MongoDbInsert<
     const interceptedDocuments = this.insertDocuments.map((document) => {
       const interceptedDocument =
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.options!.interceptBeforeInserting!(document);
+        this.options!.interceptBeforeInserting!(document as Document);
 
       return interceptedDocument as OptionalUnlessRequiredId<Document>;
     });
@@ -47,7 +47,7 @@ class MongoDbInsert<
       const interceptionFunction = this.options?.interceptBeforeInserting;
 
       if (typeof interceptionFunction === 'function') {
-        return interceptionFunction(validatedDocument);
+        return interceptionFunction(validatedDocument as Document);
       }
 
       return validatedDocument;

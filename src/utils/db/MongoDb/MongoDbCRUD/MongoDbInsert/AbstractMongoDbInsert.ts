@@ -35,9 +35,9 @@ abstract class AbstractMongoDbInsert<
   protected abstract insertDocuments: InsertDocumentsType<Type, Document>;
 
   protected abstract options: Type extends 'insertMany'
-    ? CollectionCrudOptions['insertOptions']
+    ? CollectionCrudOptions<Document>['insertOptions']
     : Type extends 'insertOne'
-    ? CollectionCrudOptions['insertOneOptions']
+    ? CollectionCrudOptions<Document>['insertOneOptions']
     : never;
 
   protected abstract interceptInsertion(): InsertDocumentsType<Type, Document>;

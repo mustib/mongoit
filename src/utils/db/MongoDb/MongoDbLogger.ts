@@ -7,7 +7,7 @@ import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
 type CollectionInfo = {
   collectionId?: string;
   collectionName: string;
-  collectionOptions?: CollectionConfigOptions;
+  collectionOptions?: CollectionConfigOptions<any>;
 };
 
 class MongoDbLogger extends Transport {

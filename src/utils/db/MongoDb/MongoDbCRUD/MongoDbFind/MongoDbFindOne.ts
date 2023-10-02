@@ -11,7 +11,7 @@ class MongoDbFindOne<
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected filterDocument?: FilterDocumentWithId<Document>,
-    protected options?: CollectionCrudOptions['findOneOptions']
+    protected options?: CollectionCrudOptions<Document>['findOneOptions']
   ) {
     super();
   }

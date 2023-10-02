@@ -10,7 +10,7 @@ import type {
 
 import type { SchemaValidationType } from '../MongoDbSchema/types/MongoDBSchema';
 
-export type CollectionConfigOptions = {
+export type CollectionConfigOptions<Schema extends MongoDocument> = {
   /**
    * @description native mongo collection options object
    */
@@ -19,10 +19,10 @@ export type CollectionConfigOptions = {
   /**
    * @description config options for MongoDbCollection class
    */
-  MongoDbCollectionConfigOptions?: CollectionCrudOptions;
+  MongoDbCollectionConfigOptions?: CollectionCrudOptions<Schema>;
 };
 
-type InsertSharedOptions<Document extends MongoDocument = MongoDocument> = {
+type InsertSharedOptions<Document extends MongoDocument> = {
   /**
    * @description a function that will be called for each document before inserting it to mongo, it will be passed the document that is ready for inserting and it's returning result will be inserted into the database
    * @param doc the document that will be inserted
@@ -46,9 +46,7 @@ type InsertSharedOptions<Document extends MongoDocument = MongoDocument> = {
 /**
  * an object that is used to predefine CRUD options for MongoDbCollection class
  */
-export interface CollectionCrudOptions<
-  Document extends MongoDocument = MongoDocument
-> {
+export interface CollectionCrudOptions<Document extends MongoDocument> {
   findOptions?: {
     /**
      * @description native mongo collection find options that is used when using collection.find @example collection.find(document, options)

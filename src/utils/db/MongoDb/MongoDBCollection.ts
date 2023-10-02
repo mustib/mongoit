@@ -42,18 +42,19 @@ type Tail<T extends any[]> = ((...t: T) => void) extends (
   : never;
 
 class MongoDBCollection<Document extends MongoDocument> {
-  protected static crudOptions: Required<CollectionCrudOptions> = {
-    findOptions: {},
-    findOneOptions: {},
-    insertOptions: {},
-    insertOneOptions: {},
-    deleteOptions: {},
-    updateOptions: {},
-  };
+  protected static crudOptions: Required<CollectionCrudOptions<MongoDocument>> =
+    {
+      findOptions: {},
+      findOneOptions: {},
+      insertOptions: {},
+      insertOneOptions: {},
+      deleteOptions: {},
+      updateOptions: {},
+    };
 
   schema: MongoDbSchema<Document> | null = null;
 
-  static setCrudOptions(options: CollectionCrudOptions) {
+  static setCrudOptions(options: CollectionCrudOptions<MongoDocument>) {
     mergeTwoObjects(
       MongoDBCollection.crudOptions,
       options as UntypedObject,
@@ -71,10 +72,12 @@ class MongoDBCollection<Document extends MongoDocument> {
     return this;
   }
 
-  protected getConfigOption<T extends keyof CollectionCrudOptions>(
+  protected getConfigOption<
+    T extends keyof CollectionCrudOptions<MongoDocument>
+  >(
     option: T,
-    possibleOption: CollectionCrudOptions[T] | undefined
-  ): CollectionCrudOptions[T] {
+    possibleOption: CollectionCrudOptions<MongoDocument>[T] | undefined
+  ): CollectionCrudOptions<MongoDocument>[T] {
     if (typeof possibleOption === 'object') return possibleOption;
 
     const configOption =
@@ -82,12 +85,12 @@ class MongoDBCollection<Document extends MongoDocument> {
         ? this.crudOptions[option]
         : MongoDBCollection.crudOptions[option];
 
-    return configOption;
+    return configOption as never;
   }
 
   constructor(
     readonly collection: Promise<Collection<Document>>,
-    protected crudOptions: CollectionCrudOptions = {}
+    protected crudOptions: CollectionCrudOptions<Document> = {}
   ) {}
 
   createSchema(schema: MongoSchema<Document>) {
@@ -96,7 +99,7 @@ class MongoDBCollection<Document extends MongoDocument> {
   }
 
   prepareSchemaFields<Type extends 'convert' | 'validate'>(
-    document: _useFieldsFromSchema<Document>,
+    document: _useFieldsFromSchema<MongoDocument>,
     type = 'convert' as Type,
     ...args: Type extends 'validate'
       ? Tail<Parameters<(typeof MongoDbSchema)['prototype']['validate']>>
@@ -116,119 +119,139 @@ class MongoDBCollection<Document extends MongoDocument> {
     }
   }
 
-  find(
-    document?: FilterDocumentWithId<Document> & _useFieldsFromSchema<Document>,
-    options?: CollectionCrudOptions['findOptions']
+  find<Doc extends MongoDocument = Document>(
+    document?: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
+    options?: CollectionCrudOptions<Doc>['findOptions']
   ) {
     this.prepareSchemaFields(document);
 
     const findOptions = this.getConfigOption('findOptions', options);
-    const mongoDbFind = new MongoDbFind(this, document, findOptions);
+    const mongoDbFind = new MongoDbFind<Doc>(
+      this as never,
+      document,
+      findOptions
+    );
 
     return mongoDbFind;
   }
 
-  findOne(
-    document?: FilterDocumentWithId<Document> & _useFieldsFromSchema<Document>,
-    options?: CollectionCrudOptions['findOneOptions']
+  findOne<Doc extends MongoDocument = Document>(
+    document?: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
+    options?: CollectionCrudOptions<Doc>['findOneOptions']
   ) {
     this.prepareSchemaFields(document);
 
     const findOptions = this.getConfigOption('findOneOptions', options);
-    const mongoDbFindOne = new MongoDbFindOne(this, document, findOptions);
+    const mongoDbFindOne = new MongoDbFindOne<Doc>(
+      this as never,
+      document,
+      findOptions
+    );
 
     return mongoDbFindOne;
   }
 
-  findById(id: string, options?: CollectionCrudOptions['findOneOptions']) {
+  findById<Doc extends MongoDocument = Document>(
+    id: string,
+    options?: CollectionCrudOptions<Doc>['findOneOptions']
+  ) {
     return this.findOne({ _id: id } as never, options).exec();
   }
 
-  insert(
-    docs: OptionalUnlessRequiredId<Document>[],
-    options?: CollectionCrudOptions['insertOptions']
+  insert<Doc extends MongoDocument = Document>(
+    docs: OptionalUnlessRequiredId<Doc>[],
+    options?: CollectionCrudOptions<Doc>['insertOptions']
   ) {
     const _options = this.getConfigOption('insertOptions', options);
 
-    const mongoDbInsert = new MongoDbInsert(this, docs, _options);
+    const mongoDbInsert = new MongoDbInsert(this as never, docs, _options);
 
     return mongoDbInsert;
   }
 
-  insertOne(
-    document: OptionalUnlessRequiredId<Document>,
-    options?: CollectionCrudOptions<Document>['insertOneOptions']
+  insertOne<Doc extends MongoDocument = Document>(
+    document: OptionalUnlessRequiredId<Doc>,
+    options?: CollectionCrudOptions<Doc>['insertOneOptions']
   ) {
     const _options = this.getConfigOption('insertOneOptions', options);
 
-    const mongoDbInsertOne = new MongoDbInsertOne<Document>(
-      this,
+    const mongoDbInsertOne = new MongoDbInsertOne<Doc>(
+      this as never,
       document,
-      _options
+      _options as never
     );
 
     return mongoDbInsertOne;
   }
 
-  delete(
-    document: FilterDocumentWithId<Document> & _useFieldsFromSchema<Document>,
-    options?: CollectionCrudOptions['deleteOptions']
+  delete<Doc extends MongoDocument = Document>(
+    document: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
+    options?: CollectionCrudOptions<Doc>['deleteOptions']
   ) {
     const _options = this.getConfigOption(
       'deleteOptions',
       options
-    ) as MongoDbDelete<Document>['options'];
+    ) as MongoDbDelete<Doc>['options'];
 
     _options.deleteType = 'deleteMany';
 
     this.prepareSchemaFields(document);
 
-    const mongoDbDelete = new MongoDbDelete(this, document, _options);
+    const mongoDbDelete = new MongoDbDelete<Doc>(
+      this as never,
+      document,
+      _options
+    );
 
     return mongoDbDelete;
   }
 
-  deleteOne(
-    document: FilterDocumentWithId<Document> & _useFieldsFromSchema<Document>,
-    options?: CollectionCrudOptions['deleteOptions']
+  deleteOne<Doc extends MongoDocument = Document>(
+    document: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
+    options?: CollectionCrudOptions<Doc>['deleteOptions']
   ) {
     const _options = this.getConfigOption(
       'deleteOptions',
       options
-    ) as MongoDbDelete<Document>['options'];
+    ) as MongoDbDelete<Doc>['options'];
 
     _options.deleteType = 'deleteOne';
 
     this.prepareSchemaFields(document);
 
-    const mongoDbDelete = new MongoDbDelete(this, document, _options);
+    const mongoDbDelete = new MongoDbDelete<Doc>(
+      this as never,
+      document,
+      _options
+    );
 
     return mongoDbDelete;
   }
 
-  deleteById(id: string, options?: CollectionCrudOptions['deleteOptions']) {
-    return this.deleteOne({ _id: id } as never, options).exec();
+  deleteById<Doc extends MongoDocument = Document>(
+    id: string,
+    options?: CollectionCrudOptions<Doc>['deleteOptions']
+  ) {
+    return this.deleteOne<Doc>({ _id: id } as never, options).exec();
   }
 
-  update(
-    filterDocument: FilterDocumentWithId<Document> &
-      _useFieldsFromSchema<Document>,
-    updateDocument: UpdateFilterDocument<Document> &
-      _useFieldsFromSchema<Document>,
-    options?: CollectionCrudOptions['updateOptions']
+  update<Doc extends MongoDocument = Document>(
+    filterDocument: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
+    updateDocument: UpdateFilterDocument<Doc> & _useFieldsFromSchema<Doc>,
+    options?: CollectionCrudOptions<Doc>['updateOptions']
   ) {
     const _options = this.getConfigOption(
       'updateOptions',
       options
-    ) as MongoDbUpdate<Document>['options'];
+    ) as MongoDbUpdate<Doc>['options'];
 
     _options.updateType = 'updateMany';
 
     this.prepareSchemaFields(filterDocument);
     this.prepareSchemaFields(updateDocument, 'validate', 'PARTIAL');
 
-    const mongoDbUpdate = new MongoDbUpdate(
-      this,
+    const mongoDbUpdate = new MongoDbUpdate<Doc>(
+      this as never,
       filterDocument,
       updateDocument,
       _options
@@ -237,25 +260,23 @@ class MongoDBCollection<Document extends MongoDocument> {
     return mongoDbUpdate;
   }
 
-  updateOne(
-    filterDocument: FilterDocumentWithId<Document> &
-      _useFieldsFromSchema<Document>,
-    updateDocument: UpdateFilterDocument<Document> &
-      _useFieldsFromSchema<Document>,
-    options?: CollectionCrudOptions['updateOptions']
+  updateOne<Doc extends MongoDocument = Document>(
+    filterDocument: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
+    updateDocument: UpdateFilterDocument<Doc> & _useFieldsFromSchema<Doc>,
+    options?: CollectionCrudOptions<Doc>['updateOptions']
   ) {
     const _options = this.getConfigOption(
       'updateOptions',
       options
-    ) as MongoDbUpdate<Document>['options'];
+    ) as MongoDbUpdate<Doc>['options'];
 
     _options.updateType = 'updateOne';
 
     this.prepareSchemaFields(filterDocument);
     this.prepareSchemaFields(updateDocument, 'validate', 'PARTIAL');
 
-    const mongoDbUpdate = new MongoDbUpdate(
-      this,
+    const mongoDbUpdate = new MongoDbUpdate<Doc>(
+      this as never,
       filterDocument,
       updateDocument,
       _options
@@ -264,13 +285,16 @@ class MongoDBCollection<Document extends MongoDocument> {
     return mongoDbUpdate;
   }
 
-  updateById(
+  updateById<Doc extends MongoDocument = Document>(
     id: string,
-    updateDocument: UpdateFilterDocument<Document> &
-      _useFieldsFromSchema<Document>,
-    options?: CollectionCrudOptions['updateOptions']
+    updateDocument: UpdateFilterDocument<Doc> & _useFieldsFromSchema<Doc>,
+    options?: CollectionCrudOptions<Doc>['updateOptions']
   ) {
-    return this.updateOne({ _id: id } as never, updateDocument, options).exec();
+    return this.updateOne<Doc>(
+      { _id: id } as never,
+      updateDocument,
+      options
+    ).exec();
   }
 }
 

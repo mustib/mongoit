@@ -171,7 +171,7 @@ class MongoDb<Collections extends string[] = string[]> {
    */
   getCollection<Schema extends MongoDocument & { _id?: string }>(
     name: Collections[number],
-    options?: CollectionConfigOptions
+    options?: CollectionConfigOptions<Schema>
   ) {
     const db = this.dbAsPromise;
     const collection = db.then((_db) =>

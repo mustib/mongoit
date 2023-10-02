@@ -15,7 +15,7 @@ class MongoDbUpdate<
     protected collection: MongoDBCollection<Document>,
     protected filterDocument: FilterDocumentWithId<Document>,
     protected updateDocument: UpdateFilterDocument<Document>,
-    protected options: CollectionCrudOptions['updateOptions'] & {
+    protected options: CollectionCrudOptions<Document>['updateOptions'] & {
       updateType: 'updateMany' | 'updateOne';
     }
   ) {

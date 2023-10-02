@@ -13,7 +13,7 @@ class MongoDbDelete<
   constructor(
     protected collection: MongoDBCollection<Document>,
     protected filterDocument: FilterDocumentWithId<Document>,
-    protected options: CollectionCrudOptions['deleteOptions'] & {
+    protected options: CollectionCrudOptions<Document>['deleteOptions'] & {
       deleteType: 'deleteOne' | 'deleteMany';
     }
   ) {
