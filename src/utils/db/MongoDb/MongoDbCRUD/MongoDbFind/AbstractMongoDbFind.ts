@@ -45,6 +45,9 @@ abstract class AbstractMongoDbFind<
     cursor.limit(this.cursorLimit);
     cursor.map(convertDocumentIdToString);
 
+    if (this.options?.interceptAfterFinding)
+      cursor.map(this.options.interceptAfterFinding);
+
     return cursor;
   }
 

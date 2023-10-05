@@ -43,18 +43,28 @@ type InsertSharedOptions<Document extends MongoDocument> = {
   schemaValidationType?: SchemaValidationType;
 };
 
+type FindSharedOptions<Document extends MongoDocument = MongoDocument> = {
+  /**
+   * @description an alias function for native mongo curser.map
+   *
+   * @param doc find document
+   * @returns find result
+   */
+  interceptAfterFinding?(doc: Document & { _id: string }): Document | object;
+};
+
 /**
  * an object that is used to predefine CRUD options for MongoDbCollection class
  */
 export interface CollectionCrudOptions<Document extends MongoDocument> {
-  findOptions?: {
+  findOptions?: FindSharedOptions<Document> & {
     /**
      * @description native mongo collection find options that is used when using collection.find @example collection.find(document, options)
      */
     nativeMongoFindOptions?: FindOptions<Document>;
   };
 
-  findOneOptions?: {
+  findOneOptions?: FindSharedOptions<Document> & {
     /**
      * @description the same options as nativeMongoFindOptions for findOptions but with a limit set to 1
      */
