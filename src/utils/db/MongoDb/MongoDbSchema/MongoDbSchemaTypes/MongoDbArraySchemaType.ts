@@ -1,8 +1,8 @@
-import getTypeof from '../../../../getTypeof';
-import AppErrorRoot from '../../../../AppError/AppErrorRoot';
-import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor';
-import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData';
-import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
+import getTypeof from '../../../../getTypeof.js';
+import AppErrorRoot from '../../../../AppError/AppErrorRoot.js';
+import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor.js';
+import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData.js';
+import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   ArraySchemaType,
@@ -13,7 +13,7 @@ import type {
   ValidatorValueObj,
   WithShorthandSchemaType,
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
-} from '../types/MongoDBSchema';
+} from '../types/MongoDBSchema.js';
 
 const validatorsData: SchemaTypeValidators<'array'> = {
   ...arrayAndStringValidatorsData,

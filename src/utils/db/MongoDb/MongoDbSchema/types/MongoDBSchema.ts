@@ -1,10 +1,10 @@
 import type { Document } from 'mongodb';
-import type MongoDbStringSchemaType from '../MongoDbSchemaTypes/MongoDbStringSchemaType';
-import type MongoDbNumberSchemaType from '../MongoDbSchemaTypes/MongoDbNumberSchemaType';
-import type MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchemaType';
-import type MongoDbDateSchemaType from '../MongoDbSchemaTypes/MongoDbDateSchemaType';
-import type MongoDbArraySchemaType from '../MongoDbSchemaTypes/MongoDbArraySchemaType';
-import type MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSchemaType';
+import type MongoDbStringSchemaType from '../MongoDbSchemaTypes/MongoDbStringSchemaType.js';
+import type MongoDbNumberSchemaType from '../MongoDbSchemaTypes/MongoDbNumberSchemaType.js';
+import type MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchemaType.js';
+import type MongoDbDateSchemaType from '../MongoDbSchemaTypes/MongoDbDateSchemaType.js';
+import type MongoDbArraySchemaType from '../MongoDbSchemaTypes/MongoDbArraySchemaType.js';
+import type MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSchemaType.js';
 
 type RecursivePartial<T> = {
   [key in keyof T]?: RecursivePartial<T[key]>;

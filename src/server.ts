@@ -1,7 +1,7 @@
-import './config/mongoDbConnect';
+import './config/mongoDbConnect.js';
 import https from 'node:https';
-import { envVars } from './config';
-import app from './app';
+import { envVars } from './config/index.js';
+import app from './app.js';
 import type { IncomingMessage, ServerResponse } from 'http';
 
 const serverOptions: https.ServerOptions<

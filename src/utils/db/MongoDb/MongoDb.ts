@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { MongoClient } from 'mongodb';
-import MongoDBCollection from './MongoDBCollection';
-import MongoSanitize from './MongoDbSanitize';
+import MongoDBCollection from './MongoDBCollection.js';
+import MongoSanitize from './MongoDbSanitize.js';
 
 import type { NextFunction, Request, Response } from 'express';
 
@@ -12,7 +12,7 @@ import type {
   Document as MongoDocument,
 } from 'mongodb';
 
-import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
+import type { CollectionConfigOptions } from './types/CollectionConfigOptions.js';
 
 type MongoConnectionOptions = {
   /**

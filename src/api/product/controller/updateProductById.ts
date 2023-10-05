@@ -2,8 +2,8 @@ import {
   ApiFailResponse,
   ApiSuccessResponse,
   catchAsyncRouteHandler,
-} from '../../../utils';
-import productModel, { type ProductSchema } from '../productModel';
+} from '../../../utils/index.js';
+import productModel, { type ProductSchema } from '../productModel.js';
 
 const updateProductById = catchAsyncRouteHandler<ProductSchema>(
   async (req, res) => {

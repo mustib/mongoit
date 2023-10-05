@@ -8,7 +8,7 @@ import type {
   UpdateOptions,
 } from 'mongodb';
 
-import type { SchemaValidationType } from '../MongoDbSchema/types/MongoDBSchema';
+import type { SchemaValidationType } from '../MongoDbSchema/types/MongoDBSchema.js';
 
 export type CollectionConfigOptions<Schema extends MongoDocument> = {
   /**

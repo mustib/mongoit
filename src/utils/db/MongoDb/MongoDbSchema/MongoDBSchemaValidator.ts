@@ -1,6 +1,6 @@
-import getTypeof from '../../../getTypeof';
-import AppError from '../../../AppError/AppError';
-import AppErrorRoot from '../../../AppError/AppErrorRoot';
+import getTypeof from '../../../getTypeof.js';
+import AppError from '../../../AppError/AppError.js';
+import AppErrorRoot from '../../../AppError/AppErrorRoot.js';
 
 import type {
   StringSchemaType,
@@ -17,7 +17,7 @@ import type {
   SchemaTypeData,
   ValidatorValueObj,
   ValidatorObjectWithOptionalErrorMessage,
-} from './types/MongoDBSchema';
+} from './types/MongoDBSchema.js';
 
 type ValidatorArray = [
   string,

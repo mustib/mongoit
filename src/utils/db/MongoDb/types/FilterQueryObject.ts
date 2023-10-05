@@ -1,8 +1,8 @@
-import type MongoSanitize from '../MongoDbSanitize';
+import type MongoSanitize from '../MongoDbSanitize.js';
 import type {
   Operators,
   FilteringOperatorsTypes,
-} from '../utils/filteringOperators';
+} from '../utils/filteringOperators.js';
 
 type SharedQueryObject<T> = {
   /**

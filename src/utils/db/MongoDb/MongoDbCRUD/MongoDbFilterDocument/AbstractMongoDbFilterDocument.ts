@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb';
-import MongoDbQueryFilter from './MongoDbQueryFilter';
+import MongoDbQueryFilter from './MongoDbQueryFilter.js';
 
 import type { Document as MongoDocument } from 'mongodb';
-import type MongoDBCollection from '../../MongoDBCollection';
-import type { FilterQueryObject } from '../../types/FilterQueryObject';
-import type { FilterDocumentWithId } from '../../types/FilterDocumentWithId';
+import type MongoDBCollection from '../../MongoDBCollection.js';
+import type { FilterQueryObject } from '../../types/FilterQueryObject.js';
+import type { FilterDocumentWithId } from '../../types/FilterDocumentWithId.js';
 
 const convertToObjectIdIfValid = (id: any) =>
   ObjectId.isValid(id) ? new ObjectId(id) : id;

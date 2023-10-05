@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
-    "start:dev": "nodemon --exec ts-node ./src/server.ts",
+    "start": "nodemon --exec tsx ./src/server.ts",
+    "start:dev": "nodemon --exec ts-node-esm ./src/server.ts",
     "start:prod": "npm run build & node ./dist/server.js",
     "lint": "eslint . --ext .js,.ts",
     "build": "rimraf ./build & tsc"
@@ -49,6 +50,7 @@
     "rimraf": "^4.4.0",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
+    "tsx": "^3.13.0",
     "typescript": "^5.0.2"
   }
 }

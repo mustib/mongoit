@@ -1,19 +1,19 @@
-import MongoDbSanitize from '../../MongoDbSanitize';
+import MongoDbSanitize from '../../MongoDbSanitize.js';
 
 import {
   allOperators,
   getFilteringOperatorsByTypes,
   filteringOperatorsTypesHandlersObject,
   filteringOperatorsAsKeysWithTypesAsValues,
-} from '../../utils/filteringOperators';
+} from '../../utils/filteringOperators.js';
 
-import type { FilterQueryObject } from '../../types/FilterQueryObject';
-import type MongoDbSchema from '../../MongoDbSchema/MongoDbSchema';
+import type { FilterQueryObject } from '../../types/FilterQueryObject.js';
+import type MongoDbSchema from '../../MongoDbSchema/MongoDbSchema.js';
 
 import type {
   Operators,
   FilterOperatorHandler,
-} from '../../utils/filteringOperators';
+} from '../../utils/filteringOperators.js';
 
 class MongoDbQueryFilter {
   filtered: UntypedObject[] = [];

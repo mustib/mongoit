@@ -1,4 +1,4 @@
-import type MongoSanitize from '../utils/db/MongoDb/MongoDbSanitize';
+import type MongoSanitize from '../utils/db/MongoDb/MongoDbSanitize.js';
 
 declare global {
   declare interface UntypedObject {

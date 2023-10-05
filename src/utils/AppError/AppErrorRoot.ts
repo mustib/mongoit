@@ -1,7 +1,7 @@
-import getTypeof from '../getTypeof';
-import AbstractAppError from './AbstractAppError';
-import AppError from './AppError';
-import type { AppErrorTypes } from './AppErrorTypes';
+import getTypeof from '../getTypeof.js';
+import AbstractAppError from './AbstractAppError.js';
+import AppError from './AppError.js';
+import type { AppErrorTypes } from './AppErrorTypes.js';
 
 class AppErrorRoot extends AbstractAppError {
   length = 0;

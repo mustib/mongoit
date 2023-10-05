@@ -1,4 +1,4 @@
-import { MongoDb } from '../../utils';
+import { MongoDb } from '../../utils/index.js';
 
 export type UserSchema = {
   name: { first: string; last: string };

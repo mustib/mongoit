@@ -1,1 +1,1 @@
-export { default as envVars } from './envVars';
+export { default as envVars } from './envVars.js';

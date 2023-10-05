@@ -2,17 +2,17 @@ import {
   ApiFailResponse,
   ApiSuccessResponse,
   catchAsyncRouteHandler,
-} from '../../../utils';
+} from '../../../utils/index.js';
 
 import productModel, {
   type ProductSearchQuery,
   type ProductSchema,
-} from '../productModel';
+} from '../productModel.js';
 
 import type {
   FilterQueryObject,
   SortQueryObject,
-} from '../../../utils/db/MongoDb/types/FilterQueryObject';
+} from '../../../utils/db/MongoDb/types/FilterQueryObject.js';
 
 const getProducts = catchAsyncRouteHandler<ProductSchema, ProductSearchQuery>(
   async (req, res) => {

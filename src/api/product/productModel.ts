@@ -1,4 +1,4 @@
-import { MongoDb } from '../../utils';
+import { MongoDb } from '../../utils/index.js';
 
 const mongoDb = MongoDb.getMongoDb('main');
 const productCollection = mongoDb.getCollection<ProductSchema>('products');

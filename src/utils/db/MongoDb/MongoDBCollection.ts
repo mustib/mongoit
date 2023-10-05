@@ -1,11 +1,11 @@
-import mergeTwoObjects from '../../mergeTwoObjects';
-import MongoDbFind from './MongoDbCRUD/MongoDbFind/MongoDbFind';
-import MongoDbFindOne from './MongoDbCRUD/MongoDbFind/MongoDbFindOne';
-import MongoDbSchema from './MongoDbSchema/MongoDbSchema';
-import MongoDbInsert from './MongoDbCRUD/MongoDbInsert/MongoDbInsert';
-import MongoDbInsertOne from './MongoDbCRUD/MongoDbInsert/MongoDbInsertOne';
-import MongoDbDelete from './MongoDbCRUD/MongoDbDelete';
-import MongoDbUpdate from './MongoDbCRUD/MongoDbUpdate';
+import mergeTwoObjects from '../../mergeTwoObjects.js';
+import MongoDbFind from './MongoDbCRUD/MongoDbFind/MongoDbFind.js';
+import MongoDbFindOne from './MongoDbCRUD/MongoDbFind/MongoDbFindOne.js';
+import MongoDbSchema from './MongoDbSchema/MongoDbSchema.js';
+import MongoDbInsert from './MongoDbCRUD/MongoDbInsert/MongoDbInsert.js';
+import MongoDbInsertOne from './MongoDbCRUD/MongoDbInsert/MongoDbInsertOne.js';
+import MongoDbDelete from './MongoDbCRUD/MongoDbDelete.js';
+import MongoDbUpdate from './MongoDbCRUD/MongoDbUpdate.js';
 
 import type {
   Collection,
@@ -13,10 +13,10 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
-import type { CollectionCrudOptions } from './types/CollectionConfigOptions';
-import type { MongoSchema } from './MongoDbSchema/types/MongoDBSchema';
-import type { UpdateFilterDocument } from './types/UpdateFilterDocument';
-import type { FilterDocumentWithId } from './types/FilterDocumentWithId';
+import type { CollectionCrudOptions } from './types/CollectionConfigOptions.js';
+import type { MongoSchema } from './MongoDbSchema/types/MongoDBSchema.js';
+import type { UpdateFilterDocument } from './types/UpdateFilterDocument.js';
+import type { FilterDocumentWithId } from './types/FilterDocumentWithId.js';
 
 type _useFieldsFromSchema<Document extends MongoDocument> =
   | {

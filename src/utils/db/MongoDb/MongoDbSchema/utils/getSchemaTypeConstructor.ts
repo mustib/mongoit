@@ -1,17 +1,13 @@
 /* eslint-disable no-nested-ternary */
 import { Document as MongoDocument } from 'mongodb';
-import { MongoSchema, MongoSchemaTypes } from '../types/MongoDBSchema';
-import getTypeof from '../../../../getTypeof';
-import MongoDbStringSchemaType from '../MongoDbSchemaTypes/MongoDbStringSchemaType';
-import MongoDbNumberSchemaType from '../MongoDbSchemaTypes/MongoDbNumberSchemaType';
-import MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchemaType';
-import MongoDbDateSchemaType from '../MongoDbSchemaTypes/MongoDbDateSchemaType';
-import _MongoDbArraySchemaType = require('../MongoDbSchemaTypes/MongoDbArraySchemaType');
-import _MongoDbObjectSchemaType = require('../MongoDbSchemaTypes/MongoDbObjectSchemaType');
-
-// NOTE: using them like this to prevent dependency cycle
-const MongoDbArraySchemaType = _MongoDbArraySchemaType.default;
-const MongoDbObjectSchemaType = _MongoDbObjectSchemaType.default;
+import { MongoSchema, MongoSchemaTypes } from '../types/MongoDBSchema.js';
+import getTypeof from '../../../../getTypeof.js';
+import MongoDbStringSchemaType from '../MongoDbSchemaTypes/MongoDbStringSchemaType.js';
+import MongoDbNumberSchemaType from '../MongoDbSchemaTypes/MongoDbNumberSchemaType.js';
+import MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchemaType.js';
+import MongoDbDateSchemaType from '../MongoDbSchemaTypes/MongoDbDateSchemaType.js';
+import MongoDbArraySchemaType from '../MongoDbSchemaTypes/MongoDbArraySchemaType.js';
+import MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSchemaType.js';
 
 const schemaTypeConstructorsObject = {
   string: MongoDbStringSchemaType,

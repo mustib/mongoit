@@ -1,5 +1,5 @@
 import { ErrorRequestHandler } from 'express';
-import { AbstractAppError, ApiFailResponse, logger } from '../utils';
+import { AbstractAppError, ApiFailResponse, logger } from '../utils/index.js';
 
 // NOTE: if _next param removed express will not consider this as an error handler function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

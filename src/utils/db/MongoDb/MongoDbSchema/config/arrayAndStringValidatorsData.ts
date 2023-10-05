@@ -1,4 +1,4 @@
-import { SchemaTypeValidators } from '../types/MongoDBSchema';
+import { SchemaTypeValidators } from '../types/MongoDBSchema.js';
 
 const maxLength: SchemaTypeValidators<'string' | 'array'>['maxLength'] = {
   type: 'number',

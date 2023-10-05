@@ -1,5 +1,5 @@
-import AbstractAppError from './AbstractAppError';
-import type { AppErrorTypes } from './AppErrorTypes';
+import AbstractAppError from './AbstractAppError.js';
+import type { AppErrorTypes } from './AppErrorTypes.js';
 
 class AppError extends AbstractAppError {
   errors: string[] = [];

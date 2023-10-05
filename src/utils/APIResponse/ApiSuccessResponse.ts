@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import ApiResponse from './APIResponse';
+import ApiResponse from './APIResponse.js';
 
 class ApiSuccessResponse extends ApiResponse {
   protected message?: string;

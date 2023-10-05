@@ -1,8 +1,13 @@
 import bcrypt from 'bcrypt';
-import { ApiSuccessResponse, catchAsyncRouteHandler } from '../../../utils';
-import userModel, { type UserSchema } from '../userModel';
-import { createUserSession } from '../../session';
-import sendEmailVerification from './sendEmailVerification';
+
+import {
+  ApiSuccessResponse,
+  catchAsyncRouteHandler,
+} from '../../../utils/index.js';
+
+import userModel, { type UserSchema } from '../userModel.js';
+import { createUserSession } from '../../session/index.js';
+import sendEmailVerification from './sendEmailVerification.js';
 
 async function interceptBeforeInserting(doc: UserSchema): Promise<UserSchema> {
   // eslint-disable-next-line no-param-reassign

@@ -1,5 +1,5 @@
-import getTypeof from '../../getTypeof';
-import type { ReplaceInString } from '../../../types/ReplaceInString';
+import getTypeof from '../../getTypeof.js';
+import type { ReplaceInString } from '../../../types/ReplaceInString.js';
 
 type SanitizeMongoKey<
   Key,

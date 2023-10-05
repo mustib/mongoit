@@ -1,12 +1,12 @@
-import getTypeof from '../../../../getTypeof';
-import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
+import getTypeof from '../../../../getTypeof.js';
+import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   DateSchemaType,
   SharedSchemaTypeFields,
   ValidatorValueObj,
   WithShorthandSchemaType,
-} from '../types/MongoDBSchema';
+} from '../types/MongoDBSchema.js';
 
 class MongoDbDateSchemaType extends AbstractMongoDbSchemaType<'date'> {
   constructor(

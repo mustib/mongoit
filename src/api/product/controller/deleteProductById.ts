@@ -2,9 +2,9 @@ import {
   ApiFailResponse,
   ApiSuccessResponse,
   catchAsyncRouteHandler,
-} from '../../../utils';
+} from '../../../utils/index.js';
 
-import productModel from '../productModel';
+import productModel from '../productModel.js';
 
 const deleteProductById = catchAsyncRouteHandler(async (req, res) => {
   const { id } = req.params;

@@ -1,3 +1,3 @@
-export { default as signUp } from './signUp';
-export { default as signIn } from './signIn';
-export { default as verifyEmail } from './verifyEmail';
+export { default as signUp } from './signUp.js';
+export { default as signIn } from './signIn.js';
+export { default as verifyEmail } from './verifyEmail.js';

@@ -1,10 +1,10 @@
-import getTypeof from '../../../../getTypeof';
-import AbstractMongoDbFind from './AbstractMongoDbFind';
+import getTypeof from '../../../../getTypeof.js';
+import AbstractMongoDbFind from './AbstractMongoDbFind.js';
 
 import type { Document as MongoDocument } from 'mongodb';
-import type MongoDBCollection from '../../MongoDBCollection';
-import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
-import type { FilterDocumentWithId } from '../../types/FilterDocumentWithId';
+import type MongoDBCollection from '../../MongoDBCollection.js';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions.js';
+import type { FilterDocumentWithId } from '../../types/FilterDocumentWithId.js';
 
 type MongoDbFindExecOptions = {
   returnDetails?: boolean;

@@ -1,8 +1,10 @@
 import path from 'path';
 import winston, { format, type LoggerOptions } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
-import { envVars } from '../config';
-import MongoDbLogger from './db/MongoDb/MongoDbLogger';
+import { envVars } from '../config/index.js';
+import MongoDbLogger from './db/MongoDb/MongoDbLogger.js';
+
+const __dirname = (await import('./getDirname.js')).default(import.meta.url);
 
 const levels: LoggerOptions['levels'] = {
   error: 0,

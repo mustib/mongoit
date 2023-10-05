@@ -1,12 +1,12 @@
 import { Document as MongoDocument } from 'mongodb';
-import AppErrorRoot from '../../../AppError/AppErrorRoot';
-import getSchemaTypeConstructor from './utils/getSchemaTypeConstructor';
+import AppErrorRoot from '../../../AppError/AppErrorRoot.js';
+import getSchemaTypeConstructor from './utils/getSchemaTypeConstructor.js';
 
 import type {
   MongoSchema,
   MongoSchemaTypesConstructors,
   SchemaValidationType,
-} from './types/MongoDBSchema';
+} from './types/MongoDBSchema.js';
 
 class MongoDbSchema<T extends MongoDocument> {
   schema: {

@@ -1,5 +1,5 @@
 import type { Response } from 'express';
-import type { SessionSchema } from '../sessionModel';
+import type { SessionSchema } from '../sessionModel.js';
 
 const createUserSessionCookies = (res: Response, session: SessionSchema) => {
   res.cookie('SID', session._id, {

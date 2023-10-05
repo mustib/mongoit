@@ -2,8 +2,8 @@ import {
   ApiFailResponse,
   ApiSuccessResponse,
   catchAsyncRouteHandler,
-} from '../../../utils';
-import productModel from '../productModel';
+} from '../../../utils/index.js';
+import productModel from '../productModel.js';
 
 const getProductById = catchAsyncRouteHandler(async (req, res) => {
   const productId = req.params.id;

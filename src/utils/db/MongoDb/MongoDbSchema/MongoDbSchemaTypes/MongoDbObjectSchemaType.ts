@@ -1,7 +1,7 @@
-import getTypeof from '../../../../getTypeof';
-import AppErrorRoot from '../../../../AppError/AppErrorRoot';
-import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor';
-import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
+import getTypeof from '../../../../getTypeof.js';
+import AppErrorRoot from '../../../../AppError/AppErrorRoot.js';
+import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor.js';
+import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   MongoSchemaTypesConstructors,
@@ -9,7 +9,7 @@ import type {
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   SharedSchemaTypeFields,
   ValidatorValueObj,
-} from '../types/MongoDBSchema';
+} from '../types/MongoDBSchema.js';
 
 class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
   nestedSchema: { [key: string | number]: MongoSchemaTypesConstructors } = {};

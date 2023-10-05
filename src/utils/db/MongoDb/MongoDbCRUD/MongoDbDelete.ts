@@ -1,9 +1,9 @@
-import AbstractMongoDbFilterDocument from './MongoDbFilterDocument/AbstractMongoDbFilterDocument';
+import AbstractMongoDbFilterDocument from './MongoDbFilterDocument/AbstractMongoDbFilterDocument.js';
 
 import type { Document as MongoDocument } from 'mongodb';
-import type MongoDBCollection from '../MongoDBCollection';
-import type { CollectionCrudOptions } from '../types/CollectionConfigOptions';
-import type { FilterDocumentWithId } from '../types/FilterDocumentWithId';
+import type MongoDBCollection from '../MongoDBCollection.js';
+import type { CollectionCrudOptions } from '../types/CollectionConfigOptions.js';
+import type { FilterDocumentWithId } from '../types/FilterDocumentWithId.js';
 
 class MongoDbDelete<
   Document extends MongoDocument

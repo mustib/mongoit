@@ -2,6 +2,10 @@ import path from 'path';
 import { readFileSync } from 'fs';
 import dotEnv from 'dotenv';
 
+const __dirname = (await import('../utils/getDirname.js')).default(
+  import.meta.url
+);
+
 type DotEnvVars =
   | 'PORT_DEV'
   | 'PORT_PROD'

@@ -3,9 +3,10 @@ import {
   ApiFailResponse,
   ApiSuccessResponse,
   catchAsyncRouteHandler,
-} from '../../../utils';
-import userModel, { type UserSchema } from '../userModel';
-import { createUserSession } from '../../session';
+} from '../../../utils/index.js';
+
+import userModel, { type UserSchema } from '../userModel.js';
+import { createUserSession } from '../../session/index.js';
 
 const signIn = catchAsyncRouteHandler<UserSchema>(async (req, res) => {
   const { email, password } = req.sanitizeMongo.body.get(['password', 'email']);

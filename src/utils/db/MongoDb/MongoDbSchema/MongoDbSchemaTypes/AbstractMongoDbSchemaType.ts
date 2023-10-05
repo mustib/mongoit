@@ -1,13 +1,13 @@
-import AppError from '../../../../AppError/AppError';
-import getTypeof from '../../../../getTypeof';
-import MongoDBSchemaValidators from '../MongoDBSchemaValidator';
+import AppError from '../../../../AppError/AppError.js';
+import getTypeof from '../../../../getTypeof.js';
+import MongoDBSchemaValidators from '../MongoDBSchemaValidator.js';
 
 import type {
   MongoSchemaTypes,
   SchemaTypeData,
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   ValidatorValueObj,
-} from '../types/MongoDBSchema';
+} from '../types/MongoDBSchema.js';
 
 abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
   private _default = {

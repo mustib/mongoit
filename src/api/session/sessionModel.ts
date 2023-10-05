@@ -1,6 +1,6 @@
 import crypto from 'crypto';
-import { MongoDb } from '../../utils';
-import type { UserSchema } from '../user';
+import { MongoDb } from '../../utils/index.js';
+import type { UserSchema } from '../user/index.js';
 
 export type SessionSchema = {
   _id?: string;

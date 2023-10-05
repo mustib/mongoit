@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { envVars } from '../../../config';
-import { sendMail } from '../../../utils';
+import { envVars } from '../../../config/index.js';
+import { sendMail } from '../../../utils/index.js';
 
 function sendEmailVerification(id: string, email: string) {
   const emailVerificationToken = jwt.sign(

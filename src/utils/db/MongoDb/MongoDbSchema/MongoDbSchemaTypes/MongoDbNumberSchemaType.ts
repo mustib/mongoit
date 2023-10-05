@@ -1,12 +1,12 @@
-import getTypeof from '../../../../getTypeof';
-import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
+import getTypeof from '../../../../getTypeof.js';
+import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   NumberSchemaType,
   SchemaTypeValidators,
   SharedSchemaTypeFields,
   WithShorthandSchemaType,
-} from '../types/MongoDBSchema';
+} from '../types/MongoDBSchema.js';
 
 const validatorsData: SchemaTypeValidators<'number'> = {
   max: {

@@ -1,5 +1,5 @@
-import type { UserSchema } from './userModel';
+import type { UserSchema } from './userModel.js';
 
 export type { UserSchema };
 
-export { default as userRouter } from './userRouter';
+export { default as userRouter } from './userRouter.js';

@@ -1,4 +1,4 @@
-import ApiResponse from './APIResponse';
+import ApiResponse from './APIResponse.js';
 import type { Response } from 'express';
 
 class ApiFailResponse extends ApiResponse {

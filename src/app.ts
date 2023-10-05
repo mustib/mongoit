@@ -1,16 +1,14 @@
 import express, { Express } from 'express';
-import cookieParser = require('cookie-parser');
-import { MongoDb } from './utils';
-import apiRouter from './api';
-import expressErrorHandler from './middlewares/expressErrorHandler';
-import { envVars } from './config';
+import cookieParser from 'cookie-parser';
+import { MongoDb } from './utils/index.js';
+import apiRouter from './api/index.js';
+import expressErrorHandler from './middlewares/expressErrorHandler.js';
+import { envVars } from './config/index.js';
 
 const app: Express = express();
 
-// NOTE: using require because I don't want this code to be injected in production environment
 if (envVars.NODE_ENV !== 'production') {
-  // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-  app.use(require('./middlewares/devHttpLogger').default);
+  app.use((await import('./middlewares/devHttpLogger.js')).default);
 }
 
 app.use(express.json());

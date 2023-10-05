@@ -1,7 +1,7 @@
-import sessionModel, { type SessionSchema } from '../sessionModel';
-import { getUserAgentData } from '../../../utils';
-import createUserSessionCookies from './createUserSessionCookies';
-import type { UserSchema } from '../../user';
+import sessionModel, { type SessionSchema } from '../sessionModel.js';
+import { getUserAgentData } from '../../../utils/index.js';
+import createUserSessionCookies from './createUserSessionCookies.js';
+import type { UserSchema } from '../../user/index.js';
 import type { Request, Response } from 'express';
 
 const createUserSession = async (

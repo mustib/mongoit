@@ -1,4 +1,4 @@
-import AbstractMongoDbInsert from './AbstractMongoDbInsert';
+import AbstractMongoDbInsert from './AbstractMongoDbInsert.js';
 
 import type {
   Filter,
@@ -7,9 +7,9 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
-import type MongoDBCollection from '../../MongoDBCollection';
-import type { ExecOptions, InsertManyExecReturn } from './MongoInsertTypes';
-import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
+import type MongoDBCollection from '../../MongoDBCollection.js';
+import type { ExecOptions, InsertManyExecReturn } from './MongoInsertTypes.js';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions.js';
 
 class MongoDbInsert<
   Document extends MongoDocument

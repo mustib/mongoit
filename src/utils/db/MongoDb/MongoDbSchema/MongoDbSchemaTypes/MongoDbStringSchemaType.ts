@@ -1,13 +1,13 @@
-import getTypeof from '../../../../getTypeof';
-import capitalize from '../../../../capitalize';
-import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData';
-import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
+import getTypeof from '../../../../getTypeof.js';
+import capitalize from '../../../../capitalize.js';
+import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData.js';
+import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   SharedSchemaTypeFields,
   StringSchemaType,
   WithShorthandSchemaType,
-} from '../types/MongoDBSchema';
+} from '../types/MongoDBSchema.js';
 
 const validatorsData = arrayAndStringValidatorsData;
 

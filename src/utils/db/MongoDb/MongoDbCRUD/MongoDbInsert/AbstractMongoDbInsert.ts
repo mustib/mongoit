@@ -10,10 +10,10 @@ import type {
   ExecOptions,
   InsertManyExecReturn,
   InsertOneExecReturn,
-} from './MongoInsertTypes';
+} from './MongoInsertTypes.js';
 
-import type MongoDBCollection from '../../MongoDBCollection';
-import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
+import type MongoDBCollection from '../../MongoDBCollection.js';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions.js';
 
 type InsertType = 'insertOne' | 'insertMany';
 

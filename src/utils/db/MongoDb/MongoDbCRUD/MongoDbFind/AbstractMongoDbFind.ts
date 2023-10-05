@@ -1,9 +1,9 @@
-import AbstractMongoDbFilterDocument from '../MongoDbFilterDocument/AbstractMongoDbFilterDocument';
+import AbstractMongoDbFilterDocument from '../MongoDbFilterDocument/AbstractMongoDbFilterDocument.js';
 
 import type { Document as MongoDocument } from 'mongodb';
 
-import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions';
-import type { SortQueryObject } from '../../types/FilterQueryObject';
+import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions.js';
+import type { SortQueryObject } from '../../types/FilterQueryObject.js';
 
 function convertDocumentIdToString(doc: MongoDocument) {
   if ('_id' in doc) {

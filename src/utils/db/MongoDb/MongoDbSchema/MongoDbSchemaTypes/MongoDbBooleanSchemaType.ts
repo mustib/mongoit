@@ -1,12 +1,12 @@
-import getTypeof from '../../../../getTypeof';
-import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData';
-import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType';
+import getTypeof from '../../../../getTypeof.js';
+import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData.js';
+import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   SharedSchemaTypeFields,
   BooleanSchemaType,
   WithShorthandSchemaType,
-} from '../types/MongoDBSchema';
+} from '../types/MongoDBSchema.js';
 
 const validatorsData = arrayAndStringValidatorsData;
 

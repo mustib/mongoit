@@ -3,9 +3,9 @@ import {
   ApiFailResponse,
   ApiSuccessResponse,
   catchAsyncRouteHandler,
-} from '../../../utils';
-import { envVars } from '../../../config';
-import userModel from '../userModel';
+} from '../../../utils/index.js';
+import { envVars } from '../../../config/index.js';
+import userModel from '../userModel.js';
 
 const verifyEmail = catchAsyncRouteHandler(async (req, res) => {
   const { token } = req.params;

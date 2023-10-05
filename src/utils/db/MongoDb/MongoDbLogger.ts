@@ -1,8 +1,8 @@
 import Transport, { type TransportStreamOptions } from 'winston-transport';
-import MongoDb from './MongoDb';
+import MongoDb from './MongoDb.js';
 
-import type MongoDBCollection from './MongoDBCollection';
-import type { CollectionConfigOptions } from './types/CollectionConfigOptions';
+import type MongoDBCollection from './MongoDBCollection.js';
+import type { CollectionConfigOptions } from './types/CollectionConfigOptions.js';
 
 type CollectionInfo = {
   collectionId?: string;
