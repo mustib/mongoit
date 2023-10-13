@@ -4,15 +4,15 @@ import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
-  SharedSchemaTypeFields,
+  StringSchemaTypeValidatorsData,
   StringSchemaType,
-  WithShorthandSchemaType,
 } from '../types/MongoDBSchema.js';
 
-const validatorsData = arrayAndStringValidatorsData;
+const validatorsData: StringSchemaTypeValidatorsData =
+  arrayAndStringValidatorsData;
 
 class MongoDbStringSchemaType extends AbstractMongoDbSchemaType<'string'> {
-  caseType: StringSchemaType['caseType'];
+  caseType: StringSchemaType<false>['caseType'];
 
   assignOrConvertTheRightValue(_value: any) {
     let value!: string;
@@ -52,11 +52,7 @@ class MongoDbStringSchemaType extends AbstractMongoDbSchemaType<'string'> {
     return { value, valueType, hasAssignedValue };
   }
 
-  constructor(
-    schemaFieldName: string,
-    schemaValue: WithShorthandSchemaType<StringSchemaType> &
-      SharedSchemaTypeFields<any>
-  ) {
+  constructor(schemaFieldName: string, schemaValue: StringSchemaType) {
     super();
     if (typeof schemaValue === 'object') this.caseType = schemaValue.caseType;
     this.init('string', {

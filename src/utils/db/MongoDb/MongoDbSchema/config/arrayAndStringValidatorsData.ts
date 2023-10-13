@@ -1,8 +1,8 @@
-import { SchemaTypeValidators } from '../types/MongoDBSchema.js';
+import { ArrayAndStringSchemaTypeValidatorsData } from '../types/MongoDBSchema.js';
 
-const maxLength: SchemaTypeValidators<'string' | 'array'>['maxLength'] = {
+const maxLength: ArrayAndStringSchemaTypeValidatorsData['maxLength'] = {
   type: 'number',
-  validator(value: { length: number }, validatorValue: number) {
+  validator(value, validatorValue) {
     return value.length <= validatorValue;
   },
   defaultErrorMessage(value, validatorValue, field) {
@@ -10,20 +10,17 @@ const maxLength: SchemaTypeValidators<'string' | 'array'>['maxLength'] = {
   },
 };
 
-const minLength: SchemaTypeValidators<'string' | 'array'>['minLength'] = {
+const minLength: ArrayAndStringSchemaTypeValidatorsData['minLength'] = {
   type: 'number',
   defaultErrorMessage(value, validatorValue, field) {
     return `minimum length for ${field} field is ${validatorValue}, but instead got ${value.length} with value of "${value}"`;
   },
-  validator(value: { length: number }, validatorValue: number) {
+  validator(value, validatorValue) {
     return value.length >= validatorValue;
   },
 };
 
-const arrayAndStringValidatorsData: Omit<
-  SchemaTypeValidators<'string' | 'array'>,
-  'length' | 'caseType'
-> = {
+const arrayAndStringValidatorsData: ArrayAndStringSchemaTypeValidatorsData = {
   maxLength,
   minLength,
 };

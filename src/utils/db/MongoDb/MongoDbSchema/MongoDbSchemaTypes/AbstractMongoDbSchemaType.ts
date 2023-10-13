@@ -78,15 +78,20 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
    * MUST BE CALLED AT THE END OF EACH CLASS' CONSTRUCTOR.
    * didn't call it in this class' constructor because some properties will be undefined by that time.
    */
-  init(type: Type, schemaData: SchemaTypeData) {
+  init<T extends Type>(type: T, schemaData: SchemaTypeData<T>) {
     this.type = type;
     this.schemaFieldName = schemaData.schemaFieldName;
     this.validatorsData = new MongoDBSchemaValidators(schemaData);
     this.setAndValidateDefaultValue(schemaData.schemaValue);
   }
 
-  setAndValidateDefaultValue(schemaValue: SchemaTypeData['schemaValue']) {
-    if (getTypeof(schemaValue) !== 'object' || !('default' in schemaValue))
+  setAndValidateDefaultValue(schemaValue: SchemaTypeData<Type>['schemaValue']) {
+    if (
+      getTypeof(schemaValue) !== 'object' ||
+      // NOTE: This check is only for ts to infer schemaValue as an object
+      typeof schemaValue !== 'object' ||
+      !('default' in schemaValue)
+    )
       return;
     try {
       const defaultValue = schemaValue.default;

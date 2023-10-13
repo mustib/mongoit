@@ -5,17 +5,14 @@ import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
-  ArraySchemaType,
   MongoSchemaTypesConstructors,
-  SchemaTypeData,
-  SchemaTypeValidators,
-  SharedSchemaTypeFields,
   ValidatorValueObj,
-  WithShorthandSchemaType,
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
+  ArraySchemaType,
+  ArraySchemaTypeValidatorsData,
 } from '../types/MongoDBSchema.js';
 
-const validatorsData: SchemaTypeValidators<'array'> = {
+const validatorsData: ArraySchemaTypeValidatorsData = {
   ...arrayAndStringValidatorsData,
   length: {
     type: 'number',
@@ -36,14 +33,13 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
     value: 0,
   };
 
-  constructor(
-    schemaFieldName: string,
-    schemaValue: WithShorthandSchemaType<ArraySchemaType<any>> &
-      SharedSchemaTypeFields<any>
-  ) {
+  constructor(schemaFieldName: string, schemaValue: ArraySchemaType<any[]>) {
     super();
 
-    if (getTypeof(schemaValue) === 'object' && 'length' in schemaValue) {
+    if (
+      getTypeof(schemaValue) === 'object' &&
+      typeof schemaValue.length === 'number'
+    ) {
       this.length.hasLength = true;
       this.length.value = schemaValue.length;
     }
@@ -54,13 +50,10 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
   }
 
   createNestedSchema(
-    schemaValue: WithShorthandSchemaType<ArraySchemaType<any>> &
-      SharedSchemaTypeFields<any>,
+    schemaValue: ArraySchemaType<any[]>,
     schemaFieldName: string
   ) {
-    const schema = Array.isArray(schemaValue)
-      ? schemaValue
-      : (schemaValue.type as SchemaTypeData['schemaValue'][]);
+    const schema = Array.isArray(schemaValue) ? schemaValue : schemaValue.type;
 
     if (schema.length === 0) {
       throw new Error(
@@ -71,7 +64,10 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
     for (let i = 0; i < schema.length; i++) {
       const SchemaTypeConstructor = getSchemaTypeConstructor(schema[i]);
       const fieldName = `${schemaFieldName}["${i}"]`;
-      this.nestedSchema[i] = new SchemaTypeConstructor(fieldName, schema[i]);
+      this.nestedSchema[i] = new SchemaTypeConstructor(
+        fieldName,
+        schema[i] as never
+      );
     }
   }
 

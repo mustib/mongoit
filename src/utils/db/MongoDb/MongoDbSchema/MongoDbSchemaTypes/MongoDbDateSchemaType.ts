@@ -3,17 +3,11 @@ import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   DateSchemaType,
-  SharedSchemaTypeFields,
   ValidatorValueObj,
-  WithShorthandSchemaType,
 } from '../types/MongoDBSchema.js';
 
 class MongoDbDateSchemaType extends AbstractMongoDbSchemaType<'date'> {
-  constructor(
-    schemaFieldName: string,
-    schemaValue: WithShorthandSchemaType<DateSchemaType> &
-      SharedSchemaTypeFields<any>
-  ) {
+  constructor(schemaFieldName: string, schemaValue: DateSchemaType) {
     super();
     this.init('date', { schemaFieldName, schemaValue, validatorsData: {} });
   }

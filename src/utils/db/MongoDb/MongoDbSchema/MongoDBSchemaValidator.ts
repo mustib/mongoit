@@ -3,20 +3,10 @@ import AppError from '../../../AppError/AppError.js';
 import AppErrorRoot from '../../../AppError/AppErrorRoot.js';
 
 import type {
-  StringSchemaType,
-  NumberSchemaType,
-  BooleanSchemaType,
-  DateSchemaType,
-  ArraySchemaType,
-  ObjectSchemaType,
   SchemaTypeValidatorsData,
-  SchemaTypeValidators,
-  SharedSchemaTypeFields,
-  ValidatorWithOptionalErrorMessage,
-  WithShorthandSchemaType,
   SchemaTypeData,
   ValidatorValueObj,
-  ValidatorObjectWithOptionalErrorMessage,
+  SharedSchemaTypeValidatorsData,
 } from './types/MongoDBSchema.js';
 
 type ValidatorArray = [
@@ -26,6 +16,27 @@ type ValidatorArray = [
   >
 ];
 
+const sharedValidatorsData: SharedSchemaTypeValidatorsData = {
+  requiredValidator: {
+    type: 'boolean',
+    defaultErrorMessage(_, _2, field) {
+      return `${field} is a required field and it is not defined`;
+    },
+    validator(value, validatorValue) {
+      return value === validatorValue;
+    },
+  },
+  customValidator: {
+    type: 'function',
+    defaultErrorMessage(value, validatorValue, field) {
+      return `custom validation for ${field} field failed`;
+    },
+    validator(value, validatorValue: (value: any) => boolean) {
+      return validatorValue(value);
+    },
+  },
+};
+
 class MongoDBSchemaValidators {
   schemaFieldName: string;
 
@@ -34,26 +45,6 @@ class MongoDBSchemaValidators {
   };
 
   validators: ValidatorArray[] = [];
-
-  static requiredValidatorData: SchemaTypeValidatorsData = {
-    type: 'boolean',
-    defaultErrorMessage(_, _2, field) {
-      return `${field} is a required field and it is not defined`;
-    },
-    validator(value, validatorValue) {
-      return value === validatorValue;
-    },
-  };
-
-  static customValidatorData: SchemaTypeValidatorsData = {
-    type: 'function',
-    defaultErrorMessage(value, validatorValue, field) {
-      return `custom validation for ${field} field failed`;
-    },
-    validator(value, validatorValue: (value: any) => boolean) {
-      return validatorValue(value);
-    },
-  };
 
   static checkValidatorValueType(
     validatorValue: string,
@@ -68,8 +59,8 @@ class MongoDBSchemaValidators {
   }
 
   static createValidatorObjectAndCheckItsType(
-    validatorValue: ValidatorWithOptionalErrorMessage<any>,
-    validatorData: SchemaTypeValidatorsData
+    validatorValue: any,
+    validatorData: SchemaTypeValidatorsData<any, any, any>
   ) {
     let value;
     let message;
@@ -89,15 +80,13 @@ class MongoDBSchemaValidators {
 
     return {
       validate: validator,
-      message: message as Required<
-        ValidatorObjectWithOptionalErrorMessage<any>
-      >['message'],
+      message,
       type,
       value,
     };
   }
 
-  constructor(schemaData: SchemaTypeData) {
+  constructor(schemaData: SchemaTypeData<any>) {
     const { schemaFieldName, schemaValue, validatorsData } = schemaData;
     this.schemaFieldName = schemaFieldName;
     this.createValidators(validatorsData, schemaValue);
@@ -144,26 +133,17 @@ class MongoDBSchemaValidators {
   }
 
   createValidators(
-    validatorsData: SchemaTypeValidators,
-    schemaValue: (
-      | WithShorthandSchemaType<
-          | StringSchemaType
-          | NumberSchemaType
-          | BooleanSchemaType
-          | DateSchemaType
-          | ArraySchemaType<any>
-        >
-      | ObjectSchemaType<any>
-    ) &
-      SharedSchemaTypeFields<any>
+    validatorsData: Record<string, SchemaTypeValidatorsData<any, any, any>>,
+    schemaValue: SchemaTypeData<any>['schemaValue']
   ) {
-    if (getTypeof(schemaValue) !== 'object') return;
+    if (getTypeof(schemaValue) !== 'object' || typeof schemaValue !== 'object')
+      return;
 
     if ('required' in schemaValue) {
       const requiredValidatorData =
         MongoDBSchemaValidators.createValidatorObjectAndCheckItsType(
           schemaValue.required,
-          MongoDBSchemaValidators.requiredValidatorData
+          sharedValidatorsData.requiredValidator
         );
 
       if (requiredValidatorData.value === true) {
@@ -176,7 +156,7 @@ class MongoDBSchemaValidators {
     if ('validator' in schemaValue) {
       validatorsDataEntries.push([
         'validator',
-        MongoDBSchemaValidators.customValidatorData,
+        sharedValidatorsData.customValidator,
       ]);
     }
 

@@ -1,14 +1,7 @@
 import getTypeof from '../../../../getTypeof.js';
-import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData.js';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
-import type {
-  SharedSchemaTypeFields,
-  BooleanSchemaType,
-  WithShorthandSchemaType,
-} from '../types/MongoDBSchema.js';
-
-const validatorsData = arrayAndStringValidatorsData;
+import type { BooleanSchemaType } from '../types/MongoDBSchema.js';
 
 class MongoDbBooleanSchemaType extends AbstractMongoDbSchemaType<'bool'> {
   assignOrConvertTheRightValue(_value: any) {
@@ -24,16 +17,12 @@ class MongoDbBooleanSchemaType extends AbstractMongoDbSchemaType<'bool'> {
     return { value, valueType, hasAssignedValue };
   }
 
-  constructor(
-    schemaFieldName: string,
-    schemaValue: WithShorthandSchemaType<BooleanSchemaType> &
-      SharedSchemaTypeFields<any>
-  ) {
+  constructor(schemaFieldName: string, schemaValue: BooleanSchemaType) {
     super();
     this.init('bool', {
       schemaFieldName,
       schemaValue,
-      validatorsData,
+      validatorsData: {},
     });
   }
 }

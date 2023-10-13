@@ -3,12 +3,10 @@ import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   NumberSchemaType,
-  SchemaTypeValidators,
-  SharedSchemaTypeFields,
-  WithShorthandSchemaType,
+  NumberSchemaTypeValidatorsData,
 } from '../types/MongoDBSchema.js';
 
-const validatorsData: SchemaTypeValidators<'number'> = {
+const validatorsData: NumberSchemaTypeValidatorsData = {
   max: {
     type: 'number',
     validator(value: number, validatorValue: number) {
@@ -30,11 +28,7 @@ const validatorsData: SchemaTypeValidators<'number'> = {
 };
 
 class MongoDbNumberSchemaType extends AbstractMongoDbSchemaType<'number'> {
-  constructor(
-    schemaFieldName: string,
-    schemaValue: WithShorthandSchemaType<NumberSchemaType> &
-      SharedSchemaTypeFields<any>
-  ) {
+  constructor(schemaFieldName: string, schemaValue: NumberSchemaType) {
     super();
     this.init('number', { schemaFieldName, schemaValue, validatorsData });
   }

@@ -5,26 +5,22 @@ import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   MongoSchemaTypesConstructors,
-  ObjectSchemaType,
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
-  SharedSchemaTypeFields,
   ValidatorValueObj,
+  ObjectSchemaType,
 } from '../types/MongoDBSchema.js';
 
 class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
   nestedSchema: { [key: string | number]: MongoSchemaTypesConstructors } = {};
 
-  constructor(
-    schemaFieldName: string,
-    schemaValue: ObjectSchemaType<any> & SharedSchemaTypeFields<any>
-  ) {
+  constructor(schemaFieldName: string, schemaValue: ObjectSchemaType<any>) {
     super();
     this.createNestedSchema(schemaValue.type, schemaFieldName);
     this.init('object', { schemaFieldName, schemaValue, validatorsData: {} });
   }
 
   createNestedSchema(
-    schemaValue: (ObjectSchemaType<any> & SharedSchemaTypeFields<any>)['type'],
+    schemaValue: ObjectSchemaType<any>['type'],
     schemaFieldName: string
   ) {
     const schemaEntries = Object.entries(schemaValue);
@@ -42,7 +38,7 @@ class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
 
       this.nestedSchema[schemaName] = new SchemaTypeConstructor(
         fieldName,
-        schema
+        schema as never
       );
     });
   }
