@@ -10,3 +10,4 @@ export { default as logger } from './logger.js';
 export { default as capitalize } from './capitalize.js';
 export { default as getUserAgentData } from './getUserAgentData.js';
 export { default as sendMail } from './sendMail.js';
+export { default as TypedEventEmitter } from './TypedEventEmitter.js';
