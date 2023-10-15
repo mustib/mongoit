@@ -12,34 +12,41 @@ const convertToObjectIdIfValid = (id: any) =>
 abstract class AbstractMongoDbFilterDocument<Document extends MongoDocument> {
   protected query: Document[] = [];
 
+  protected queryFilter: Promise<Document>[] = [];
+
   protected abstract collection: MongoDBCollection<Document>;
 
-  protected abstract filterDocument?: FilterDocumentWithId<Document>;
+  protected abstract filterDocument?: Promise<FilterDocumentWithId<Document>>;
 
   private filterDocumentAddedToQuery = false;
 
-  private addFilterDocumentToQuery() {
-    if (
-      typeof this.filterDocument !== 'object' ||
-      this.filterDocumentAddedToQuery
-    )
+  private async addFilterDocumentToQuery() {
+    const filterDocument = await this.filterDocument;
+
+    if (typeof filterDocument !== 'object' || this.filterDocumentAddedToQuery)
       return;
 
     // convert id from a string to ObjectID in the filtered documents
-    if ('_id' in this.filterDocument) {
+    if ('_id' in filterDocument) {
       const convertedObjectIdFromString = convertToObjectIdIfValid(
-        this.filterDocument._id
+        filterDocument._id
       );
 
-      this.filterDocument._id = convertedObjectIdFromString;
+      filterDocument._id = convertedObjectIdFromString;
     }
 
-    this.query.push(this.filterDocument as Document);
+    this.query.push(filterDocument as Document);
     this.filterDocumentAddedToQuery = true;
   }
 
-  protected createFilterQuery() {
-    this.addFilterDocumentToQuery();
+  protected async createFilterQuery() {
+    await this.addFilterDocumentToQuery();
+
+    if (this.queryFilter.length > 0) {
+      const filtered = await Promise.all(this.queryFilter);
+      if (this.query.length === 0) this.query = filtered;
+      else this.query.push({ $and: filtered } as never);
+    }
 
     const filterQuery = this.query.length > 0 ? { $and: this.query } : {};
 
@@ -49,10 +56,7 @@ abstract class AbstractMongoDbFilterDocument<Document extends MongoDocument> {
   filter(filter: FilterQueryObject) {
     const { filtered } = new MongoDbQueryFilter(filter, this.collection.schema);
 
-    if (filtered.length > 0) {
-      if (this.query.length === 0) this.query = filtered as Document[];
-      else this.query.push({ $and: filtered } as unknown as Document);
-    }
+    this.queryFilter.push(filtered as never);
 
     return this;
   }

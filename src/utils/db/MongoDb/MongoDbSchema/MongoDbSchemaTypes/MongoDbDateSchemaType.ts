@@ -3,6 +3,7 @@ import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
   DateSchemaType,
+  SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   ValidatorValueObj,
 } from '../types/MongoDBSchema.js';
 
@@ -12,7 +13,11 @@ class MongoDbDateSchemaType extends AbstractMongoDbSchemaType<'date'> {
     this.init('date', { schemaFieldName, schemaValue, validatorsData: {} });
   }
 
-  assignOrConvertTheRightValue(_value: any) {
+  async assignOrConvertTheRightValue(
+    _value: any,
+    options?: SchemaTypesConstructorsAssignOrConvertTheRightValueOptions
+  ) {
+    if (options?.onlyConvertTypeForNestedSchema) await this.initialize;
     const valueObj: ValidatorValueObj = {
       value: undefined,
       hasAssignedValue: false,

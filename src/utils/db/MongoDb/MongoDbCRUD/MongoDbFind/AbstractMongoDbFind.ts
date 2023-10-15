@@ -31,7 +31,7 @@ abstract class AbstractMongoDbFind<
 
   protected async createCursor() {
     const collection = await this.collection.collection;
-    const filterQuery = this.createFilterQuery();
+    const filterQuery = await this.createFilterQuery();
 
     const cursor = collection.find<Document & { _id: string }>(
       filterQuery,

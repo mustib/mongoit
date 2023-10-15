@@ -11,7 +11,7 @@ import { createUserSession } from '../../session/index.js';
 const signIn = catchAsyncRouteHandler<UserSchema>(async (req, res) => {
   const { email, password } = req.sanitizeMongo.body.get(['password', 'email']);
 
-  userModel.schema?.validate({ email, password }, 'PARTIAL');
+  await userModel.schema?.validate({ email, password }, 'PARTIAL');
 
   const user = await userModel.findOne({ email }).exec();
 

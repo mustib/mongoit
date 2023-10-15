@@ -32,77 +32,83 @@ class MongoDbSchema<T extends MongoDocument> {
     return schema as MongoSchemaTypesConstructors | undefined;
   }
 
-  convertValueToSchemaTypeByKey(key: string, value: any) {
+  async convertValueToSchemaTypeByKey(key: string, value: any) {
     const schema = this.getSchemaTypeByKey(key);
 
     if (schema === undefined) return value;
 
     if (Array.isArray(value) && schema.type !== 'array') {
-      const _value = value.map((v: unknown) => {
+      const _value = [] as any[];
+
+      for await (const v of value) {
         const { hasAssignedValue, value: _value2 } =
-          schema.assignOrConvertTheRightValue(v, {
+          await schema.assignOrConvertTheRightValue(v, {
             onlyConvertTypeForNestedSchema: true,
           });
 
-        return hasAssignedValue ? _value2 : value;
-      });
+        if (hasAssignedValue) _value.push(_value2);
+      }
 
       return _value;
     }
 
-    const { hasAssignedValue, value: _value } =
-      schema.assignOrConvertTheRightValue(value, {
-        onlyConvertTypeForNestedSchema: true,
-      });
-    return hasAssignedValue ? _value : value;
+    const { value: _value } = await schema.assignOrConvertTheRightValue(value, {
+      onlyConvertTypeForNestedSchema: true,
+    });
+
+    return _value;
   }
 
-  convertValuesToSchemaTypes(schema: UntypedObject) {
+  async convertValuesToSchemaTypes(schema: UntypedObject) {
     const converted: UntypedObject = {};
     const schemaEntries = Object.entries(schema);
 
     if (schemaEntries.length === 0) return converted;
 
-    schemaEntries.forEach(([key, value]) => {
-      if (!(key in this.schema)) return;
+    for await (const [key, value] of schemaEntries) {
+      if (!(key in this.schema)) continue;
 
       const SchemaTypeClass = this.schema[key];
 
       const { hasAssignedValue, value: assignedValue } =
-        SchemaTypeClass.assignOrConvertTheRightValue(value, {
+        await SchemaTypeClass.assignOrConvertTheRightValue(value, {
           onlyConvertTypeForNestedSchema: true,
         });
 
       if (hasAssignedValue) converted[key] = assignedValue;
-    });
+    }
 
     return converted;
   }
 
-  validate(
+  async validate(
     schema: UntypedObject,
     validationType: SchemaValidationType = 'FULL'
   ) {
     if (validationType === 'OFF') return schema;
 
     const validated: UntypedObject = {};
+
     const schemaEntries = Object.entries(this.schema);
 
     if (schemaEntries.length === 0) return validated;
 
-    AppErrorRoot.aggregate((tryCatch) => {
-      schemaEntries.forEach(([schemaNameKey, SchemaTypeClass]) => {
-        const keyIsNotDefined = !(schemaNameKey in schema);
+    const appErrorRoot = new AppErrorRoot();
 
-        if (keyIsNotDefined && validationType === 'PARTIAL') return;
+    for await (const [schemaNameKey, SchemaTypeClass] of schemaEntries) {
+      const keyIsNotDefined = !(schemaNameKey in schema);
 
-        tryCatch(() => {
-          const { hasAssignedValue, value } =
-            SchemaTypeClass.validateFieldValue(schema[schemaNameKey]);
-          if (hasAssignedValue) validated[schemaNameKey] = value;
-        });
+      if (keyIsNotDefined && validationType === 'PARTIAL') continue;
+
+      await appErrorRoot.tryCatch(async () => {
+        const { hasAssignedValue, value } =
+          await SchemaTypeClass.validateFieldValue(schema[schemaNameKey]);
+
+        if (hasAssignedValue) validated[schemaNameKey] = value;
       });
-    });
+    }
+
+    appErrorRoot.end(this.validate);
 
     return validated;
   }

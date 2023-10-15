@@ -98,37 +98,40 @@ class MongoDBCollection<Document extends MongoDocument> {
     return this;
   }
 
-  prepareSchemaFields<Type extends 'convert' | 'validate'>(
-    document: _useFieldsFromSchema<MongoDocument>,
+  async prepareSchemaFields<Doc, Type extends 'convert' | 'validate'>(
+    document: Doc & _useFieldsFromSchema<MongoDocument>,
     type = 'convert' as Type,
     ...args: Type extends 'validate'
       ? Tail<Parameters<(typeof MongoDbSchema)['prototype']['validate']>>
       : never[]
-  ) {
+  ): Promise<Doc> {
     if (document !== undefined && '_useFieldsFromSchema' in document) {
       const { _useFieldsFromSchema } = document;
       // eslint-disable-next-line no-param-reassign
       delete document._useFieldsFromSchema;
 
-      Object.assign(
+      return Object.assign(
         document,
         type === 'convert'
-          ? this.schema?.convertValuesToSchemaTypes(_useFieldsFromSchema as any)
-          : this.schema?.validate(_useFieldsFromSchema as any, ...args)
+          ? await this.schema?.convertValuesToSchemaTypes(
+              _useFieldsFromSchema as any
+            )
+          : await this.schema?.validate(_useFieldsFromSchema as any, ...args)
       );
     }
+
+    return document;
   }
 
   find<Doc extends MongoDocument = Document>(
     document?: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
     options?: CollectionCrudOptions<Doc>['findOptions']
   ) {
-    this.prepareSchemaFields(document);
-
     const findOptions = this.getConfigOption('findOptions', options);
+
     const mongoDbFind = new MongoDbFind<Doc>(
       this as never,
-      document,
+      this.prepareSchemaFields(document as FilterDocumentWithId<Doc>),
       findOptions
     );
 
@@ -139,12 +142,11 @@ class MongoDBCollection<Document extends MongoDocument> {
     document?: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
     options?: CollectionCrudOptions<Doc>['findOneOptions']
   ) {
-    this.prepareSchemaFields(document);
-
     const findOptions = this.getConfigOption('findOneOptions', options);
+
     const mongoDbFindOne = new MongoDbFindOne<Doc>(
       this as never,
-      document,
+      this.prepareSchemaFields(document as FilterDocumentWithId<Doc>),
       findOptions
     );
 
@@ -195,11 +197,9 @@ class MongoDBCollection<Document extends MongoDocument> {
 
     _options.deleteType = 'deleteMany';
 
-    this.prepareSchemaFields(document);
-
     const mongoDbDelete = new MongoDbDelete<Doc>(
       this as never,
-      document,
+      this.prepareSchemaFields(document),
       _options
     );
 
@@ -217,11 +217,9 @@ class MongoDBCollection<Document extends MongoDocument> {
 
     _options.deleteType = 'deleteOne';
 
-    this.prepareSchemaFields(document);
-
     const mongoDbDelete = new MongoDbDelete<Doc>(
       this as never,
-      document,
+      this.prepareSchemaFields(document),
       _options
     );
 
@@ -247,13 +245,10 @@ class MongoDBCollection<Document extends MongoDocument> {
 
     _options.updateType = 'updateMany';
 
-    this.prepareSchemaFields(filterDocument);
-    this.prepareSchemaFields(updateDocument, 'validate', 'PARTIAL');
-
     const mongoDbUpdate = new MongoDbUpdate<Doc>(
       this as never,
-      filterDocument,
-      updateDocument,
+      this.prepareSchemaFields(filterDocument),
+      this.prepareSchemaFields(updateDocument, 'validate', 'PARTIAL'),
       _options
     );
 
@@ -272,13 +267,10 @@ class MongoDBCollection<Document extends MongoDocument> {
 
     _options.updateType = 'updateOne';
 
-    this.prepareSchemaFields(filterDocument);
-    this.prepareSchemaFields(updateDocument, 'validate', 'PARTIAL');
-
     const mongoDbUpdate = new MongoDbUpdate<Doc>(
       this as never,
-      filterDocument,
-      updateDocument,
+      this.prepareSchemaFields(filterDocument),
+      this.prepareSchemaFields(updateDocument, 'validate', 'PARTIAL'),
       _options
     );
 

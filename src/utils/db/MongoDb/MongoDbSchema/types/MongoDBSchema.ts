@@ -55,12 +55,20 @@ export type SharedSchemaTypeValidators<Type> = {
     | ValidatorArrayWithOptionalErrorMessage<Type, boolean>
     | ValidatorObjectWithOptionalErrorMessage<Type, boolean>;
 
-  default?: RecursivePartial<Type> | (() => RecursivePartial<Type>);
+  default?:
+    | RecursivePartial<Type>
+    | (() => RecursivePartial<Type> | Promise<RecursivePartial<Type>>);
 
   validator?:
-    | ((value: Type) => boolean)
-    | ValidatorArrayWithOptionalErrorMessage<Type, (value: Type) => boolean>
-    | ValidatorObjectWithOptionalErrorMessage<Type, (value: Type) => boolean>;
+    | ((value: Type) => boolean | Promise<boolean>)
+    | ValidatorArrayWithOptionalErrorMessage<
+        Type,
+        (value: Type) => boolean | Promise<boolean>
+      >
+    | ValidatorObjectWithOptionalErrorMessage<
+        Type,
+        (value: Type) => boolean | Promise<boolean>
+      >;
 };
 
 type TypeofSchemaValidators = 'string' | 'number' | 'boolean' | 'function';
@@ -77,7 +85,10 @@ export type SchemaTypeValidatorsData<
     ValidatorValueType
   >['message'];
 
-  validator(value: FieldType, validatorValue: ValidatorValueType): boolean;
+  validator(
+    value: FieldType,
+    validatorValue: ValidatorValueType
+  ): boolean | Promise<boolean>;
 };
 
 export type SharedSchemaTypeValidatorsData = {
@@ -86,7 +97,7 @@ export type SharedSchemaTypeValidatorsData = {
   customValidator: SchemaTypeValidatorsData<
     'function',
     any,
-    (value: any) => boolean
+    (value: any) => boolean | Promise<boolean>
   >;
 };
 

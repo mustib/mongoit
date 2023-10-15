@@ -43,7 +43,7 @@ class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
     });
   }
 
-  assignOrConvertTheRightValue(
+  async assignOrConvertTheRightValue(
     _value: any,
     options?: SchemaTypesConstructorsAssignOrConvertTheRightValueOptions
   ) {
@@ -59,26 +59,30 @@ class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
 
     if (nestedSchemaEntries.length === 0) return valueObj;
 
-    AppErrorRoot.aggregate((tryCatch) => {
-      nestedSchemaEntries.forEach(([schemaName, schema]) => {
-        tryCatch(() => {
-          let validatedFieldValue: ValidatorValueObj;
+    const appErrorRoot = new AppErrorRoot();
 
-          if (options?.onlyConvertTypeForNestedSchema === true) {
-            validatedFieldValue = schema.assignOrConvertTheRightValue(
-              value[schemaName],
-              options
-            );
-          } else
-            validatedFieldValue = schema.validateFieldValue(value[schemaName]);
+    for await (const [schemaName, schema] of nestedSchemaEntries) {
+      await appErrorRoot.tryCatch(async () => {
+        let validatedFieldValue: ValidatorValueObj;
 
-          if (validatedFieldValue.hasAssignedValue) {
-            valueObj.value[schemaName] = validatedFieldValue.value;
-            valueObj.hasAssignedValue = true;
-          }
-        });
+        if (options?.onlyConvertTypeForNestedSchema === true) {
+          validatedFieldValue = await schema.assignOrConvertTheRightValue(
+            value[schemaName],
+            options
+          );
+        } else
+          validatedFieldValue = await schema.validateFieldValue(
+            value[schemaName]
+          );
+
+        if (validatedFieldValue.hasAssignedValue) {
+          valueObj.value[schemaName] = validatedFieldValue.value;
+          valueObj.hasAssignedValue = true;
+        }
       });
-    });
+    }
+
+    appErrorRoot.end();
 
     return valueObj;
   }

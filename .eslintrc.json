@@ -39,7 +39,10 @@
     ],
     "no-underscore-dangle": "off",
     "import/no-unresolved": "off",
+    "no-await-in-loop": "off",
+    "no-continue": "off",
     "no-plusplus": "off",
+    "no-restricted-syntax": "off",
     "class-methods-use-this": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/naming-convention": "off",
@@ -52,7 +55,8 @@
       2,
       {
         "allowString": false,
-        "allowNumber": false
+        "allowNumber": false,
+        "allowNullableBoolean": true
       }
     ]
   }

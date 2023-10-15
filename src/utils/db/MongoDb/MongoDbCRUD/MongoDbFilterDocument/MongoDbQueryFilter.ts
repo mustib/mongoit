@@ -16,7 +16,19 @@ import type {
 } from '../../utils/filteringOperators.js';
 
 class MongoDbQueryFilter {
-  filtered: UntypedObject[] = [];
+  protected _filtered: UntypedObject[] = [];
+
+  protected hasFiltered = false;
+
+  get filtered(): Promise<typeof this._filtered> {
+    return new Promise((resolve) => {
+      if (this.hasFiltered) resolve(this._filtered);
+      this.startFiltering().then(() => {
+        this.hasFiltered = true;
+        resolve(this._filtered);
+      });
+    });
+  }
 
   protected allowedTargetKeys: string[];
 
@@ -66,18 +78,16 @@ class MongoDbQueryFilter {
 
     this.target = target as never;
     this.allowedOperators = allowedOperators;
-
-    this.startFiltering();
   }
 
-  protected convertToSchemaType(key: string, value: any) {
+  async convertToSchemaType(key: string, value: any) {
     return this.shouldUseSchema
       ? this.schema?.convertValueToSchemaTypeByKey(key, value)
       : value;
   }
 
-  addEqualOperator(key: string, value: unknown) {
-    const _value = this.convertToSchemaType(key, value);
+  async addEqualOperator(key: string, value: unknown) {
+    const _value = await this.convertToSchemaType(key, value);
 
     const filtered = filteringOperatorsTypesHandlersObject.asValue(
       '$eq',
@@ -85,10 +95,10 @@ class MongoDbQueryFilter {
       _value
     ) as UntypedObject;
 
-    this.filtered.push(filtered);
+    this._filtered.push(filtered);
   }
 
-  addOperatorIfAllowed(
+  async addOperatorIfAllowed(
     operator: Operators<'WithoutDollarSign'>,
     key: string,
     value: unknown
@@ -104,14 +114,14 @@ class MongoDbQueryFilter {
 
     const mongoOperator = `$${operator}` as Operators<'WithDollarSign'>;
 
-    const _value = this.convertToSchemaType(key, value);
+    const _value = await this.convertToSchemaType(key, value);
 
     const filtered = operatorHandler(mongoOperator, key, _value);
 
-    this.filtered.push(filtered as UntypedObject);
+    this._filtered.push(filtered as UntypedObject);
   }
 
-  addAllowedOperatorsFromObject(key: string, operators: object) {
+  async addAllowedOperatorsFromObject(key: string, operators: object) {
     if (typeof operators !== 'object') return;
 
     const operatorsEntries = Object.entries(operators) as [
@@ -119,9 +129,9 @@ class MongoDbQueryFilter {
       unknown
     ][];
 
-    operatorsEntries.forEach(([operator, operatorValue]) => {
-      this.addOperatorIfAllowed(operator, key, operatorValue);
-    });
+    for await (const [operator, operatorValue] of operatorsEntries) {
+      await this.addOperatorIfAllowed(operator, key, operatorValue);
+    }
   }
 
   private getOperatorValue(allowedTargetKey: string) {
@@ -136,30 +146,34 @@ class MongoDbQueryFilter {
     return operatorValue;
   }
 
-  private startFiltering() {
-    this.allowedTargetKeys.forEach((allowedKey) => {
+  private async startFiltering() {
+    for await (const allowedKey of this.allowedTargetKeys) {
       const [allowedTargetKey, allowedTargetKeyAsAlias = allowedTargetKey] =
         allowedKey.split(': ');
 
       const operatorValue = this.getOperatorValue(allowedTargetKey);
 
-      if (operatorValue === undefined) return;
+      if (operatorValue === undefined) continue;
 
       if (typeof operatorValue !== 'object') {
-        this.addEqualOperator(allowedTargetKeyAsAlias, operatorValue);
-        return;
+        await this.addEqualOperator(allowedTargetKeyAsAlias, operatorValue);
+        continue;
       }
 
       if (Array.isArray(operatorValue)) {
-        this.addOperatorIfAllowed('or', allowedTargetKeyAsAlias, operatorValue);
-        return;
+        await this.addOperatorIfAllowed(
+          'or',
+          allowedTargetKeyAsAlias,
+          operatorValue
+        );
+        continue;
       }
 
-      this.addAllowedOperatorsFromObject(
+      await this.addAllowedOperatorsFromObject(
         allowedTargetKeyAsAlias,
         operatorValue
       );
-    });
+    }
   }
 }
 

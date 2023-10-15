@@ -22,6 +22,7 @@ const sharedValidatorsData: SharedSchemaTypeValidatorsData = {
     defaultErrorMessage(_, _2, field) {
       return `${field} is a required field and it is not defined`;
     },
+
     validator(value, validatorValue) {
       return value === validatorValue;
     },
@@ -31,7 +32,8 @@ const sharedValidatorsData: SharedSchemaTypeValidatorsData = {
     defaultErrorMessage(value, validatorValue, field) {
       return `custom validation for ${field} field failed`;
     },
-    validator(value, validatorValue: (value: any) => boolean) {
+
+    validator(value, validatorValue) {
       return validatorValue(value);
     },
   },
@@ -92,9 +94,9 @@ class MongoDBSchemaValidators {
     this.createValidators(validatorsData, schemaValue);
   }
 
-  validateValidator(value: any, validatorObj: ValidatorArray['1']) {
+  async validateValidator(value: any, validatorObj: ValidatorArray['1']) {
     const validatorValue = validatorObj.value;
-    const isValid = validatorObj.validate(value, validatorValue);
+    const isValid = await validatorObj.validate(value, validatorValue);
 
     if (isValid) return;
 
@@ -111,25 +113,27 @@ class MongoDBSchemaValidators {
     AppError.throw('Validation', errorMessage);
   }
 
-  validateValidators(valueObj: ValidatorValueObj) {
-    AppErrorRoot.aggregate((tryCatch) => {
-      if (this.requiredValidator.value === true) {
-        tryCatch(() => {
-          this.validateValidator(
-            valueObj.hasAssignedValue,
-            this.requiredValidator as ValidatorArray['1']
-          );
+  async validateValidators(valueObj: ValidatorValueObj) {
+    const appErrorRoot = new AppErrorRoot();
+
+    if (this.requiredValidator.value === true) {
+      await appErrorRoot.tryCatch(async () => {
+        await this.validateValidator(
+          valueObj.hasAssignedValue,
+          this.requiredValidator as ValidatorArray['1']
+        );
+      });
+    }
+
+    if (valueObj.hasAssignedValue) {
+      for await (const validator of this.validators) {
+        await appErrorRoot.tryCatch(async () => {
+          await this.validateValidator(valueObj.value, validator[1]);
         });
       }
+    }
 
-      if (!valueObj.hasAssignedValue) return;
-
-      for (let i = 0; i < this.validators.length; i++) {
-        tryCatch(() => {
-          this.validateValidator(valueObj.value, this.validators[i][1]);
-        });
-      }
-    });
+    appErrorRoot.end(this.validateValidators);
   }
 
   createValidators(

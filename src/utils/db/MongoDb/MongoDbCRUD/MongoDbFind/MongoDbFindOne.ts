@@ -10,7 +10,7 @@ class MongoDbFindOne<
 > extends AbstractMongoDbFind<Document> {
   constructor(
     protected collection: MongoDBCollection<Document>,
-    protected filterDocument?: FilterDocumentWithId<Document>,
+    protected filterDocument?: Promise<FilterDocumentWithId<Document>>,
     protected options?: CollectionCrudOptions<Document>['findOneOptions']
   ) {
     super();

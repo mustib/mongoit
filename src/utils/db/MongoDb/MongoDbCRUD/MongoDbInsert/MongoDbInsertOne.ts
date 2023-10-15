@@ -22,19 +22,19 @@ class MongoDbInsertOne<
     super();
   }
 
-  protected interceptInsertion() {
+  protected async interceptInsertion() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const interceptedDocument = this.options!.interceptBeforeInserting!(
+    const interceptedDocument = await this.options!.interceptBeforeInserting!(
       this.insertDocuments as Document
     );
 
     return interceptedDocument as OptionalUnlessRequiredId<Document>;
   }
 
-  protected validateAndInterceptInsertion() {
+  protected async validateAndInterceptInsertion() {
     const schemaValidationType = this.options?.schemaValidationType;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const validatedDocument = this.collection.schema!.validate(
+    const validatedDocument = await this.collection.schema!.validate(
       this.insertDocuments,
       schemaValidationType
     );

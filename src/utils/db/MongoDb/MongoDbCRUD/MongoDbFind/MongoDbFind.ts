@@ -36,7 +36,7 @@ class MongoDbFind<
 
   constructor(
     protected collection: MongoDBCollection<Document>,
-    protected filterDocument?: FilterDocumentWithId<Document>,
+    protected filterDocument?: Promise<FilterDocumentWithId<Document>>,
     protected options?: CollectionCrudOptions<Document>['findOptions']
   ) {
     super();
@@ -62,7 +62,7 @@ class MongoDbFind<
 
   private async countDocuments() {
     const collection = await this.collection.collection;
-    const query = this.createFilterQuery();
+    const query = await this.createFilterQuery();
     const count = await collection.countDocuments(query);
 
     return count;

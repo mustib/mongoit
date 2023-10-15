@@ -22,24 +22,27 @@ class MongoDbInsert<
     super();
   }
 
-  protected interceptInsertion() {
-    const interceptedDocuments = this.insertDocuments.map((document) => {
+  protected async interceptInsertion() {
+    const interceptedDocuments = [] as any[];
+
+    for await (const document of this.insertDocuments) {
       const interceptedDocument =
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.options!.interceptBeforeInserting!(document as Document);
+        await this.options!.interceptBeforeInserting!(document as Document);
 
-      return interceptedDocument as OptionalUnlessRequiredId<Document>;
-    });
+      interceptedDocuments.push(interceptedDocument);
+    }
 
     return interceptedDocuments;
   }
 
-  protected validateAndInterceptInsertion() {
+  protected async validateAndInterceptInsertion() {
     const schemaValidationType = this.options?.schemaValidationType;
 
-    const validatedDocuments = this.insertDocuments.map((document) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const validatedDocument = this.collection.schema!.validate(
+    const validatedDocuments = [] as any[];
+
+    for await (const document of this.insertDocuments) {
+      let validatedDocument = await this.collection.schema?.validate(
         document,
         schemaValidationType
       );
@@ -47,13 +50,15 @@ class MongoDbInsert<
       const interceptionFunction = this.options?.interceptBeforeInserting;
 
       if (typeof interceptionFunction === 'function') {
-        return interceptionFunction(validatedDocument as Document);
+        validatedDocument = await interceptionFunction(
+          validatedDocument as Document
+        );
       }
 
-      return validatedDocument;
-    });
+      validatedDocuments.push(validatedDocument);
+    }
 
-    return validatedDocuments as OptionalUnlessRequiredId<Document>[];
+    return validatedDocuments;
   }
 
   protected getInsertedIds({ insertedIds }: InsertManyResult<Document>) {

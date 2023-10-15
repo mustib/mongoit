@@ -12,7 +12,7 @@ class MongoDbDelete<
 
   constructor(
     protected collection: MongoDBCollection<Document>,
-    protected filterDocument: FilterDocumentWithId<Document>,
+    protected filterDocument: Promise<FilterDocumentWithId<Document>>,
     protected options: CollectionCrudOptions<Document>['deleteOptions'] & {
       deleteType: 'deleteOne' | 'deleteMany';
     }
@@ -22,7 +22,7 @@ class MongoDbDelete<
 
   async exec() {
     const collection = await this.collection.collection;
-    const query = this.createFilterQuery();
+    const query = await this.createFilterQuery();
     const deleteResult = await collection[this.options.deleteType](
       query,
       this.options?.nativeMongoDeleteOptions

@@ -71,7 +71,7 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
     }
   }
 
-  assignOrConvertTheRightValue(
+  async assignOrConvertTheRightValue(
     _value: any,
     options?: SchemaTypesConstructorsAssignOrConvertTheRightValueOptions
   ) {
@@ -91,19 +91,20 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
       nestedSchemaIndex: number,
       nestedSchemaValue: any
     ) => {
-      appErrorRoot.tryCatch(() => {
+      return appErrorRoot.tryCatch(async () => {
         const SchemaTypeConstructor = this.nestedSchema[nestedSchemaIndex];
         let validatedFieldValue: ValidatorValueObj;
 
         if (options?.onlyConvertTypeForNestedSchema === true) {
           validatedFieldValue =
-            SchemaTypeConstructor.assignOrConvertTheRightValue(
+            await SchemaTypeConstructor.assignOrConvertTheRightValue(
               nestedSchemaValue,
               options
             );
         } else
-          validatedFieldValue =
-            SchemaTypeConstructor.validateFieldValue(nestedSchemaValue);
+          validatedFieldValue = await SchemaTypeConstructor.validateFieldValue(
+            nestedSchemaValue
+          );
 
         if (validatedFieldValue.hasAssignedValue || !hasOneSchema) {
           valueObj.value.push(validatedFieldValue.value);
@@ -116,14 +117,14 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
       const length = this.length.hasLength ? this.length.value : value.length;
       let i = 0;
       do {
-        validateAndAddValue(0, value[i]);
+        await validateAndAddValue(0, value[i]);
         i++;
       } while (i < length);
     }
 
     if (!hasOneSchema) {
       for (let i = 0; i < this.nestedSchema.length; i++) {
-        validateAndAddValue(i, value[i]);
+        await validateAndAddValue(i, value[i]);
       }
     }
 

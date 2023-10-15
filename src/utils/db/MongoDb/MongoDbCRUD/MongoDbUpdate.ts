@@ -13,8 +13,8 @@ class MongoDbUpdate<
 
   constructor(
     protected collection: MongoDBCollection<Document>,
-    protected filterDocument: FilterDocumentWithId<Document>,
-    protected updateDocument: UpdateFilterDocument<Document>,
+    protected filterDocument: Promise<FilterDocumentWithId<Document>>,
+    protected updateDocument: Promise<UpdateFilterDocument<Document>>,
     protected options: CollectionCrudOptions<Document>['updateOptions'] & {
       updateType: 'updateMany' | 'updateOne';
     }
@@ -24,9 +24,9 @@ class MongoDbUpdate<
 
   async exec() {
     const collection = await this.collection.collection;
-    const filterDocument = this.createFilterQuery();
-    const { _useMongoUpdateFilterOperators, ...updateDocument } =
-      this.updateDocument;
+    const filterDocument = await this.createFilterQuery();
+    const { _useMongoUpdateFilterOperators, ...updateDocument } = await this
+      .updateDocument;
 
     return collection[this.options.updateType](
       filterDocument,

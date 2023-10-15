@@ -40,11 +40,13 @@ abstract class AbstractMongoDbInsert<
     ? CollectionCrudOptions<Document>['insertOneOptions']
     : never;
 
-  protected abstract interceptInsertion(): InsertDocumentsType<Type, Document>;
+  protected abstract interceptInsertion(): Promise<
+    InsertDocumentsType<Type, Document>
+  >;
 
-  protected abstract validateAndInterceptInsertion():
-    | InsertDocumentsType<Type, Document>
-    | Promise<InsertDocumentsType<Type, Document>>;
+  protected abstract validateAndInterceptInsertion(): Promise<
+    InsertDocumentsType<Type, Document>
+  >;
 
   protected async getInsertDocuments(): Promise<
     InsertDocumentsType<Type, Document>
