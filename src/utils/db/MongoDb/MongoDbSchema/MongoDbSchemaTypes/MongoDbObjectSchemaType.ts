@@ -1,4 +1,5 @@
 import getTypeof from '../../../../getTypeof.js';
+import getValidJson from '../../../../getValidJson.js';
 import AppErrorRoot from '../../../../AppError/AppErrorRoot.js';
 import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor.js';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
@@ -47,7 +48,22 @@ class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
     _value: any,
     options?: SchemaTypesConstructorsAssignOrConvertTheRightValueOptions
   ) {
-    const value = getTypeof(_value) === 'object' ? _value : {};
+    let value: UntypedObject;
+
+    switch (getTypeof(_value)) {
+      case 'string':
+        {
+          const v = getValidJson(_value);
+          if (v !== 'invalid') value = v;
+          else value = {};
+        }
+        break;
+      case 'object':
+        value = _value;
+        break;
+      default:
+        value = {};
+    }
 
     const valueObj: ValidatorValueObj = {
       value: {},
