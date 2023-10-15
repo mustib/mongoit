@@ -9,20 +9,37 @@ class AppErrorRoot extends AbstractAppError {
   errors: Record<string, AppError> = {};
 
   static aggregate(
-    aggregateFunc: (tryCatch: AppErrorRoot['tryCatch']) => void | never
+    aggregateFunc: (tryCatch: AppErrorRoot['tryCatch']) => void | Promise<void>
   ) {
     const appErrorRoot = new AppErrorRoot();
 
-    try {
-      aggregateFunc(appErrorRoot.tryCatch.bind(appErrorRoot));
-    } catch (error) {
+    const catchError = (error: unknown) => {
       if (getTypeof(error) === 'object') {
         Error.captureStackTrace(error as object, AppErrorRoot.aggregate);
       }
       throw error;
+    };
+
+    try {
+      if (aggregateFunc.constructor.name === 'AsyncFunction')
+        return (
+          aggregateFunc(
+            appErrorRoot.tryCatch.bind(appErrorRoot)
+          ) as Promise<any>
+        )
+          .catch(catchError)
+          .finally(() => {
+            appErrorRoot.end(AppErrorRoot.aggregate);
+          });
+
+      aggregateFunc(appErrorRoot.tryCatch.bind(appErrorRoot));
+    } catch (error) {
+      catchError(error);
     }
 
     appErrorRoot.end(AppErrorRoot.aggregate);
+
+    return undefined;
   }
 
   push(type: AppErrorTypes, error: string | string[]) {
@@ -52,10 +69,8 @@ class AppErrorRoot extends AbstractAppError {
     return errorsString;
   }
 
-  tryCatch(tryCatchFunc: () => void) {
-    try {
-      tryCatchFunc();
-    } catch (error) {
+  tryCatch(tryCatchFunc: () => void | Promise<void>) {
+    const catchError = (error: unknown) => {
       if (error instanceof AppError) this.push(error.type, error.errors);
       else if (error instanceof AppErrorRoot) this.pushRoot(error);
       else {
@@ -64,7 +79,17 @@ class AppErrorRoot extends AbstractAppError {
         }
         throw error;
       }
+    };
+    try {
+      if (tryCatchFunc.constructor.name === 'AsyncFunction')
+        return (tryCatchFunc() as Promise<any>).catch(catchError);
+
+      tryCatchFunc();
+    } catch (error) {
+      catchError(error);
     }
+
+    return undefined;
   }
 }
 
