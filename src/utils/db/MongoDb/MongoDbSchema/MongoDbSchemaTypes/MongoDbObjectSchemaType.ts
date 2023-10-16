@@ -88,7 +88,8 @@ class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
           );
         } else
           validatedFieldValue = await schema.validateFieldValue(
-            value[schemaName]
+            value[schemaName],
+            { schema: options?.schema ?? {} }
           );
 
         if (validatedFieldValue.hasAssignedValue) {

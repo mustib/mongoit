@@ -12,7 +12,7 @@ const validatorsData: StringSchemaTypeValidatorsData =
   arrayAndStringValidatorsData;
 
 class MongoDbStringSchemaType extends AbstractMongoDbSchemaType<'string'> {
-  caseType: StringSchemaType<false>['caseType'];
+  caseType: StringSchemaType<never, false>['caseType'];
 
   assignOrConvertTheRightValue(_value: any) {
     let value!: string;

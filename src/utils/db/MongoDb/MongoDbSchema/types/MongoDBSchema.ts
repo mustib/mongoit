@@ -18,9 +18,18 @@ import type MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSch
  *-------------------------------------------------------------*
  */
 
+export type ValidatorMetaObject<Schema = UntypedObject> = UntypedObject & {
+  fieldName: string;
+  schema: Readonly<Schema>;
+};
+
+export type ValueofSchemaValidators = number | boolean | Func;
+export type TypeofSchemaValidators = 'number' | 'boolean' | 'function';
+
 export type ValidatorArrayWithOptionalErrorMessage<
+  Schema,
   FieldType,
-  ValidatorValueType
+  ValidatorValueType extends ValueofSchemaValidators
 > = [
   ValidatorValueType,
   (
@@ -28,20 +37,21 @@ export type ValidatorArrayWithOptionalErrorMessage<
     | ((
         value: FieldType,
         validatorValue: ValidatorValueType,
-        field: string
+        meta: ValidatorMetaObject<Schema>
       ) => string)
   )?
 ];
 
 export type ValidatorObjectWithOptionalErrorMessage<
+  Schema,
   FieldType,
-  ValidatorValueType
+  ValidatorValueType extends ValueofSchemaValidators
 > = {
   value: ValidatorValueType;
   message?(
     value: FieldType,
     validatorValue: ValidatorValueType,
-    field: string
+    meta: ValidatorMetaObject<Schema>
   ): string;
 };
 
@@ -49,45 +59,56 @@ type RecursivePartial<T> = {
   [key in keyof T]?: RecursivePartial<T[key]>;
 };
 
-export type SharedSchemaTypeValidators<Type> = {
+export type SharedSchemaTypeValidators<Schema, Type> = {
   required?:
     | boolean
-    | ValidatorArrayWithOptionalErrorMessage<Type, boolean>
-    | ValidatorObjectWithOptionalErrorMessage<Type, boolean>;
+    | ValidatorArrayWithOptionalErrorMessage<Schema, Type, boolean>
+    | ValidatorObjectWithOptionalErrorMessage<Schema, Type, boolean>;
 
   default?:
     | RecursivePartial<Type>
     | (() => RecursivePartial<Type> | Promise<RecursivePartial<Type>>);
 
   validator?:
-    | ((value: Type) => boolean | Promise<boolean>)
+    | ((
+        value: Type,
+        meta: ValidatorMetaObject<Schema>
+      ) => boolean | Promise<boolean>)
     | ValidatorArrayWithOptionalErrorMessage<
+        Schema,
         Type,
-        (value: Type) => boolean | Promise<boolean>
+        (
+          value: Type,
+          meta: ValidatorMetaObject<Schema>
+        ) => boolean | Promise<boolean>
       >
     | ValidatorObjectWithOptionalErrorMessage<
+        Schema,
         Type,
-        (value: Type) => boolean | Promise<boolean>
+        (
+          value: Type,
+          meta: ValidatorMetaObject<Schema>
+        ) => boolean | Promise<boolean>
       >;
 };
-
-type TypeofSchemaValidators = 'string' | 'number' | 'boolean' | 'function';
 
 export type SchemaTypeValidatorsData<
   TypeofValidator extends TypeofSchemaValidators,
   FieldType,
-  ValidatorValueType
+  ValidatorValueType extends ValueofSchemaValidators
 > = {
   type: TypeofValidator;
 
   defaultErrorMessage: ValidatorObjectWithOptionalErrorMessage<
+    UntypedObject,
     FieldType,
     ValidatorValueType
   >['message'];
 
   validator(
     value: FieldType,
-    validatorValue: ValidatorValueType
+    validatorValue: ValidatorValueType,
+    meta: ValidatorMetaObject
   ): boolean | Promise<boolean>;
 };
 
@@ -97,7 +118,7 @@ export type SharedSchemaTypeValidatorsData = {
   customValidator: SchemaTypeValidatorsData<
     'function',
     any,
-    (value: any) => boolean | Promise<boolean>
+    (value: any, meta: ValidatorMetaObject) => boolean | Promise<boolean>
   >;
 };
 
@@ -120,7 +141,10 @@ export type ArrayAndStringSchemaTypeValidatorsData = {
  *-------------------------------------------------------------*
  */
 
-export type StringSchemaType<WithShorthandType extends boolean = true> =
+export type StringSchemaType<
+  Schema = UntypedObject,
+  WithShorthandType extends boolean = true
+> =
   | (WithShorthandType extends true ? 'string' : never)
   | ({
       type: 'string';
@@ -133,14 +157,14 @@ export type StringSchemaType<WithShorthandType extends boolean = true> =
 
       maxLength?:
         | number
-        | ValidatorArrayWithOptionalErrorMessage<string, number>
-        | ValidatorObjectWithOptionalErrorMessage<string, number>;
+        | ValidatorArrayWithOptionalErrorMessage<Schema, string, number>
+        | ValidatorObjectWithOptionalErrorMessage<Schema, string, number>;
 
       minLength?:
         | number
-        | ValidatorArrayWithOptionalErrorMessage<string, number>
-        | ValidatorObjectWithOptionalErrorMessage<string, number>;
-    } & SharedSchemaTypeValidators<string>);
+        | ValidatorArrayWithOptionalErrorMessage<Schema, string, number>
+        | ValidatorObjectWithOptionalErrorMessage<Schema, string, number>;
+    } & SharedSchemaTypeValidators<Schema, string>);
 
 export type StringSchemaTypeValidatorsData =
   ArrayAndStringSchemaTypeValidatorsData;
@@ -155,21 +179,24 @@ export type StringSchemaTypeValidatorsData =
  *-------------------------------------------------------------*
  */
 
-export type NumberSchemaType<WithShorthandType extends boolean = true> =
+export type NumberSchemaType<
+  Schema = UntypedObject,
+  WithShorthandType extends boolean = true
+> =
   | (WithShorthandType extends true ? 'number' : never)
   | ({
       type: 'number';
 
       min?:
         | number
-        | ValidatorArrayWithOptionalErrorMessage<number, number>
-        | ValidatorObjectWithOptionalErrorMessage<number, number>;
+        | ValidatorArrayWithOptionalErrorMessage<Schema, number, number>
+        | ValidatorObjectWithOptionalErrorMessage<Schema, number, number>;
 
       max?:
         | number
-        | ValidatorArrayWithOptionalErrorMessage<number, number>
-        | ValidatorObjectWithOptionalErrorMessage<number, number>;
-    } & SharedSchemaTypeValidators<number>);
+        | ValidatorArrayWithOptionalErrorMessage<Schema, number, number>
+        | ValidatorObjectWithOptionalErrorMessage<Schema, number, number>;
+    } & SharedSchemaTypeValidators<Schema, number>);
 
 export type NumberSchemaTypeValidatorsData = {
   max: SchemaTypeValidatorsData<'number', number, number>;
@@ -186,11 +213,14 @@ export type NumberSchemaTypeValidatorsData = {
  *--------------------------------------------------------------*
  */
 
-export type BooleanSchemaType<WithShorthandType extends boolean = true> =
+export type BooleanSchemaType<
+  Schema = UntypedObject,
+  WithShorthandType extends boolean = true
+> =
   | (WithShorthandType extends true ? 'bool' : never)
   | ({
       type: 'bool';
-    } & SharedSchemaTypeValidators<boolean>);
+    } & SharedSchemaTypeValidators<Schema, boolean>);
 
 /*-----------------------------------------------------------*/
 
@@ -202,11 +232,14 @@ export type BooleanSchemaType<WithShorthandType extends boolean = true> =
  *-----------------------------------------------------------*
  */
 
-export type DateSchemaType<WithShorthandType extends boolean = true> =
+export type DateSchemaType<
+  Schema = UntypedObject,
+  WithShorthandType extends boolean = true
+> =
   | (WithShorthandType extends true ? 'date' : never)
   | ({
       type: 'date';
-    } & SharedSchemaTypeValidators<Date>);
+    } & SharedSchemaTypeValidators<Schema, Date>);
 
 /*------------------------------------------------------------*/
 
@@ -220,27 +253,28 @@ export type DateSchemaType<WithShorthandType extends boolean = true> =
 
 export type ArraySchemaType<
   Type extends object,
+  Schema = Type,
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? MongoSchema<Required<Type>> : never)
   | ({
-      type: MongoSchema<Required<Type>>;
+      type: MongoSchema<Required<Type>, Schema>;
 
       length?:
         | number
-        | ValidatorArrayWithOptionalErrorMessage<Type, number>
-        | ValidatorObjectWithOptionalErrorMessage<Type, number>;
+        | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
+        | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
 
       maxLength?:
         | number
-        | ValidatorArrayWithOptionalErrorMessage<Type, number>
-        | ValidatorObjectWithOptionalErrorMessage<Type, number>;
+        | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
+        | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
 
       minLength?:
         | number
-        | ValidatorArrayWithOptionalErrorMessage<Type, number>
-        | ValidatorObjectWithOptionalErrorMessage<Type, number>;
-    } & SharedSchemaTypeValidators<Type>);
+        | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
+        | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
+    } & SharedSchemaTypeValidators<Schema, Type>);
 
 export type ArraySchemaTypeValidatorsData =
   ArrayAndStringSchemaTypeValidatorsData & {
@@ -257,25 +291,25 @@ export type ArraySchemaTypeValidatorsData =
  *-------------------------------------------------------------*
  */
 
-export type ObjectSchemaType<Type extends object> = {
-  type: MongoSchema<Required<ReplaceTypeField<Type>>>;
-} & SharedSchemaTypeValidators<Type>;
+export type ObjectSchemaType<Type extends object, Schema = Type> = {
+  type: MongoSchema<Required<ReplaceTypeField<Type>>, Schema>;
+} & SharedSchemaTypeValidators<Schema, Type>;
 
 /*-------------------------------------------------------------*/
 
-export type MongoSchema<Schema> = ReplaceTypeField<{
+export type MongoSchema<Schema, OriginalSchema = Schema> = ReplaceTypeField<{
   [key in keyof Schema]-?: Required<Schema>[key] extends string
-    ? StringSchemaType
+    ? StringSchemaType<OriginalSchema>
     : Required<Schema>[key] extends number
-    ? NumberSchemaType
+    ? NumberSchemaType<OriginalSchema>
     : Required<Schema>[key] extends Date
-    ? DateSchemaType
+    ? DateSchemaType<OriginalSchema>
     : Required<Schema>[key] extends boolean
-    ? BooleanSchemaType
+    ? BooleanSchemaType<OriginalSchema>
     : Required<Schema>[key] extends Array<any>
-    ? ArraySchemaType<Required<Schema>[key]>
+    ? ArraySchemaType<Required<Schema>[key], OriginalSchema>
     : Required<Schema>[key] extends object
-    ? ObjectSchemaType<Required<Schema>[key]>
+    ? ObjectSchemaType<Required<Schema>[key], OriginalSchema>
     : never;
 }>;
 
@@ -323,6 +357,11 @@ export type SchemaTypeData<T extends MongoSchemaTypes> = {
 
 export type SchemaTypesConstructorsAssignOrConvertTheRightValueOptions = {
   onlyConvertTypeForNestedSchema?: boolean;
+  schema?: UntypedObject;
+};
+
+export type SchemaTypesConstructorsValidateFieldValueOptions = {
+  schema: UntypedObject;
 };
 
 export type ValidatorValueObj = {

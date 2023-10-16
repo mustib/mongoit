@@ -73,6 +73,7 @@ class MongoDbSchema<T extends MongoDocument> {
       const { hasAssignedValue, value: assignedValue } =
         await SchemaTypeClass.assignOrConvertTheRightValue(value, {
           onlyConvertTypeForNestedSchema: true,
+          schema,
         });
 
       if (hasAssignedValue) converted[key] = assignedValue;
@@ -102,7 +103,9 @@ class MongoDbSchema<T extends MongoDocument> {
 
       await appErrorRoot.tryCatch(async () => {
         const { hasAssignedValue, value } =
-          await SchemaTypeClass.validateFieldValue(schema[schemaNameKey]);
+          await SchemaTypeClass.validateFieldValue(schema[schemaNameKey], {
+            schema,
+          });
 
         if (hasAssignedValue) validated[schemaNameKey] = value;
       });

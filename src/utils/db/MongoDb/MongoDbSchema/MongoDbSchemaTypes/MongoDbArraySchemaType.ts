@@ -63,7 +63,9 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
     }
 
     for (let i = 0; i < schema.length; i++) {
-      const SchemaTypeConstructor = getSchemaTypeConstructor(schema[i]);
+      const SchemaTypeConstructor = getSchemaTypeConstructor(
+        schema[i] as never
+      );
       const fieldName = `${schemaFieldName}["${i}"]`;
       this.nestedSchema[i] = new SchemaTypeConstructor(
         fieldName,
@@ -119,7 +121,10 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
             );
         } else
           validatedFieldValue = await SchemaTypeConstructor.validateFieldValue(
-            nestedSchemaValue
+            nestedSchemaValue,
+            {
+              schema: options?.schema ?? {},
+            }
           );
 
         if (validatedFieldValue.hasAssignedValue || !hasOneSchema) {

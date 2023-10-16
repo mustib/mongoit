@@ -7,6 +7,7 @@ import type {
   MongoSchemaTypes,
   SchemaTypeData,
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
+  SchemaTypesConstructorsValidateFieldValueOptions,
   ValidatorValueObj,
 } from '../types/MongoDBSchema.js';
 
@@ -58,7 +59,10 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
     return valueObj;
   }
 
-  async validateFieldValue(_value: any) {
+  async validateFieldValue(
+    _value: any,
+    { schema }: SchemaTypesConstructorsValidateFieldValueOptions
+  ) {
     await this.initialize;
 
     const { hasDefault } = this._default;
@@ -67,7 +71,9 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
 
     if (shouldAssignDefault) return this.getDefaultValueObj();
 
-    const valueObj = await this.assignOrConvertTheRightValue(_value);
+    const valueObj = await this.assignOrConvertTheRightValue(_value, {
+      schema,
+    });
 
     if (!valueObj.hasAssignedValue && hasDefault) {
       return this.getDefaultValueObj();
@@ -86,7 +92,7 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
       );
     }
 
-    await this.validatorsData.validateValidators(valueObj);
+    await this.validatorsData.validateValidators(valueObj, schema);
 
     return valueObj;
   }
@@ -129,7 +135,7 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
         );
       }
 
-      await this.validatorsData.validateValidators(defaultValueObj);
+      await this.validatorsData.validateValidators(defaultValueObj, {});
 
       this._default.value = isDynamicDefault
         ? defaultValue
