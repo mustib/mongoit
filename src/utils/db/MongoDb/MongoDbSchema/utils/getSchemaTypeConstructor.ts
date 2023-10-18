@@ -6,6 +6,7 @@ import MongoDbStringSchemaType from '../MongoDbSchemaTypes/MongoDbStringSchemaTy
 import MongoDbNumberSchemaType from '../MongoDbSchemaTypes/MongoDbNumberSchemaType.js';
 import MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchemaType.js';
 import MongoDbDateSchemaType from '../MongoDbSchemaTypes/MongoDbDateSchemaType.js';
+import MongoDbFileSchemaType from '../MongoDbSchemaTypes/MongoDbFileSchemaType.js';
 import MongoDbArraySchemaType from '../MongoDbSchemaTypes/MongoDbArraySchemaType.js';
 import MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSchemaType.js';
 import MongoDbIdSchemaType from '../MongoDbSchemaTypes/MongoDbIdSchemaType.js';
@@ -18,6 +19,7 @@ const schemaTypeConstructorsObject = {
   array: MongoDbArraySchemaType,
   object: MongoDbObjectSchemaType,
   id: MongoDbIdSchemaType,
+  image: MongoDbFileSchemaType,
 };
 
 function getSchemaTypeConstructor(

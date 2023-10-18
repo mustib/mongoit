@@ -1,10 +1,12 @@
 import { Document as MongoDocument } from 'mongodb';
 import AppErrorRoot from '../../../AppError/AppErrorRoot.js';
+import TypedEventEmitter from '../../../TypedEventEmitter.js';
 import getSchemaTypeConstructor from './utils/getSchemaTypeConstructor.js';
 
 import type {
   MongoSchema,
   MongoSchemaTypesConstructors,
+  SchemaEvents,
   SchemaValidationType,
 } from './types/MongoDBSchema.js';
 
@@ -84,7 +86,10 @@ class MongoDbSchema<T extends MongoDocument> {
 
   async validate(
     schema: UntypedObject,
-    validationType: SchemaValidationType = 'FULL'
+    validationType: SchemaValidationType = 'FULL',
+    options?: {
+      eventEmitter?: TypedEventEmitter<{ insert: any }>;
+    }
   ) {
     if (validationType === 'OFF') return schema;
 
@@ -96,6 +101,8 @@ class MongoDbSchema<T extends MongoDocument> {
 
     const appErrorRoot = new AppErrorRoot();
 
+    const eventEmitter = new TypedEventEmitter() as SchemaEvents;
+
     for await (const [schemaNameKey, SchemaTypeClass] of schemaEntries) {
       const keyIsNotDefined = !(schemaNameKey in schema);
 
@@ -105,6 +112,7 @@ class MongoDbSchema<T extends MongoDocument> {
         const { hasAssignedValue, value } =
           await SchemaTypeClass.validateFieldValue(schema[schemaNameKey], {
             schema,
+            eventEmitter,
           });
 
         if (hasAssignedValue) validated[schemaNameKey] = value;
@@ -112,6 +120,14 @@ class MongoDbSchema<T extends MongoDocument> {
     }
 
     appErrorRoot.end(this.validate);
+
+    eventEmitter.emit('validate', { validated });
+
+    if (options?.eventEmitter) {
+      options.eventEmitter.once('insert', () => {
+        eventEmitter.emit('insert', { validated });
+      });
+    }
 
     return validated;
   }

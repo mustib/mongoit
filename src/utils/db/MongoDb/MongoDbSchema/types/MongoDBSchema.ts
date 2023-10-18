@@ -12,6 +12,10 @@ import type MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSch
 
 import type MongoDbIdSchemaType from '../MongoDbSchemaTypes/MongoDbIdSchemaType.js';
 
+import type MongoDbFileSchemaType from '../MongoDbSchemaTypes/MongoDbFileSchemaType.js';
+
+import type TypedEventEmitter from '../../../../TypedEventEmitter.js';
+
 /*
  *-------------------------------------------------------------*
  *.............................................................*
@@ -25,8 +29,12 @@ export type ValidatorMetaObject<Schema = UntypedObject> = UntypedObject & {
   schema: Readonly<Schema>;
 };
 
-export type ValueofSchemaValidators = number | boolean | Func;
-export type TypeofSchemaValidators = 'number' | 'boolean' | 'function';
+export type ValueofSchemaValidators = number | boolean | Func | string[];
+export type TypeofSchemaValidators =
+  | 'number'
+  | 'boolean'
+  | 'function'
+  | 'array';
 
 export type ValidatorArrayWithOptionalErrorMessage<
   Schema,
@@ -131,6 +139,26 @@ export type ReplaceTypeField<Obj> = {
 export type ArrayAndStringSchemaTypeValidatorsData = {
   maxLength: SchemaTypeValidatorsData<'number', string | any[], number>;
   minLength: SchemaTypeValidatorsData<'number', string | any[], number>;
+};
+
+export type SchemaEvents = TypedEventEmitter<{
+  [key in 'insert' | 'validate']: { validated: UntypedObject };
+}>;
+
+export type MongoSchemaDocument<Schema> = {
+  [key in keyof Schema]: Required<Schema>[key] extends FileSchemaTypes
+    ? string | FileTypeValidatedFileValue['buffer']
+    : Required<Schema>[key] extends 'id'
+    ? any
+    : Schema[key];
+};
+
+export type ValidatedMongoSchemaDocument<Schema> = {
+  [key in keyof Schema]: Required<Schema>[key] extends FileSchemaTypes
+    ? string
+    : Required<Schema>[key] extends 'id'
+    ? any
+    : Schema[key];
 };
 
 /*---------------------------------------------------------*/
@@ -314,10 +342,146 @@ export type ObjectSchemaType<Type extends object, Schema = Type> = {
   type: MongoSchema<Required<ReplaceTypeField<Type>>, Schema>;
 } & SharedSchemaTypeValidators<Schema, Type>;
 
-/*-------------------------------------------------------------*/
+/*-----------------------------------------------------------*/
+
+/*
+ *-----------------------------------------------------------*
+ *...........................................................*
+ *...............File SCHEMA TYPES DEFINITIONS...............*
+ *...........................................................*
+ *-----------------------------------------------------------*
+ */
+
+type FileSchemaData = {
+  image: {
+    extensions:
+      | 'apng'
+      | 'arw'
+      | 'avif'
+      | 'bmp'
+      | 'bpg'
+      | 'cr2'
+      | 'cr3'
+      | 'cur'
+      | 'dcm'
+      | 'dng'
+      | 'flif'
+      | 'gif'
+      | 'heic'
+      | 'icns'
+      | 'ico'
+      | 'j2c'
+      | 'jls'
+      | 'jp2'
+      | 'jpg'
+      | 'jpm'
+      | 'jpx'
+      | 'jxl'
+      | 'jxr'
+      | 'mj2'
+      | 'nef'
+      | 'orf'
+      | 'png'
+      | 'raf'
+      | 'rw2'
+      | 'tif'
+      | 'webp';
+  };
+};
+
+export type FileSchemaTypes = keyof FileSchemaData;
+
+export type FileTypeValidatedFileValue = {
+  buffer: Uint8Array | ArrayBuffer;
+  ext: string;
+  mime: string;
+};
+
+export type FileSchemaType<
+  Type extends FileSchemaTypes,
+  Schema = UntypedObject
+> = {
+  type: Type;
+
+  fileName?: string | (() => string);
+
+  /**
+   * maximum file size in bytes
+   */
+  maxSize?:
+    | number
+    | ValidatorArrayWithOptionalErrorMessage<
+        Schema,
+        FileTypeValidatedFileValue,
+        number
+      >
+    | ValidatorObjectWithOptionalErrorMessage<
+        Schema,
+        FileTypeValidatedFileValue,
+        number
+      >;
+
+  saveSignal?: {
+    afterValidate?(
+      data: Readonly<
+        {
+          validated: ValidatedMongoSchemaDocument<Schema>;
+          fileName: string;
+        } & FileTypeValidatedFileValue
+      >
+    ): void;
+    afterInsert?(
+      data: Readonly<
+        {
+          validated: ValidatedMongoSchemaDocument<Schema>;
+          fileName: string;
+        } & FileTypeValidatedFileValue
+      >
+    ): void;
+  };
+
+  default?:
+    | RecursivePartial<string | ArrayBuffer | Uint8Array>
+    | (() =>
+        | RecursivePartial<string | ArrayBuffer | Uint8Array>
+        | Promise<RecursivePartial<string | ArrayBuffer | Uint8Array>>);
+
+  extensions?:
+    | ValidatorArrayWithOptionalErrorMessage<
+        Schema,
+        FileTypeValidatedFileValue,
+        FileSchemaData[Type]['extensions'][]
+      >
+    | ValidatorObjectWithOptionalErrorMessage<
+        Schema,
+        FileTypeValidatedFileValue,
+        FileSchemaData[Type]['extensions'][]
+      >;
+} & Omit<
+  SharedSchemaTypeValidators<Schema, FileTypeValidatedFileValue>,
+  'default'
+>;
+
+export type FileSchemaTypeValidatorsData = {
+  extensions: SchemaTypeValidatorsData<
+    'array',
+    FileTypeValidatedFileValue,
+    string[]
+  >;
+
+  maxSize: SchemaTypeValidatorsData<
+    'number',
+    FileTypeValidatedFileValue,
+    number
+  >;
+};
+
+/*----------------------------------------------------------*/
 
 export type MongoSchema<Schema, OriginalSchema = Schema> = ReplaceTypeField<{
-  [key in keyof Schema]-?: Required<Schema>[key] extends 'id'
+  [key in keyof Schema]-?: Required<Schema>[key] extends FileSchemaTypes
+    ? FileSchemaType<Required<Schema>[key], OriginalSchema>
+    : Required<Schema>[key] extends 'id'
     ? IdSchemaType
     : Required<Schema>[key] extends string
     ? StringSchemaType<OriginalSchema>
@@ -343,7 +507,8 @@ export type MongoSchemaTypesConstructors =
   | MongoDbDateSchemaType
   | MongoDbArraySchemaType
   | MongoDbObjectSchemaType
-  | MongoDbIdSchemaType;
+  | MongoDbIdSchemaType
+  | MongoDbFileSchemaType;
 
 export type MongoSchemaTypes =
   | 'string'
@@ -352,18 +517,23 @@ export type MongoSchemaTypes =
   | 'bool'
   | 'array'
   | 'object'
-  | 'id';
+  | 'id'
+  | FileSchemaTypes;
 
 export type SchemaTypeData<T extends MongoSchemaTypes> = {
   schemaFieldName: string;
-  validatorsData: T extends 'string'
+  validatorsData: T extends FileSchemaTypes
+    ? FileSchemaTypeValidatorsData
+    : T extends 'string'
     ? StringSchemaTypeValidatorsData
     : T extends 'number'
     ? NumberSchemaTypeValidatorsData
     : T extends 'array'
     ? ArraySchemaTypeValidatorsData
     : Record<string, never>;
-  schemaValue: T extends 'id'
+  schemaValue: T extends FileSchemaTypes
+    ? FileSchemaType<T>
+    : T extends 'id'
     ? IdSchemaType
     : T extends 'string'
     ? StringSchemaType
@@ -383,10 +553,12 @@ export type SchemaTypeData<T extends MongoSchemaTypes> = {
 export type SchemaTypesConstructorsAssignOrConvertTheRightValueOptions = {
   onlyConvertTypeForNestedSchema?: boolean;
   schema?: UntypedObject;
+  eventEmitter?: SchemaEvents;
 };
 
 export type SchemaTypesConstructorsValidateFieldValueOptions = {
   schema: UntypedObject;
+  eventEmitter?: SchemaEvents;
 };
 
 export type ValidatorValueObj = {

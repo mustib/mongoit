@@ -20,6 +20,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-useragent": "^1.0.15",
+    "file-type": "^18.5.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "5.3",
     "nodemailer": "^6.9.5",

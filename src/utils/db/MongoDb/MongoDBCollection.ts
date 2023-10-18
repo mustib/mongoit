@@ -116,7 +116,10 @@ class MongoDBCollection<Document extends MongoDocument> {
           ? await this.schema?.convertValuesToSchemaTypes(
               _useFieldsFromSchema as any
             )
-          : await this.schema?.validate(_useFieldsFromSchema as any, ...args)
+          : await this.schema?.validate(
+              _useFieldsFromSchema as any,
+              ...(args as never[])
+            )
       );
     }
 

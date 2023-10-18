@@ -1,3 +1,5 @@
+import TypedEventEmitter from '../../../../TypedEventEmitter.js';
+
 import type {
   Filter,
   InsertManyResult,
@@ -30,6 +32,8 @@ abstract class AbstractMongoDbInsert<
   Document extends MongoDocument,
   Type extends InsertType
 > {
+  protected eventEmitter = new TypedEventEmitter<{ insert: any }>();
+
   protected abstract collection: MongoDBCollection<Document>;
 
   protected abstract insertDocuments: InsertDocumentsType<Type, Document>;

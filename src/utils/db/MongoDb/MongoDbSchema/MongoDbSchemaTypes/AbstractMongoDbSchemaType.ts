@@ -61,7 +61,7 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
 
   async validateFieldValue(
     _value: any,
-    { schema }: SchemaTypesConstructorsValidateFieldValueOptions
+    options: SchemaTypesConstructorsValidateFieldValueOptions
   ) {
     await this.initialize;
 
@@ -71,9 +71,7 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
 
     if (shouldAssignDefault) return this.getDefaultValueObj();
 
-    const valueObj = await this.assignOrConvertTheRightValue(_value, {
-      schema,
-    });
+    const valueObj = await this.assignOrConvertTheRightValue(_value, options);
 
     if (!valueObj.hasAssignedValue && hasDefault) {
       return this.getDefaultValueObj();
@@ -92,7 +90,7 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
       );
     }
 
-    await this.validatorsData.validateValidators(valueObj, schema);
+    await this.validatorsData.validateValidators(valueObj, options.schema);
 
     return valueObj;
   }
@@ -101,7 +99,7 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
    * MUST BE CALLED AT THE END OF EACH CLASS' CONSTRUCTOR.
    * didn't call it in this class' constructor because some properties will be undefined by that time.
    */
-  async init<T extends Type>(type: T, schemaData: SchemaTypeData<T>) {
+  async init(type: Type, schemaData: SchemaTypeData<Type>) {
     this.type = type;
     this.schemaFieldName = schemaData.schemaFieldName;
     this.validatorsData = new MongoDBSchemaValidators(schemaData);

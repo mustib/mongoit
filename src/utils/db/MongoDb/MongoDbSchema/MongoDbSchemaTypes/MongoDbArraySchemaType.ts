@@ -123,6 +123,7 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
           validatedFieldValue = await SchemaTypeConstructor.validateFieldValue(
             nestedSchemaValue,
             {
+              eventEmitter: options?.eventEmitter,
               schema: options?.schema ?? {},
             }
           );

@@ -1,4 +1,6 @@
 function getTypeof(value: any) {
+  if (value instanceof Uint8Array) return 'buffer';
+
   const type = typeof value;
 
   if (
@@ -22,6 +24,9 @@ function getTypeof(value: any) {
       if (value.toString() === 'Invalid Date') return 'invalid_date';
       return 'date';
     }
+    if (value instanceof Uint8Array || value instanceof ArrayBuffer)
+      return 'buffer';
+
     return 'object';
   }
 

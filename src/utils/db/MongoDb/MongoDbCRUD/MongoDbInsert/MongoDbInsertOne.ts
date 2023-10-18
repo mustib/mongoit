@@ -36,7 +36,10 @@ class MongoDbInsertOne<
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const validatedDocument = await this.collection.schema!.validate(
       this.insertDocuments,
-      schemaValidationType
+      schemaValidationType,
+      {
+        eventEmitter: this.eventEmitter,
+      }
     );
 
     const interceptionFunction = this.options?.interceptBeforeInserting;
@@ -64,6 +67,8 @@ class MongoDbInsertOne<
       insertDocument,
       this.options?.nativeMongoInsertOptions
     );
+
+    this.eventEmitter.emit('insert');
 
     if (options?.returnInserted !== false) {
       const insertedDocument = this.collection

@@ -44,7 +44,10 @@ class MongoDbInsert<
     for await (const document of this.insertDocuments) {
       let validatedDocument = await this.collection.schema?.validate(
         document,
-        schemaValidationType
+        schemaValidationType,
+        {
+          eventEmitter: this.eventEmitter,
+        }
       );
 
       const interceptionFunction = this.options?.interceptBeforeInserting;
@@ -76,6 +79,8 @@ class MongoDbInsert<
       insertDocument,
       this.options?.nativeMongoInsertOptions
     );
+
+    this.eventEmitter.emit('insert');
 
     if (options?.returnInserted === true) {
       const insertedDocument = await this.collection

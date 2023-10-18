@@ -87,7 +87,7 @@ class MongoDBSchemaValidators {
       ValueofSchemaValidators
     >
   ) {
-    let value;
+    let value: any;
     let message;
 
     if (typeof validatorValue !== 'object') value = validatorValue;
@@ -111,7 +111,7 @@ class MongoDBSchemaValidators {
             ValidatorObjectWithOptionalErrorMessage<any, any, any>
           >['message'],
       type,
-      value,
+      value: value as ValueofSchemaValidators,
     };
   }
 
