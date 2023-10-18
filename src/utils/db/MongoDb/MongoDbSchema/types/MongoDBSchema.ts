@@ -10,6 +10,8 @@ import type MongoDbArraySchemaType from '../MongoDbSchemaTypes/MongoDbArraySchem
 
 import type MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSchemaType.js';
 
+import type MongoDbIdSchemaType from '../MongoDbSchemaTypes/MongoDbIdSchemaType.js';
+
 /*
  *-------------------------------------------------------------*
  *.............................................................*
@@ -130,6 +132,23 @@ export type ArrayAndStringSchemaTypeValidatorsData = {
   maxLength: SchemaTypeValidatorsData<'number', string | any[], number>;
   minLength: SchemaTypeValidatorsData<'number', string | any[], number>;
 };
+
+/*---------------------------------------------------------*/
+
+/*
+ *---------------------------------------------------------*
+ *.........................................................*
+ *...............ID SCHEMA TYPES DEFINITIONS...............*
+ *.........................................................*
+ *---------------------------------------------------------*
+ */
+
+export type IdSchemaType<WithShorthandType extends boolean = true> =
+  | (WithShorthandType extends true ? 'id' : never)
+  | {
+      type: 'id';
+      default?(): any;
+    };
 
 /*-------------------------------------------------------------*/
 
@@ -298,7 +317,9 @@ export type ObjectSchemaType<Type extends object, Schema = Type> = {
 /*-------------------------------------------------------------*/
 
 export type MongoSchema<Schema, OriginalSchema = Schema> = ReplaceTypeField<{
-  [key in keyof Schema]-?: Required<Schema>[key] extends string
+  [key in keyof Schema]-?: Required<Schema>[key] extends 'id'
+    ? IdSchemaType
+    : Required<Schema>[key] extends string
     ? StringSchemaType<OriginalSchema>
     : Required<Schema>[key] extends number
     ? NumberSchemaType<OriginalSchema>
@@ -321,7 +342,8 @@ export type MongoSchemaTypesConstructors =
   | MongoDbBooleanSchemaType
   | MongoDbDateSchemaType
   | MongoDbArraySchemaType
-  | MongoDbObjectSchemaType;
+  | MongoDbObjectSchemaType
+  | MongoDbIdSchemaType;
 
 export type MongoSchemaTypes =
   | 'string'
@@ -329,7 +351,8 @@ export type MongoSchemaTypes =
   | 'date'
   | 'bool'
   | 'array'
-  | 'object';
+  | 'object'
+  | 'id';
 
 export type SchemaTypeData<T extends MongoSchemaTypes> = {
   schemaFieldName: string;
@@ -340,7 +363,9 @@ export type SchemaTypeData<T extends MongoSchemaTypes> = {
     : T extends 'array'
     ? ArraySchemaTypeValidatorsData
     : Record<string, never>;
-  schemaValue: T extends 'string'
+  schemaValue: T extends 'id'
+    ? IdSchemaType
+    : T extends 'string'
     ? StringSchemaType
     : T extends 'number'
     ? NumberSchemaType

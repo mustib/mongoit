@@ -8,6 +8,7 @@ import MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchema
 import MongoDbDateSchemaType from '../MongoDbSchemaTypes/MongoDbDateSchemaType.js';
 import MongoDbArraySchemaType from '../MongoDbSchemaTypes/MongoDbArraySchemaType.js';
 import MongoDbObjectSchemaType from '../MongoDbSchemaTypes/MongoDbObjectSchemaType.js';
+import MongoDbIdSchemaType from '../MongoDbSchemaTypes/MongoDbIdSchemaType.js';
 
 const schemaTypeConstructorsObject = {
   string: MongoDbStringSchemaType,
@@ -16,6 +17,7 @@ const schemaTypeConstructorsObject = {
   date: MongoDbDateSchemaType,
   array: MongoDbArraySchemaType,
   object: MongoDbObjectSchemaType,
+  id: MongoDbIdSchemaType,
 };
 
 function getSchemaTypeConstructor(
