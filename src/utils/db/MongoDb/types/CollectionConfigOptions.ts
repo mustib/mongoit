@@ -8,7 +8,10 @@ import type {
   UpdateOptions,
 } from 'mongodb';
 
-import type { SchemaValidationType } from '../MongoDbSchema/types/MongoDBSchema.js';
+import type {
+  SchemaValidationType,
+  ValidatedMongoSchemaDocument,
+} from '../MongoDbSchema/types/MongoDBSchema.js';
 
 export type CollectionConfigOptions<Schema extends MongoDocument> = {
   /**
@@ -28,7 +31,11 @@ type InsertSharedOptions<Document extends MongoDocument> = {
    * @param doc the document that will be inserted
    * @returns the document to be inserted
    */
-  interceptBeforeInserting?(doc: Document): Document | Promise<Document>;
+  interceptBeforeInserting?(
+    doc: ValidatedMongoSchemaDocument<Document>
+  ):
+    | ValidatedMongoSchemaDocument<Document>
+    | Promise<ValidatedMongoSchemaDocument<Document>>;
 
   /**
    * @default "FULL"
@@ -50,7 +57,9 @@ type FindSharedOptions<Document extends MongoDocument = MongoDocument> = {
    * @param doc find document
    * @returns find result
    */
-  interceptAfterFinding?(doc: Document & { _id: string }): Document | object;
+  interceptAfterFinding?(
+    doc: ValidatedMongoSchemaDocument<Document> & { _id: string }
+  ): ValidatedMongoSchemaDocument<Document> | object;
 };
 
 /**

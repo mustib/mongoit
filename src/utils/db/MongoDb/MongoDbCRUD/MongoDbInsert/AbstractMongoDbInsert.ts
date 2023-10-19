@@ -16,6 +16,10 @@ import type {
 
 import type MongoDBCollection from '../../MongoDBCollection.js';
 import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions.js';
+import type {
+  MongoSchemaDocument,
+  ValidatedMongoSchemaDocument,
+} from '../../MongoDbSchema/types/MongoDBSchema.js';
 
 type InsertType = 'insertOne' | 'insertMany';
 
@@ -36,7 +40,10 @@ abstract class AbstractMongoDbInsert<
 
   protected abstract collection: MongoDBCollection<Document>;
 
-  protected abstract insertDocuments: InsertDocumentsType<Type, Document>;
+  protected abstract insertDocuments: InsertDocumentsType<
+    Type,
+    MongoSchemaDocument<Document>
+  >;
 
   protected abstract options: Type extends 'insertMany'
     ? CollectionCrudOptions<Document>['insertOptions']
@@ -60,7 +67,7 @@ abstract class AbstractMongoDbInsert<
 
     const hasSchema = this.collection.schema !== null;
 
-    if (!hasInterception && !hasSchema) return this.insertDocuments;
+    if (!hasInterception && !hasSchema) return this.insertDocuments as never;
 
     if (hasInterception && !hasSchema) {
       return this.interceptInsertion();
@@ -81,9 +88,9 @@ abstract class AbstractMongoDbInsert<
     options?: Options
   ): Promise<
     Type extends 'insertMany'
-      ? InsertManyExecReturn<Options, Document>
+      ? InsertManyExecReturn<Options, ValidatedMongoSchemaDocument<Document>>
       : Type extends 'insertOne'
-      ? InsertOneExecReturn<Options, Document>
+      ? InsertOneExecReturn<Options, ValidatedMongoSchemaDocument<Document>>
       : never
   >;
 }

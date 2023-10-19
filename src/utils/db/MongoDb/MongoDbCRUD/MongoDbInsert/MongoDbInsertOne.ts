@@ -10,13 +10,19 @@ import type {
 import type MongoDBCollection from '../../MongoDBCollection.js';
 import type { CollectionCrudOptions } from '../../types/CollectionConfigOptions.js';
 import type { ExecOptions, InsertOneExecReturn } from './MongoInsertTypes.js';
+import type {
+  MongoSchemaDocument,
+  ValidatedMongoSchemaDocument,
+} from '../../MongoDbSchema/types/MongoDBSchema.js';
 
 class MongoDbInsertOne<
   Document extends MongoDocument
 > extends AbstractMongoDbInsert<Document, 'insertOne'> {
   constructor(
     protected collection: MongoDBCollection<Document>,
-    protected insertDocuments: OptionalUnlessRequiredId<Document>,
+    protected insertDocuments: OptionalUnlessRequiredId<
+      MongoSchemaDocument<Document>
+    >,
     protected options: CollectionCrudOptions<Document>['insertOneOptions']
   ) {
     super();
@@ -59,7 +65,9 @@ class MongoDbInsertOne<
 
   async exec<Options extends ExecOptions>(
     options?: Options
-  ): Promise<InsertOneExecReturn<Options, Document>> {
+  ): Promise<
+    InsertOneExecReturn<Options, ValidatedMongoSchemaDocument<Document>>
+  > {
     const collection = await this.collection.collection;
     const insertDocument = await this.getInsertDocuments();
 

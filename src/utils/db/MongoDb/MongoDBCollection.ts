@@ -14,7 +14,10 @@ import type {
 } from 'mongodb';
 
 import type { CollectionCrudOptions } from './types/CollectionConfigOptions.js';
-import type { MongoSchema } from './MongoDbSchema/types/MongoDBSchema.js';
+import type {
+  MongoSchema,
+  MongoSchemaDocument,
+} from './MongoDbSchema/types/MongoDBSchema.js';
 import type { UpdateFilterDocument } from './types/UpdateFilterDocument.js';
 import type { FilterDocumentWithId } from './types/FilterDocumentWithId.js';
 
@@ -164,18 +167,22 @@ class MongoDBCollection<Document extends MongoDocument> {
   }
 
   insert<Doc extends MongoDocument = Document>(
-    docs: OptionalUnlessRequiredId<Doc>[],
+    docs: OptionalUnlessRequiredId<MongoSchemaDocument<Doc>>[],
     options?: CollectionCrudOptions<Doc>['insertOptions']
   ) {
     const _options = this.getConfigOption('insertOptions', options);
 
-    const mongoDbInsert = new MongoDbInsert(this as never, docs, _options);
+    const mongoDbInsert = new MongoDbInsert<Doc>(
+      this as never,
+      docs,
+      _options as never
+    );
 
     return mongoDbInsert;
   }
 
   insertOne<Doc extends MongoDocument = Document>(
-    document: OptionalUnlessRequiredId<Doc>,
+    document: OptionalUnlessRequiredId<MongoSchemaDocument<Doc>>,
     options?: CollectionCrudOptions<Doc>['insertOneOptions']
   ) {
     const _options = this.getConfigOption('insertOneOptions', options);
