@@ -8,6 +8,8 @@ import { envVars } from '../../config/index.js';
 
 import { MongoDb } from '../../utils/index.js';
 
+import type { ValidatedMongoSchemaDocument } from '../../utils/db/MongoDb/MongoDbSchema/types/MongoDBSchema.js';
+
 const mongoDb = MongoDb.getMongoDb('main');
 
 const productCollection = mongoDb.getCollection<ProductSchema>('products');
@@ -28,6 +30,15 @@ export type ProductSearchQuery = {
   resPerPage: number; // resultsPerPage
   sort: string;
 };
+
+productCollection.setCrudOptions({
+  findOptions: {
+    interceptAfterFinding,
+  },
+  findOneOptions: {
+    interceptAfterFinding,
+  },
+});
 
 productCollection.createSchema({
   _id: 'id',
@@ -111,6 +122,16 @@ productCollection.createSchema({
     default: 0,
   },
 });
+
+function interceptAfterFinding(
+  doc: ValidatedMongoSchemaDocument<ProductSchema>
+) {
+  if (doc.image !== undefined)
+    doc.image = `${envVars.HOST_URL}:${envVars.PORT}/static/products/${doc._id}/${doc.image}`;
+  else doc.image = '#';
+
+  return doc;
+}
 
 const productModel = productCollection;
 
