@@ -1,1 +1,1 @@
-export type AppErrorTypes = 'Type' | 'Validation';
+export type AppErrorTypes = 'Type' | 'Validation' | 'File';

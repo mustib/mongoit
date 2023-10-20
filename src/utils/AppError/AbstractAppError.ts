@@ -1,14 +1,16 @@
 abstract class AbstractAppError extends Error {
   abstract length: number;
 
-  abstract push(...args: any[]): void;
+  abstract push(...args: any[]): this;
+
+  get message() {
+    return this.toString();
+  }
 
   abstract toString(indentation?: number): string;
 
   throw(stackTraceConstructor?: Func) {
     Error.captureStackTrace(this, stackTraceConstructor ?? this.throw);
-
-    this.message = this.toString();
 
     throw this;
   }

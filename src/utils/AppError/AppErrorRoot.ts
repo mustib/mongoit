@@ -45,12 +45,13 @@ class AppErrorRoot extends AbstractAppError {
   push(type: AppErrorTypes, error: string | string[]) {
     if (type in this.errors) {
       this.errors[type].push(error);
-      return;
+      return this;
     }
     const appError = new AppError(type);
     appError.push(error);
     this.errors[type] = appError;
     this.length++;
+    return this;
   }
 
   protected pushRoot(appErrorRoot: AppErrorRoot) {

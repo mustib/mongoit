@@ -38,6 +38,7 @@ class AppError extends AbstractAppError {
   push(error: string | string[]) {
     if (typeof error === 'string') this.errors.push(error);
     if (Array.isArray(error)) this.errors.push(...error);
+    return this;
   }
 }
 
