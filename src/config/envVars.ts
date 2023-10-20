@@ -19,7 +19,8 @@ type DotEnvVars =
   | 'EMAIL_VERIFICATION_SECRET'
   | 'HOST_URL'
   | 'EMAIL_VERIFICATION_EXPIRE'
-  | 'EMAIL_VERIFICATION_PATH';
+  | 'EMAIL_VERIFICATION_PATH'
+  | 'PRODUCTS_STATIC_PATH';
 
 type EnvVars = {
   PORT: number;
@@ -36,6 +37,7 @@ type EnvVars = {
   HOST_URL: string;
   EMAIL_VERIFICATION_EXPIRE: string;
   EMAIL_VERIFICATION_PATH: string;
+  PRODUCTS_STATIC_PATH: 'path';
 };
 
 type EnvVarMapValue<T> = DotEnvVars | (() => T);
@@ -45,7 +47,9 @@ type EnvVarsMap = {
     whenNodeEnvIs: {
       [Env in EnvVars['NODE_ENV'] | 'anyEnv']?: EnvVarMapValue<EnvVars[Var]>;
     };
-    type?: EnvVars[Var] extends string
+    type?: EnvVars[Var] extends 'path'
+      ? 'path'
+      : EnvVars[Var] extends string
       ? 'string'
       : EnvVars[Var] extends number
       ? 'number'
@@ -55,9 +59,10 @@ type EnvVarsMap = {
   };
 };
 
+const dotEnvPath = path.join(__dirname, '..', '..');
+
 const dotEnvVars = <Record<DotEnvVars, string>>(() => {
-  const dotEnvPath = path.join(__dirname, '..', '..', '.env');
-  const _dotEnvVars = dotEnv.parse(readFileSync(dotEnvPath));
+  const _dotEnvVars = dotEnv.parse(readFileSync(path.join(dotEnvPath, '.env')));
 
   return new Proxy(_dotEnvVars, {
     get(target, prop) {
@@ -150,6 +155,10 @@ const envVarsMap: EnvVarsMap = {
   EMAIL_VERIFICATION_PATH: {
     whenNodeEnvIs: { anyEnv: 'EMAIL_VERIFICATION_PATH' },
   },
+  PRODUCTS_STATIC_PATH: {
+    whenNodeEnvIs: { anyEnv: 'PRODUCTS_STATIC_PATH' },
+    type: 'path',
+  },
 };
 
 function getEnvVars() {
@@ -187,7 +196,8 @@ function getEnvVars() {
                 );
               break;
             case 'number':
-              currentEnvVarValue = +currentEnvVarValue;
+              // eslint-disable-next-line no-eval
+              currentEnvVarValue = eval(`Number(${currentEnvVarValue})`);
               if (Number.isNaN(currentEnvVarValue))
                 throw new Error(`${envVarName} in envVars assigned NAN value`);
               break;
@@ -204,6 +214,12 @@ function getEnvVars() {
                     `${currentEnvVarValue} is not a valid boolean value for ${envVarName} in envVars`
                   );
               }
+              break;
+            case 'path':
+              currentEnvVarValue = path.join(
+                dotEnvPath,
+                ...currentEnvVarValue.split('/')
+              );
               break;
             default:
               throw new Error(`${type} type in envVars is not supported`);
@@ -224,7 +240,9 @@ function getEnvVars() {
     throw Error(`Errors while creating env vars\n${errorsMessages}`);
   }
 
-  return envVars as EnvVars;
+  return envVars as {
+    [key in keyof EnvVars]: EnvVars[key] extends string ? string : EnvVars[key];
+  };
 }
 
 const envVars = getEnvVars();

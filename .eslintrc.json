@@ -41,6 +41,7 @@
     "import/no-unresolved": "off",
     "no-await-in-loop": "off",
     "no-continue": "off",
+    "no-param-reassign": "off",
     "no-plusplus": "off",
     "no-restricted-syntax": "off",
     "class-methods-use-this": "off",

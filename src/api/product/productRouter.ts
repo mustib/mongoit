@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import multer from 'multer';
+
 import {
   addProduct,
   getProducts,
@@ -9,7 +11,7 @@ import {
 
 const router = Router();
 
-router.route('/').post(addProduct).get(getProducts);
+router.route('/').post(multer().single('image'), addProduct).get(getProducts);
 
 router
   .route('/:id')

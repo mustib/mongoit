@@ -1,3 +1,5 @@
+import { MongoSchemaDocument } from '../../../utils/db/MongoDb/MongoDbSchema/types/MongoDBSchema.js';
+
 import {
   ApiSuccessResponse,
   catchAsyncRouteHandler,
@@ -5,21 +7,23 @@ import {
 
 import productModel, { type ProductSchema } from '../productModel.js';
 
-const addProduct = catchAsyncRouteHandler<ProductSchema>(async (req, res) => {
-  const productObj = req.sanitizeMongo.body.get([
-    'name',
-    'price',
-    'description',
-    'image',
-    'stockQuantity',
-  ]);
+const addProduct = catchAsyncRouteHandler<MongoSchemaDocument<ProductSchema>>(
+  async (req, res) => {
+    const productObj = {
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description,
+      stockQuantity: req.body.stockQuantity,
+      image: req.file?.buffer,
+    };
 
-  const product = await productModel.insertOne(productObj).exec();
+    const product = await productModel.insertOne(productObj).exec();
 
-  new ApiSuccessResponse(res)
-    .setMessage('Product has been added successfully')
-    .setData(product)
-    .send();
-});
+    new ApiSuccessResponse(res)
+      .setMessage('Product has been added successfully')
+      .setData(product)
+      .send();
+  }
+);
 
 export default addProduct;
