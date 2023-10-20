@@ -3,7 +3,8 @@ import { Request, Response, NextFunction } from 'express';
 function catchAsyncRouteHandler<ReqBody = any, ReqQuery = any>(
   routeHandler: (
     req: Request<any, any, ReqBody, ReqQuery>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => Promise<void>
 ) {
   const wrapper = async (
@@ -12,7 +13,7 @@ function catchAsyncRouteHandler<ReqBody = any, ReqQuery = any>(
     next: NextFunction
   ) => {
     try {
-      await routeHandler(req, res);
+      await routeHandler(req, res, next);
     } catch (err) {
       next(err);
     }

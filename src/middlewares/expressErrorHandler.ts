@@ -12,6 +12,7 @@ const expressErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     method: req.method,
     ip: req.ip,
     query: req.query,
+    cause: err.cause,
   };
 
   if (err instanceof AbstractAppError) {
@@ -20,7 +21,11 @@ const expressErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     return;
   }
 
-  res.send(err.message);
+  res.status(500).json({
+    status: 'error',
+    message: 'something went wrong',
+  });
+
   logger.log('httpError', errorData);
 };
 
