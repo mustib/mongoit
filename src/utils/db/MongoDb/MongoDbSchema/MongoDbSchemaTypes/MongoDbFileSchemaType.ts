@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { randomUUID } from 'crypto';
 import { fileTypeFromBuffer } from 'file-type';
-import getTypeof from '../../../../getTypeof.js';
+import { getTypeof } from '@mustib/utils';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {
@@ -29,11 +29,10 @@ const validatorsData: FileSchemaTypeValidatorsData = {
     type: 'array',
 
     defaultErrorMessage(value, validatorValue, { fieldName }) {
-      return `unsupported extension "${
-        value.ext
-      }" for ${fieldName} field only supported extensions are (${validatorValue.join(
-        ', '
-      )})`;
+      return `unsupported extension "${value.ext
+        }" for ${fieldName} field only supported extensions are (${validatorValue.join(
+          ', '
+        )})`;
     },
 
     validator(value, validatorValue) {
@@ -64,8 +63,8 @@ class MongoDbFileSchemaType extends AbstractMongoDbSchemaType<FileSchemaTypes> {
     return typeof this._fileName === 'string'
       ? this._fileName
       : typeof this._fileName === 'function'
-      ? this._fileName()
-      : `${Date.now().toString(36)}${randomUUID()
+        ? this._fileName()
+        : `${Date.now().toString(36)}${randomUUID()
           .replaceAll('-', '')
           .toString()}.jpg`;
   }
@@ -83,7 +82,8 @@ class MongoDbFileSchemaType extends AbstractMongoDbSchemaType<FileSchemaTypes> {
 
   async assignOrConvertTheRightValue(_value: any) {
     let value;
-    let valueType = getTypeof(_value);
+    const _valueType = getTypeof(_value);
+    let valueType: string = _valueType;
     let hasAssignedValue = false;
 
     const checkValue = async (buffer: ArrayBuffer | Uint8Array) => {
@@ -95,7 +95,7 @@ class MongoDbFileSchemaType extends AbstractMongoDbSchemaType<FileSchemaTypes> {
       }
     };
 
-    switch (valueType as ReturnType<typeof getTypeof>) {
+    switch (_valueType) {
       case 'buffer':
         await checkValue(_value);
         break;

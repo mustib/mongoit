@@ -1,45 +1,23 @@
 {
-  "name": "home-furniture-server",
-  "version": "1.0.0",
+  "name": "",
+  "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "",
   "type": "module",
   "scripts": {
-    "start": "nodemon --exec tsx ./src/server.ts",
-    "start:dev": "nodemon --exec ts-node-esm ./src/server.ts",
-    "start:prod": "npm run build & node ./dist/server.js",
     "lint": "eslint . --ext .js,.ts",
-    "build": "rimraf ./build & tsc"
+    "build": "rimraf ./dist & tsc"
   },
   "keywords": [],
   "author": "Muhammad Mustafa",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "cookie-parser": "^1.4.6",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "express-useragent": "^1.0.15",
+    "@mustib/utils": "^0.0.1",
     "file-type": "^18.5.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongodb": "5.3",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.5",
-    "picocolors": "^1.0.0",
-    "sharp": "^0.32.6",
-    "winston": "^3.10.0",
-    "winston-daily-rotate-file": "^4.7.1",
-    "winston-transport": "^4.5.0"
+    "mongodb": "5.3"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
-    "@types/cookie-parser": "^1.4.4",
-    "@types/express": "^4.17.17",
-    "@types/express-useragent": "^1.0.2",
-    "@types/jsonwebtoken": "^9.0.3",
-    "@types/multer": "^1.4.9",
     "@types/node": "^18.15.3",
-    "@types/nodemailer": "^6.4.11",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.55.0",
     "eslint": "^8.2.0",
@@ -52,9 +30,6 @@
     "nodemon": "^2.0.21",
     "prettier": "2.8.4",
     "rimraf": "^4.4.0",
-    "ts-node": "^10.9.1",
-    "tslib": "^2.5.0",
-    "tsx": "^3.13.0",
     "typescript": "^5.0.2"
   }
 }

@@ -1,6 +1,0 @@
-creating a trusted self signed ssl for localhost
-
-1: sudo apt install mkcert
-2: sudo apt install libnss3-tools
-3: mkcert -key-file key.pem -cert-file cert.pem localhost
-4: mkcert -install

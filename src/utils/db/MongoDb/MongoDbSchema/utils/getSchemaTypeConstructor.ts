@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { Document as MongoDocument } from 'mongodb';
+import { getTypeof } from '@mustib/utils';
 import { MongoSchema, MongoSchemaTypes } from '../types/MongoDBSchema.js';
-import getTypeof from '../../../../getTypeof.js';
 import MongoDbStringSchemaType from '../MongoDbSchemaTypes/MongoDbStringSchemaType.js';
 import MongoDbNumberSchemaType from '../MongoDbSchemaTypes/MongoDbNumberSchemaType.js';
 import MongoDbBooleanSchemaType from '../MongoDbSchemaTypes/MongoDbBooleanSchemaType.js';
@@ -29,10 +29,10 @@ function getSchemaTypeConstructor(
     typeof schemaKeyValue === 'string'
       ? schemaKeyValue
       : typeof schemaKeyValue.type === 'string'
-      ? schemaKeyValue.type
-      : Array.isArray(schemaKeyValue) || Array.isArray(schemaKeyValue.type)
-      ? 'array'
-      : getTypeof(schemaKeyValue.type);
+        ? schemaKeyValue.type
+        : Array.isArray(schemaKeyValue) || Array.isArray(schemaKeyValue.type)
+          ? 'array'
+          : getTypeof(schemaKeyValue.type);
 
   if (!(type in schemaTypeConstructorsObject)) {
     throw new Error(`Schema type error, "${type}" is not a valid type`);

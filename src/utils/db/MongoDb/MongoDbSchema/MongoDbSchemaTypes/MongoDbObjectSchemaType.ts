@@ -1,6 +1,8 @@
-import getTypeof from '../../../../getTypeof.js';
-import getValidJson from '../../../../getValidJson.js';
-import AppErrorRoot from '../../../../AppError/AppErrorRoot.js';
+import {
+  getTypeof,
+  parseJson,
+  AppErrorRoot
+} from '@mustib/utils';
 import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor.js';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
@@ -53,8 +55,8 @@ class MongoDbObjectSchemaType extends AbstractMongoDbSchemaType<'object'> {
     switch (getTypeof(_value)) {
       case 'string':
         {
-          const v = getValidJson(_value);
-          if (v !== 'invalid') value = v;
+          const v = parseJson<UntypedObject>(_value);
+          if (v !== undefined) value = v;
           else value = {};
         }
         break;

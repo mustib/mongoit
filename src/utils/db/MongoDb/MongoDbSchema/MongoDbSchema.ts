@@ -1,6 +1,9 @@
 import { Document as MongoDocument } from 'mongodb';
-import AppErrorRoot from '../../../AppError/AppErrorRoot.js';
-import TypedEventEmitter from '../../../TypedEventEmitter.js';
+import {
+  AppErrorRoot,
+  TypedEventEmitter
+} from "@mustib/utils";
+
 import getSchemaTypeConstructor from './utils/getSchemaTypeConstructor.js';
 
 import type {
@@ -9,6 +12,8 @@ import type {
   SchemaEvents,
   SchemaValidationType,
 } from './types/MongoDBSchema.js';
+
+import type { AppErrorTypes } from '../../../../types/AppErrorTypes.js';
 
 class MongoDbSchema<T extends MongoDocument> {
   schema: {
@@ -99,7 +104,7 @@ class MongoDbSchema<T extends MongoDocument> {
 
     if (schemaEntries.length === 0) return validated;
 
-    const appErrorRoot = new AppErrorRoot();
+    const appErrorRoot = new AppErrorRoot<AppErrorTypes>();
 
     const eventEmitter = new TypedEventEmitter() as SchemaEvents;
 

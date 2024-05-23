@@ -1,4 +1,4 @@
-import getTypeof from '../../../../getTypeof.js';
+import { getTypeof } from '@mustib/utils';
 import AbstractMongoDbFind from './AbstractMongoDbFind.js';
 
 import type { Document as MongoDocument } from 'mongodb';
@@ -15,12 +15,12 @@ type MongoDbFindExecReturn<
   Document extends MongoDocument
 > = Promise<
   Options['returnDetails'] extends false
-    ? {
-        documents: (Document & {
-          _id: string;
-        })[];
-      }
-    : ReturnType<MongoDbFind<Document>['execDetails']>
+  ? {
+    documents: (Document & {
+      _id: string;
+    })[];
+  }
+  : ReturnType<MongoDbFind<Document>['execDetails']>
 >;
 
 class MongoDbFind<

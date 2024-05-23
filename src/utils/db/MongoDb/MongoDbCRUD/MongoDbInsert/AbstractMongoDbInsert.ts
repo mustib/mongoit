@@ -1,4 +1,4 @@
-import TypedEventEmitter from '../../../../TypedEventEmitter.js';
+import { TypedEventEmitter } from '@mustib/utils';
 
 import type {
   Filter,
@@ -88,10 +88,10 @@ abstract class AbstractMongoDbInsert<
     options?: Options
   ): Promise<
     Type extends 'insertMany'
-      ? InsertManyExecReturn<Options, ValidatedMongoSchemaDocument<Document>>
-      : Type extends 'insertOne'
-      ? InsertOneExecReturn<Options, ValidatedMongoSchemaDocument<Document>>
-      : never
+    ? InsertManyExecReturn<Options, ValidatedMongoSchemaDocument<Document>>
+    : Type extends 'insertOne'
+    ? InsertOneExecReturn<Options, ValidatedMongoSchemaDocument<Document>>
+    : never
   >;
 }
 

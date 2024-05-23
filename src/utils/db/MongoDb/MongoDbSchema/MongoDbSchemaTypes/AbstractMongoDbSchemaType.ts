@@ -1,6 +1,8 @@
-import AppError from '../../../../AppError/AppError.js';
-import TypedEventEmitter from '../../../../TypedEventEmitter.js';
-import getTypeof from '../../../../getTypeof.js';
+import {
+  getTypeof,
+  AppError,
+  TypedEventEmitter
+} from '@mustib/utils';
 import MongoDBSchemaValidators from '../MongoDBSchemaValidator.js';
 
 import type {
@@ -142,8 +144,7 @@ abstract class AbstractMongoDbSchemaType<Type extends MongoSchemaTypes> {
       this._default.hasDefault = true;
     } catch (error) {
       throw new Error(
-        `Error while adding and validating default value for ${
-          this.schemaFieldName
+        `Error while adding and validating default value for ${this.schemaFieldName
         } field, ${(error as any).message}`
       );
     }

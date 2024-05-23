@@ -1,4 +1,4 @@
-import mergeTwoObjects from '../../mergeTwoObjects.js';
+import { mergeTwoObjects } from '@mustib/utils';
 import MongoDbFind from './MongoDbCRUD/MongoDbFind/MongoDbFind.js';
 import MongoDbFindOne from './MongoDbCRUD/MongoDbFind/MongoDbFindOne.js';
 import MongoDbSchema from './MongoDbSchema/MongoDbSchema.js';
@@ -23,8 +23,8 @@ import type { FilterDocumentWithId } from './types/FilterDocumentWithId.js';
 
 type _useFieldsFromSchema<Document extends MongoDocument> =
   | {
-      _useFieldsFromSchema?: Partial<Document>;
-    }
+    _useFieldsFromSchema?: Partial<Document>;
+  }
   | undefined;
 
 /**
@@ -94,7 +94,7 @@ class MongoDBCollection<Document extends MongoDocument> {
   constructor(
     readonly collection: Promise<Collection<Document>>,
     protected crudOptions: CollectionCrudOptions<Document> = {}
-  ) {}
+  ) { }
 
   createSchema(schema: MongoSchema<Document>) {
     this.schema = new MongoDbSchema(schema);
@@ -117,12 +117,12 @@ class MongoDBCollection<Document extends MongoDocument> {
         document,
         type === 'convert'
           ? await this.schema?.convertValuesToSchemaTypes(
-              _useFieldsFromSchema as any
-            )
+            _useFieldsFromSchema as any
+          )
           : await this.schema?.validate(
-              _useFieldsFromSchema as any,
-              ...(args as never[])
-            )
+            _useFieldsFromSchema as any,
+            ...(args as never[])
+          )
       );
     }
 

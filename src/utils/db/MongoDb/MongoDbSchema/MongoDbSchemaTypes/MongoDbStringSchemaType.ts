@@ -1,5 +1,4 @@
-import getTypeof from '../../../../getTypeof.js';
-import capitalize from '../../../../capitalize.js';
+import { getTypeof, capitalize } from '@mustib/utils';
 import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData.js';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 

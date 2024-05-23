@@ -1,6 +1,6 @@
 import { isRegExp } from 'util/types';
 import { ObjectId } from 'mongodb';
-import getTypeof from '../../../../getTypeof.js';
+import { getTypeof } from '@mustib/utils';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type { IdSchemaType } from '../types/MongoDBSchema.js';

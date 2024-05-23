@@ -1,4 +1,4 @@
-import getTypeof from '../../../../getTypeof.js';
+import { getTypeof } from '@mustib/utils';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
 
 import type {

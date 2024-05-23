@@ -1,9 +1,6 @@
 import { EventEmitter } from 'events';
 import { MongoClient } from 'mongodb';
 import MongoDBCollection from './MongoDBCollection.js';
-import MongoSanitize from './MongoDbSanitize.js';
-
-import type { NextFunction, Request, Response } from 'express';
 
 import type {
   Db,
@@ -48,18 +45,6 @@ class MongoDb<Collections extends string[] = string[]> {
 
   private _db: Db | undefined;
 
-  /**
-   * @description an express middleware that is used to sanitize only the needed props from req.body, req.query and req.params by adding sanitizeMongo property to the request object, sanitizeMongo is an object containing three properties body, query and params, and each of them has a get method that takes no arguments to sanitize all fields or take an array of keys to retrieve that keys values from the original request object and sanitize them
-   */
-  static sanitize(req: Request, _: Response, next: NextFunction) {
-    req.sanitizeMongo = {
-      body: new MongoSanitize(req, 'body'),
-      query: new MongoSanitize(req, 'query'),
-      params: new MongoSanitize(req, 'params'),
-    };
-
-    next();
-  }
 
   /**
    * @description a static method that is used to save the created MongoDb to the connectedDatabases
@@ -109,10 +94,9 @@ class MongoDb<Collections extends string[] = string[]> {
 
     if (db === undefined) {
       throw new Error(
-        `no mongo database founded, make sure you instantiated it first, ${
-          id !== undefined
-            ? `or check you didn't misspelled the provided id '${id}'`
-            : ''
+        `no mongo database founded, make sure you instantiated it first, ${id !== undefined
+          ? `or check you didn't misspelled the provided id '${id}'`
+          : ''
         }`
       );
     }

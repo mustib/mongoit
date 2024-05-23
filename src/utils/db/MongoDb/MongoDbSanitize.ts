@@ -1,4 +1,4 @@
-import getTypeof from '../../getTypeof.js';
+import { getTypeof } from '@mustib/utils';
 import type { ReplaceInString } from '../../../types/ReplaceInString.js';
 
 type SanitizeMongoKey<
@@ -7,10 +7,10 @@ type SanitizeMongoKey<
   ReplaceDotWith extends string = ''
 > = Key extends string
   ? ReplaceInString<
-      ReplaceInString<Key, '.', ReplaceDotWith>,
-      '$',
-      ReplaceDollarWith
-    >
+    ReplaceInString<Key, '.', ReplaceDotWith>,
+    '$',
+    ReplaceDollarWith
+  >
   : Key;
 
 type SanitizeMongoDocumentKeyValue<
@@ -25,28 +25,28 @@ type SanitizeMongoDocument<
   ReplaceDollarWith extends string = '',
   ReplaceDotWith extends string = ''
 > = {
-  [Key in keyof Document as SanitizeMongoKey<
-    Key,
-    ReplaceDollarWith,
-    ReplaceDotWith
-  >]: SanitizeMongoDocumentKeyValue<Document, Key> extends object
+    [Key in keyof Document as SanitizeMongoKey<
+      Key,
+      ReplaceDollarWith,
+      ReplaceDotWith
+    >]: SanitizeMongoDocumentKeyValue<Document, Key> extends object
     ? SanitizeMongoDocument<
-        SanitizeMongoDocumentKeyValue<Document, Key>,
-        ReplaceDollarWith,
-        ReplaceDotWith
-      >
+      SanitizeMongoDocumentKeyValue<Document, Key>,
+      ReplaceDollarWith,
+      ReplaceDotWith
+    >
     : SanitizeMongoDocumentKeyValue<Document, Key>;
-};
+  };
 
 class MongoSanitize<
   T extends UntypedObject,
   // NOTE: R & P are just needed for constructor parameters to support types and intelligence
   R extends UntypedObject = any,
   P extends keyof R extends infer K
-    ? K extends string
-      ? K
-      : never
-    : never = any
+  ? K extends string
+  ? K
+  : never
+  : never = any
 > {
   protected sanitizedFields: Partial<SanitizeMongoDocument<T>> = {};
 

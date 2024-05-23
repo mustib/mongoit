@@ -1,6 +1,8 @@
-import getTypeof from '../../../getTypeof.js';
-import AppError from '../../../AppError/AppError.js';
-import AppErrorRoot from '../../../AppError/AppErrorRoot.js';
+import {
+  getTypeof,
+  AppError,
+  AppErrorRoot
+} from '@mustib/utils/';
 
 import type {
   SchemaTypeValidatorsData,
@@ -15,6 +17,8 @@ import type {
   ValidatorMetaObject,
 } from './types/MongoDBSchema.js';
 
+import type { AppErrorTypes } from '../../../../types/AppErrorTypes.js';
+
 type ValidatorArray = [
   string,
   ReturnType<
@@ -25,15 +29,15 @@ type ValidatorArray = [
 type ValidatorValue =
   | ValueofSchemaValidators
   | ValidatorArrayWithOptionalErrorMessage<
-      UntypedObject,
-      any,
-      ValueofSchemaValidators
-    >
+    UntypedObject,
+    any,
+    ValueofSchemaValidators
+  >
   | ValidatorObjectWithOptionalErrorMessage<
-      UntypedObject,
-      any,
-      ValueofSchemaValidators
-    >;
+    UntypedObject,
+    any,
+    ValueofSchemaValidators
+  >;
 
 const sharedValidatorsData: SharedSchemaTypeValidatorsData = {
   requiredValidator: {
@@ -108,8 +112,8 @@ class MongoDBSchemaValidators {
       message: message as
         | string
         | Required<
-            ValidatorObjectWithOptionalErrorMessage<any, any, any>
-          >['message'],
+          ValidatorObjectWithOptionalErrorMessage<any, any, any>
+        >['message'],
       type,
       value: value as ValueofSchemaValidators,
     };
@@ -143,11 +147,11 @@ class MongoDBSchemaValidators {
       errorMessage = validatorObj.message(value, validatorValue, meta);
     } else errorMessage = validatorObj.message;
 
-    AppError.throw('Validation', errorMessage);
+    AppError.throw<AppErrorTypes>('Validation', errorMessage);
   }
 
   async validateValidators(valueObj: ValidatorValueObj, schema: UntypedObject) {
-    const appErrorRoot = new AppErrorRoot();
+    const appErrorRoot = new AppErrorRoot<AppErrorTypes>();
 
     if (this.requiredValidator.value === true) {
       await appErrorRoot.tryCatch(async () => {

@@ -1,6 +1,9 @@
-import getTypeof from '../../../../getTypeof.js';
-import getValidJson from '../../../../getValidJson.js';
-import AppErrorRoot from '../../../../AppError/AppErrorRoot.js';
+import {
+  getTypeof,
+  parseJson,
+  AppErrorRoot
+} from '@mustib/utils';
+
 import getSchemaTypeConstructor from '../utils/getSchemaTypeConstructor.js';
 import arrayAndStringValidatorsData from '../config/arrayAndStringValidatorsData.js';
 import AbstractMongoDbSchemaType from './AbstractMongoDbSchemaType.js';
@@ -83,7 +86,7 @@ class MongoDbArraySchemaType extends AbstractMongoDbSchemaType<'array'> {
     switch (getTypeof(_value)) {
       case 'string':
         {
-          const v = getValidJson(_value);
+          const v = parseJson(_value);
           if (v !== 'invalid') value = v as never;
           else value = [_value];
         }
