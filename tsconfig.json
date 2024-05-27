@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+    "baseUrl": "src",
+    "declaration": true,
     "module": "NodeNext",
     "rootDir": "./src",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "noEmitOnError": true,
     "esModuleInterop": true,
     "strict": true,
     "noImplicitAny": true,
-    "skipLibCheck": true,
-    "types": ["./src/types/types.global.d.ts"]
+    "skipLibCheck": true
   },
   "include": ["./src"]
 }
