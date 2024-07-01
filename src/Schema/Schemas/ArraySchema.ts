@@ -26,8 +26,8 @@ const validatorsData: ArraySchemaTypeValidatorsData = {
     validator(value, validatorValue) {
       return value.length === validatorValue;
     },
-    defaultErrorMessage(value, validatorValue, field) {
-      return `${field} field length must only be ${validatorValue}, but instead got ${value.length}`;
+    defaultErrorMessage(value, validatorValue, { fieldName }) {
+      return `${fieldName} field length must only be ${validatorValue}, but instead got ${value.length}`;
     },
   },
   unique: {
