@@ -1,4 +1,6 @@
-import type { Sanitize } from '../../types/index.js';
+import type { UntypedObject } from '@mustib/utils';
+
+import type { Sanitize } from '../../index.js';
 
 type SharedQueryObject<T> = {
   /**

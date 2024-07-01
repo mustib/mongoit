@@ -5,7 +5,7 @@ import { AbstractSchema } from './AbstractSchema.js';
 import type {
   NumberSchemaType,
   NumberSchemaTypeValidatorsData,
-} from '../types/index.js';
+} from '../../index.js';
 
 const validatorsData: NumberSchemaTypeValidatorsData = {
   max: {

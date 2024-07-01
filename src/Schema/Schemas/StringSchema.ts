@@ -7,7 +7,7 @@ import { AbstractSchema } from './AbstractSchema.js';
 import type {
   StringSchemaTypeValidatorsData,
   StringSchemaType,
-} from '../types/index.js';
+} from '../../index.js';
 
 const validatorsData: StringSchemaTypeValidatorsData =
   arrayAndStringValidatorsData;

@@ -15,12 +15,9 @@ import type {
   FilterDocumentWithId,
   CollectionOptions,
   CrudOptions,
-} from './types/index.js';
-
-import type {
   MongoitSchema,
   MongoitSchemaDocument,
-} from './Schema/types/index.js';
+} from './index.js';
 
 type _useFieldsFromSchema<Document extends MongoDocument> =
   | {

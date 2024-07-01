@@ -2,7 +2,9 @@ import AbstractMongoDbFilterDocument from '../FilterDocument/AbstractFilterDocum
 
 import type { Document as MongoDocument } from 'mongodb';
 
-import type { CrudOptions, SortQueryObject } from '../../types/index.js';
+import type { CrudOptions, SortQueryObject } from '../../index.js';
+
+import type { UntypedObject } from '@mustib/utils';
 
 function convertDocumentIdToString(doc: MongoDocument) {
   if ('_id' in doc) {

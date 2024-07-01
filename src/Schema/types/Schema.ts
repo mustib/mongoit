@@ -1,3 +1,4 @@
+
 import type {
   StringSchema,
   NumberSchema,
@@ -7,9 +8,9 @@ import type {
   ObjectSchema,
   IdSchema,
   FileSchema,
-} from '../Schemas/index.js';
+} from '../../index.js';
 
-import type { TypedEventEmitter } from "@mustib/utils";
+import type { TypedEventEmitter, UntypedObject, Func } from "@mustib/utils";
 
 /*
  *-------------------------------------------------------------*
@@ -318,11 +319,17 @@ export type ArraySchemaType<
     | number
     | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
     | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
+
+    unique?:
+    | boolean
+    | ValidatorArrayWithOptionalErrorMessage<Schema, Type, boolean>
+    | ValidatorObjectWithOptionalErrorMessage<Schema, Type, boolean>;
   } & SharedSchemaTypeValidators<Schema, Type>);
 
 export type ArraySchemaTypeValidatorsData =
   ArrayAndStringSchemaTypeValidatorsData & {
     length: SchemaTypeValidatorsData<'number', any[], number>;
+    unique: SchemaTypeValidatorsData<'boolean', any[], boolean>;
   };
 
 /*-------------------------------------------------------------*/

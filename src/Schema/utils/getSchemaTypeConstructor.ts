@@ -14,7 +14,7 @@ import {
   IdSchema,
 } from '../Schemas/index.js';
 
-import type { MongoitSchema, MongoitSchemaTypes } from '../../types/index.js';
+import type { MongoitSchema, MongoitSchemaTypes } from '../../index.js';
 
 const schemaTypeConstructorsObject = {
   string: StringSchema,

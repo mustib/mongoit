@@ -11,7 +11,7 @@ import type {
 import type {
   SchemaValidationType,
   ValidatedMongoitSchemaDocument,
-} from '../Schema/types/index.js';
+} from '../index.js';
 
 export type CollectionOptions<Schema extends MongoDocument> = {
   /**

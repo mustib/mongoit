@@ -14,10 +14,9 @@ import type {
   FileSchemaTypes,
   FileTypeValidatedFileValue,
   SchemaEvents,
-  SchemaTypesConstructorsValidateFieldValueOptions
-} from '../types/index.js';
-
-import type { ReplaceInString } from '../../types/index.js';
+  SchemaTypesConstructorsValidateFieldValueOptions,
+  ReplaceInString
+} from '../../index.js';
 
 const saveSignals: {
   [key in keyof Required<

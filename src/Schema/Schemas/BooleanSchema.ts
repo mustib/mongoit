@@ -2,7 +2,7 @@ import { getTypeof } from '@mustib/utils';
 
 import { AbstractSchema } from './AbstractSchema.js';
 
-import type { BooleanSchemaType } from '../types/index.js';
+import type { BooleanSchemaType } from '../../index.js';
 
 export class BooleanSchema extends AbstractSchema<'bool'> {
   assignOrConvertTheRightValue(_value: any) {

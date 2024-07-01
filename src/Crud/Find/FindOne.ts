@@ -2,7 +2,7 @@ import { AbstractFind } from './AbstractFind.js';
 
 import type { Document as MongoDocument } from 'mongodb';
 
-import type { Collection, CrudOptions, FilterDocumentWithId } from '../../types/index.js';
+import type { Collection, CrudOptions, FilterDocumentWithId } from '../../index.js';
 
 export class FindOne<
   Document extends MongoDocument

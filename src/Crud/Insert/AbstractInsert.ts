@@ -17,7 +17,7 @@ import type {
   CrudOptions,
   MongoitSchemaDocument,
   ValidatedMongoitSchemaDocument,
-} from '../../types/index.js';
+} from '../../index.js';
 
 type InsertType = 'insertOne' | 'insertMany';
 

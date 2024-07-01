@@ -5,7 +5,7 @@ import { AbstractSchema } from './AbstractSchema.js';
 import type {
   DateSchemaType,
   ValidatorValueObj,
-} from '../types/index.js';
+} from '../../index.js';
 
 export class DateSchema extends AbstractSchema<'date'> {
   constructor(schemaFieldName: string, schemaValue: DateSchemaType) {

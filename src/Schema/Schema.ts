@@ -2,7 +2,8 @@ import { Document as MongoDocument } from 'mongodb';
 
 import {
   AppErrorRoot,
-  TypedEventEmitter
+  TypedEventEmitter,
+  type UntypedObject
 } from "@mustib/utils";
 
 import { getSchemaTypeConstructor } from './utils/getSchemaTypeConstructor.js';
@@ -13,7 +14,7 @@ import type {
   SchemaEvents,
   SchemaValidationType,
   AppErrorTypes
-} from '../types/index.js';
+} from '../index.js';
 
 /**
  * @description define a new mongoit schema structure

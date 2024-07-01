@@ -1,6 +1,6 @@
-import { getTypeof } from '@mustib/utils';
+import { getTypeof, type UntypedObject } from '@mustib/utils';
 
-import type { ReplaceInString } from './types/index.js';
+import type { ReplaceInString } from './index.js';
 
 type SanitizeMongoKey<
   Key,

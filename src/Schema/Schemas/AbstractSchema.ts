@@ -14,7 +14,7 @@ import type {
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   SchemaTypesConstructorsValidateFieldValueOptions,
   ValidatorValueObj,
-} from '../types/index.js';
+} from '../../index.js';
 
 
 export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {

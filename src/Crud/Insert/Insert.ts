@@ -7,16 +7,15 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
-import type { Collection } from '../../Collection.js';
-
-import type { ExecOptions, InsertManyExecReturn } from './types.js';
-
-import type { CrudOptions } from '../../types/index.js';
-
 import type {
+  CrudOptions,
+  Collection,
+  ExecOptions,
+  InsertManyExecReturn,
   MongoitSchemaDocument,
-  ValidatedMongoitSchemaDocument,
-} from '../../Schema/types/index.js';
+  ValidatedMongoitSchemaDocument
+} from '../../index.js';
+
 
 export class Insert<
   Document extends MongoDocument

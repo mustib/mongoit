@@ -1,7 +1,8 @@
 import {
   getTypeof,
   AppError,
-  AppErrorRoot
+  AppErrorRoot,
+  type UntypedObject
 } from '@mustib/utils';
 
 import type {
@@ -15,9 +16,9 @@ import type {
   ValidatorArrayWithOptionalErrorMessage,
   MongoitSchemaTypes,
   ValidatorMetaObject,
-} from './types/index.js';
+  AppErrorTypes
+} from '../index.js';
 
-import type { AppErrorTypes } from '../types/index.js';
 
 type ValidatorArray = [
   string,

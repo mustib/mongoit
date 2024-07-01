@@ -1,7 +1,8 @@
 import {
   getTypeof,
   parseJson,
-  AppErrorRoot
+  AppErrorRoot,
+  type UntypedObject
 } from '@mustib/utils';
 
 import { getSchemaTypeConstructor } from '../utils/getSchemaTypeConstructor.js';
@@ -13,7 +14,7 @@ import type {
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   ValidatorValueObj,
   ObjectSchemaType,
-} from '../types/index.js';
+} from '../../index.js';
 
 export class ObjectSchema extends AbstractSchema<'object'> {
   nestedSchema: { [key: string | number]: SchemaConstructors } = {};

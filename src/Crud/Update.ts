@@ -2,13 +2,13 @@ import AbstractMongoDbFilterDocument from './FilterDocument/AbstractFilterDocume
 
 import type { Document as MongoDocument } from 'mongodb';
 
-import type { Collection } from '../Collection.js';
 
 import type {
   CrudOptions,
   UpdateFilterDocument,
   FilterDocumentWithId,
-} from '../types/index.js';
+  Collection
+} from '../index.js';
 
 export class Update<
   Document extends MongoDocument

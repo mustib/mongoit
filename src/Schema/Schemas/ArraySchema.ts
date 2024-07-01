@@ -17,19 +17,28 @@ import type {
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   ArraySchemaType,
   ArraySchemaTypeValidatorsData,
-} from '../types/index.js';
+} from '../../index.js';
 
 const validatorsData: ArraySchemaTypeValidatorsData = {
   ...arrayAndStringValidatorsData,
   length: {
     type: 'number',
-    validator(value: any[], validatorValue) {
+    validator(value, validatorValue) {
       return value.length === validatorValue;
     },
-    defaultErrorMessage(value: any[], validatorValue, field) {
+    defaultErrorMessage(value, validatorValue, field) {
       return `${field} field length must only be ${validatorValue}, but instead got ${value.length}`;
     },
   },
+  unique: {
+    type: 'boolean',
+    validator(value) {
+      return new Set(value).size === value.length
+    },
+    defaultErrorMessage(value, validatorValue, { fieldName }) {
+      return `${fieldName} field must contain unique items, but instead got ${value}`;
+    },
+  }
 };
 
 export class ArraySchema extends AbstractSchema<'array'> {

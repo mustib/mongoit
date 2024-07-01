@@ -6,7 +6,7 @@ import { getTypeof } from '@mustib/utils';
 
 import { AbstractSchema } from './AbstractSchema.js';
 
-import type { IdSchemaType } from '../types/index.js';
+import type { IdSchemaType } from '../../index.js';
 
 function defaultValue() {
   return new ObjectId();

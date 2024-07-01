@@ -12,7 +12,9 @@ import type {
   FilterOperators,
   FilterQueryObject,
   FilterOperatorHandler,
-} from '../../types/index.js'
+} from '../../index.js'
+
+import type { UntypedObject } from '@mustib/utils';
 
 export class QueryFilter {
   protected _filtered: UntypedObject[] = [];

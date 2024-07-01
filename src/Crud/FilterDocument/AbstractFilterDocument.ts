@@ -5,13 +5,10 @@ import { QueryFilter } from './QueryFilter.js';
 import type { Document as MongoDocument } from 'mongodb';
 
 import type {
-  FilterQueryObject,
-} from './types.js';
-
-import type {
   Collection,
+  FilterQueryObject,
   FilterDocumentWithId
-} from '../../types/index.js';
+} from '../../index.js';
 
 const convertToObjectIdIfValid = (id: any) =>
   ObjectId.isValid(id) ? new ObjectId(id) : id;

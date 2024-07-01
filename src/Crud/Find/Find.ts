@@ -4,7 +4,7 @@ import { AbstractFind } from './AbstractFind.js';
 
 import type { Document as MongoDocument } from 'mongodb';
 
-import type { Collection, CrudOptions, FilterDocumentWithId } from '../../types/index.js'
+import type { Collection, CrudOptions, FilterDocumentWithId } from '../../index.js'
 
 type FindExecOptions = {
   returnDetails?: boolean;

@@ -12,7 +12,7 @@ import type {
 } from 'mongodb';
 
 
-import type { CollectionOptions } from './types/index.js';
+import type { CollectionOptions } from './index.js';
 
 type MongoitConnectionOptions = {
   /**

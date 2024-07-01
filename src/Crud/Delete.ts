@@ -2,9 +2,7 @@ import AbstractMongoDbFilterDocument from './FilterDocument/AbstractFilterDocume
 
 import type { Document as MongoDocument } from 'mongodb';
 
-import type { Collection } from '../Collection.js';
-
-import type { CrudOptions, FilterDocumentWithId } from '../types/index.js';
+import type { CrudOptions, FilterDocumentWithId, Collection } from '../index.js';
 
 export class Delete<
   Document extends MongoDocument

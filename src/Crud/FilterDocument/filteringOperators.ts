@@ -1,3 +1,5 @@
+import type { UntypedObject } from "@mustib/utils";
+
 import type { FilterOperatorHandler, FilterOperators, FilteringOperatorsTypes } from "./types.js";
 
 
