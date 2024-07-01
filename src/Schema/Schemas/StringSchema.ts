@@ -15,6 +15,8 @@ const validatorsData: StringSchemaTypeValidatorsData =
 export class StringSchema extends AbstractSchema<'string'> {
   caseType: StringSchemaType<never, false>['caseType'];
 
+  trim: StringSchemaType<never, false>['trim'];
+
   assignOrConvertTheRightValue(_value: any) {
     let value!: string;
     let valueType = getTypeof(_value);
@@ -50,12 +52,18 @@ export class StringSchema extends AbstractSchema<'string'> {
         }
     }
 
+    if (this.trim && hasAssignedValue) value = value.trim();
+
     return { value, valueType, hasAssignedValue };
   }
 
   constructor(schemaFieldName: string, schemaValue: StringSchemaType) {
     super();
-    if (typeof schemaValue === 'object') this.caseType = schemaValue.caseType;
+    if (typeof schemaValue === 'object') {
+      this.caseType = schemaValue.caseType
+      this.trim = schemaValue.trim
+    }
+
     this.init('string', {
       schemaFieldName,
       schemaValue,

@@ -197,6 +197,8 @@ export type StringSchemaType<
     | 'capitalize'
     | ((value: string) => string);
 
+    trim?: boolean;
+
     maxLength?:
     | number
     | ValidatorArrayWithOptionalErrorMessage<Schema, string, number>
