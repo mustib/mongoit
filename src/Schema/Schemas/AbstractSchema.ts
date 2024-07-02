@@ -13,11 +13,14 @@ import type {
   SchemaTypeData,
   SchemaTypesConstructorsAssignOrConvertTheRightValueOptions,
   SchemaTypesConstructorsValidateFieldValueOptions,
+  SharedSchemaTypeOptions,
   ValidatorValueObj,
 } from '../../index.js';
 
 
 export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
+  declare private sealed?: boolean;
+
   private _default = {
     hasDefault: false,
     value: undefined as any,
@@ -66,7 +69,7 @@ export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
 
     const { hasDefault } = this._default;
     const isUndefinedValue = _value === undefined;
-    const shouldAssignDefault = isUndefinedValue && hasDefault;
+    const shouldAssignDefault = (isUndefinedValue && hasDefault) || this.sealed;
 
     if (shouldAssignDefault) return this.getDefaultValueObj();
 
@@ -104,6 +107,14 @@ export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
     this.schemaFieldName = schemaData.schemaFieldName;
     this.validator = new Validator(schemaData);
     await this.setAndValidateDefaultValue(schemaData.schemaValue);
+
+    const sealed = typeof schemaData.schemaValue === 'object' && (schemaData.schemaValue as SharedSchemaTypeOptions).sealed
+
+    this.sealed = sealed;
+
+    if (sealed && !this._default.hasDefault) {
+      throw new Error(`sealed fields must have default values, and (${this.schemaFieldName}) field is sealed and there is no default value provided`)
+    }
 
     this.eventEmitter.emit('init');
   }

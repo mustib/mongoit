@@ -128,6 +128,8 @@ export type SharedSchemaTypeValidatorsData = {
   >;
 };
 
+export type SharedSchemaTypeOptions = Partial<{ sealed: boolean }>
+
 export type ReplaceTypeField<Obj> = {
   [Key in keyof Obj as Key extends 'type' ? '_typeField' : Key]: Obj[Key];
 };
@@ -169,7 +171,7 @@ export type ValidatedMongoitSchemaDocument<Schema> = {
 
 export type IdSchemaType<WithShorthandType extends boolean = true> =
   | (WithShorthandType extends true ? 'id' : never)
-  | {
+  | SharedSchemaTypeOptions & {
     type: 'id';
     default?(): any;
   };
@@ -189,7 +191,7 @@ export type StringSchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? 'string' : never)
-  | ({
+  | SharedSchemaTypeOptions & ({
     type: 'string';
 
     caseType?:
@@ -229,7 +231,7 @@ export type NumberSchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? 'number' : never)
-  | ({
+  | SharedSchemaTypeOptions & ({
     type: 'number';
 
     min?:
@@ -263,7 +265,7 @@ export type BooleanSchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? 'bool' : never)
-  | ({
+  | SharedSchemaTypeOptions & ({
     type: 'bool';
   } & SharedSchemaTypeValidators<Schema, boolean>);
 
@@ -282,7 +284,7 @@ export type DateSchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? 'date' : never)
-  | ({
+  | SharedSchemaTypeOptions & ({
     type: 'date';
   } & SharedSchemaTypeValidators<Schema, Date>);
 
@@ -302,7 +304,7 @@ export type ArraySchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? MongoitSchema<Required<Type>> : never)
-  | ({
+  | SharedSchemaTypeOptions & ({
     type: MongoitSchema<Required<Type>, Schema>;
 
     length?:
@@ -342,7 +344,7 @@ export type ArraySchemaTypeValidatorsData =
  *-------------------------------------------------------------*
  */
 
-export type ObjectSchemaType<Type extends object, Schema = Type> = {
+export type ObjectSchemaType<Type extends object, Schema = Type> = SharedSchemaTypeOptions & {
   type: MongoitSchema<Required<ReplaceTypeField<Type>>, Schema>;
 } & SharedSchemaTypeValidators<Schema, Type>;
 
@@ -404,7 +406,7 @@ export type FileTypeValidatedFileValue = {
 export type FileSchemaType<
   Type extends FileSchemaTypes,
   Schema = UntypedObject
-> = {
+> = SharedSchemaTypeOptions & {
   type: Type;
 
   fileName?: string | (() => string);
