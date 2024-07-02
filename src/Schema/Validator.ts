@@ -43,8 +43,8 @@ type ValidatorValue =
 const sharedValidatorsData: SharedSchemaTypeValidatorsData = {
   requiredValidator: {
     type: 'boolean',
-    defaultErrorMessage(_, _2, { field }) {
-      return `${field} is a required field and it is not defined`;
+    defaultErrorMessage(_, _2, { fieldName }) {
+      return `${fieldName} is a required field and it is not defined`;
     },
 
     validator(value, validatorValue) {
@@ -53,8 +53,8 @@ const sharedValidatorsData: SharedSchemaTypeValidatorsData = {
   },
   customValidator: {
     type: 'function',
-    defaultErrorMessage(value, validatorValue, { field }) {
-      return `custom validation for ${field} field failed`;
+    defaultErrorMessage(value, validatorValue, { fieldName }) {
+      return `custom validation for ${fieldName} field failed`;
     },
 
     validator(value, validatorValue, meta) {

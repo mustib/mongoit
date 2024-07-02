@@ -13,8 +13,8 @@ const validatorsData: NumberSchemaTypeValidatorsData = {
     validator(value: number, validatorValue: number) {
       return value <= validatorValue;
     },
-    defaultErrorMessage(value, validatorValue, field) {
-      return `maximum number for ${field} field is ${validatorValue}, but instead got ${value}`;
+    defaultErrorMessage(value, validatorValue, { fieldName }) {
+      return `maximum number for ${fieldName} field is ${validatorValue}, but instead got ${value}`;
     },
   },
   min: {
@@ -22,8 +22,8 @@ const validatorsData: NumberSchemaTypeValidatorsData = {
     validator(value: number, validatorValue: number) {
       return value >= validatorValue;
     },
-    defaultErrorMessage(value, validatorValue, field) {
-      return `minimum number for ${field} field is ${validatorValue}, but instead got ${value}`;
+    defaultErrorMessage(value, validatorValue, { fieldName }) {
+      return `minimum number for ${fieldName} field is ${validatorValue}, but instead got ${value}`;
     },
   },
 };

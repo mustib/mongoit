@@ -5,15 +5,15 @@ const maxLength: ArrayAndStringSchemaTypeValidatorsData['maxLength'] = {
   validator(value, validatorValue) {
     return value.length <= validatorValue;
   },
-  defaultErrorMessage(value, validatorValue, field) {
-    return `maximum length for ${field} field is ${validatorValue}, but instead got ${value.length} with value of "${value}"`;
+  defaultErrorMessage(value, validatorValue, { fieldName }) {
+    return `maximum length for ${fieldName} field is ${validatorValue}, but instead got ${value.length} with value of "${value}"`;
   },
 };
 
 const minLength: ArrayAndStringSchemaTypeValidatorsData['minLength'] = {
   type: 'number',
-  defaultErrorMessage(value, validatorValue, field) {
-    return `minimum length for ${field} field is ${validatorValue}, but instead got ${value.length} with value of "${value}"`;
+  defaultErrorMessage(value, validatorValue, { fieldName }) {
+    return `minimum length for ${fieldName} field is ${validatorValue}, but instead got ${value.length} with value of "${value}"`;
   },
   validator(value, validatorValue) {
     return value.length >= validatorValue;
