@@ -23,7 +23,7 @@ export class DateSchema extends AbstractSchema<'date'> {
     };
 
     const addValueToValueObj = (value: any) => {
-      valueObj.value = (value as Date).toISOString();
+      valueObj.value = (value as Date);
       valueObj.hasAssignedValue = true;
       valueObj.valueType = 'date';
     };
