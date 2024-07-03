@@ -35,6 +35,7 @@ type RemoveFirstElementFromArray<Arr extends any[]> = ((...args: Arr) => void) e
 export class Collection<Document extends MongoDocument> {
   schema: Schema<Document> | null = null;
 
+  crudOptions: CrudOptions<Document>;
 
   /**
    * @description default global crud options
@@ -62,14 +63,12 @@ export class Collection<Document extends MongoDocument> {
     );
   }
 
-  get crudOptions() {
-    return this.options?.crudOptions || {}
-  }
-
   constructor(
     readonly collection: Promise<MongoCollection<Document>>,
     protected options: CollectionOptions<Document>['MongoitCollection'] = {}
-  ) { }
+  ) {
+    this.crudOptions = options.crudOptions ?? {}
+  }
 
 
   /**
