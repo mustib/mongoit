@@ -358,7 +358,7 @@ export type ObjectSchemaType<Type extends object, Schema = Type> = SharedSchemaT
  *-----------------------------------------------------------*
  */
 
-type FileSchemaData = {
+export type FileSchemaData = {
   image: {
     extensions:
     | 'apng'
