@@ -1,6 +1,8 @@
+import EventEmitter from 'node:events';
+
 import { MongoClient } from 'mongodb';
 
-import { TypedEventEmitter, AppError } from '@mustib/utils';
+import { type TypedEventEmitter, AppError } from '@mustib/utils/node';
 
 import { Collection } from './Collection.js';
 
@@ -10,7 +12,6 @@ import type {
   MongoClientOptions,
   Document as MongoDocument,
 } from 'mongodb';
-
 
 import type { CollectionOptions } from './index.js';
 
@@ -36,7 +37,6 @@ type MongoitConnectionOptions = {
   mongoitID?: string | number;
 };
 
-
 /**
  * @description instantiate new Mongoit class and add it to the private static property instantiatedMongoits that is used later to retrieve it by the static getMongoit() method by its provided id or the first instantiated Mongoit if no id is provided
  */
@@ -48,8 +48,9 @@ export class Mongoit<Collections extends string[] = string[]> {
 
   private hasConnectedMongoClient = false;
 
-  private eventEmitter = new TypedEventEmitter<{ dbConnected: { db: Db } }>();
-
+  private eventEmitter = new EventEmitter() as TypedEventEmitter<{
+    dbConnected: { db: Db };
+  }>;
 
   /**
    * @description an object that contains all instantiated Mongoit classes
@@ -63,16 +64,22 @@ export class Mongoit<Collections extends string[] = string[]> {
     /**
      * @description an object that contains all instantiated Mongoit classes by their id
      */
-    byID: { [key: Required<MongoitConnectionOptions>['mongoitID']]: Mongoit | undefined };
+    byID: {
+      [key: Required<MongoitConnectionOptions>['mongoitID']]:
+        | Mongoit
+        | undefined;
+    };
   };
-
 
   /**
    * @description a static method that is used to save the instantiated Mongoit to the static property instantiatedMongoits
    * @param mongoit is the newly instantiated Mongoit class
    * @param id an optional id, that is used to retrieve the instantiated Mongoit class later. useful when instantiating more than one Mongoit
    */
-  protected static addToInstantiatedMongoits(mongoit: Mongoit, id?: MongoitConnectionOptions['mongoitID']) {
+  protected static addToInstantiatedMongoits(
+    mongoit: Mongoit,
+    id?: MongoitConnectionOptions['mongoitID']
+  ) {
     let hasBeenAdded = false;
 
     const isMainMongoit = Mongoit.instantiatedMongoits.main === undefined;
@@ -85,7 +92,8 @@ export class Mongoit<Collections extends string[] = string[]> {
     if (id !== undefined) {
       const isAddedBefore = Mongoit.instantiatedMongoits.byID[id] !== undefined;
 
-      if (isAddedBefore) AppError.throw('Duplicated ID', `duplicated Mongoit id (${id})`);
+      if (isAddedBefore)
+        AppError.throw('Duplicated ID', `duplicated Mongoit id (${id})`);
 
       Mongoit.instantiatedMongoits.byID[id] = mongoit;
       hasBeenAdded = true;
@@ -102,7 +110,6 @@ export class Mongoit<Collections extends string[] = string[]> {
       );
   }
 
-
   /**
    * @description a static method to retrieve previously instantiated Mongoit classes
    * @param id an optional id that is used to retrieve instantiated Mongoit classes with their provided mongoitID option
@@ -111,11 +118,17 @@ export class Mongoit<Collections extends string[] = string[]> {
   static getMongoit<Collections extends string[] = string[]>(
     id?: MongoitConnectionOptions['mongoitID']
   ) {
-    const mongoit: Mongoit<Collections> | undefined = id === undefined ? Mongoit.instantiatedMongoits.main : Mongoit.instantiatedMongoits.byID[id];
+    const mongoit: Mongoit<Collections> | undefined =
+      id === undefined
+        ? Mongoit.instantiatedMongoits.main
+        : Mongoit.instantiatedMongoits.byID[id];
 
     if (mongoit === undefined) {
-      AppError.throw('Undefined',
-        `no previously instantiated Mongoit classes founded to retrieve${id !== undefined ? ` with the id (${id})` : ''},
+      AppError.throw(
+        'Undefined',
+        `no previously instantiated Mongoit classes founded to retrieve${
+          id !== undefined ? ` with the id (${id})` : ''
+        },
         make sure you instantiated it first, then try again`
       );
     }
@@ -123,9 +136,8 @@ export class Mongoit<Collections extends string[] = string[]> {
     return mongoit;
   }
 
-
   /**
-   * 
+   *
    * @param uri mongo connection string
    * @param options an optional object to configure both the native mongo client and instantiated Mongoit class
    */
@@ -151,13 +163,16 @@ export class Mongoit<Collections extends string[] = string[]> {
     Mongoit.addToInstantiatedMongoits(this, mongoitID);
   }
 
-
   /**
    * @description a getter method for the original mongo db object
    */
   get db() {
-    if (!this.hasConnectedMongoClient || this._nativeMongoDbObject === undefined)
-      AppError.throw('Undefined',
+    if (
+      !this.hasConnectedMongoClient ||
+      this._nativeMongoDbObject === undefined
+    )
+      AppError.throw(
+        'Undefined',
         'database has not been connected yet, if you want to use it before it\'s connection to be ready, try using "dbAsPromise" instead'
       );
     return this._nativeMongoDbObject;
@@ -167,8 +182,9 @@ export class Mongoit<Collections extends string[] = string[]> {
    * @description a getter method for the original mongo db object as a promise
    */
   get dbAsPromise(): Promise<Db> {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    if (this.hasConnectedMongoClient) return Promise.resolve(this._nativeMongoDbObject!);
+    if (this.hasConnectedMongoClient)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return Promise.resolve(this._nativeMongoDbObject!);
 
     return new Promise((resolve) => {
       this.eventEmitter.once('dbConnected', ({ db }) => resolve(db));
@@ -190,9 +206,6 @@ export class Mongoit<Collections extends string[] = string[]> {
       _db.collection<Schema>(name, options?.nativeMongoCollectionOptions)
     );
 
-    return new Collection<Schema>(
-      collection,
-      options?.MongoitCollection
-    );
+    return new Collection<Schema>(collection, options?.MongoitCollection);
   }
 }

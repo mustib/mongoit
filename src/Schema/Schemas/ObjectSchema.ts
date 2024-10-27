@@ -1,9 +1,9 @@
 import {
   getTypeof,
   parseJson,
-  AppErrorRoot,
-  type UntypedObject
-} from '@mustib/utils';
+  AppError,
+  type UntypedObject,
+} from '@mustib/utils/node';
 
 import { getSchemaTypeConstructor } from '../utils/getSchemaTypeConstructor.js';
 
@@ -80,10 +80,10 @@ export class ObjectSchema extends AbstractSchema<'object'> {
 
     if (nestedSchemaEntries.length === 0) return valueObj;
 
-    const appErrorRoot = new AppErrorRoot();
+    const appErrorRoot = new AppError();
 
     for await (const [schemaName, schema] of nestedSchemaEntries) {
-      await appErrorRoot.tryCatch(async () => {
+      await appErrorRoot.catch(async () => {
         let validatedFieldValue: ValidatorValueObj;
 
         if (options?.onlyConvertTypeForNestedSchema === true) {

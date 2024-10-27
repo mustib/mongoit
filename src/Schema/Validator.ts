@@ -1,9 +1,4 @@
-import {
-  getTypeof,
-  AppError,
-  AppErrorRoot,
-  type UntypedObject
-} from '@mustib/utils';
+import { getTypeof, AppError, type UntypedObject } from '@mustib/utils/node';
 
 import type {
   SchemaTypeValidatorsData,
@@ -16,29 +11,26 @@ import type {
   ValidatorArrayWithOptionalErrorMessage,
   MongoitSchemaTypes,
   ValidatorMetaObject,
-  AppErrorTypes
+  AppErrorTypes,
 } from '../index.js';
-
 
 type ValidatorArray = [
   string,
-  ReturnType<
-    (typeof Validator)['createValidatorObjectAndCheckItsType']
-  >
+  ReturnType<(typeof Validator)['createValidatorObjectAndCheckItsType']>
 ];
 
 type ValidatorValue =
   | ValueofSchemaValidators
   | ValidatorArrayWithOptionalErrorMessage<
-    UntypedObject,
-    any,
-    ValueofSchemaValidators
-  >
+      UntypedObject,
+      any,
+      ValueofSchemaValidators
+    >
   | ValidatorObjectWithOptionalErrorMessage<
-    UntypedObject,
-    any,
-    ValueofSchemaValidators
-  >;
+      UntypedObject,
+      any,
+      ValueofSchemaValidators
+    >;
 
 const sharedValidatorsData: SharedSchemaTypeValidatorsData = {
   requiredValidator: {
@@ -113,8 +105,8 @@ export class Validator {
       message: message as
         | string
         | Required<
-          ValidatorObjectWithOptionalErrorMessage<any, any, any>
-        >['message'],
+            ValidatorObjectWithOptionalErrorMessage<any, any, any>
+          >['message'],
       type,
       value: value as ValueofSchemaValidators,
     };
@@ -152,10 +144,12 @@ export class Validator {
   }
 
   async validateValidators(valueObj: ValidatorValueObj, schema: UntypedObject) {
-    const appErrorRoot = new AppErrorRoot<AppErrorTypes>();
+    const appError = new AppError<AppErrorTypes>({
+      stackTraceConstructor: this.validateValidators,
+    });
 
     if (this.requiredValidator.value === true) {
-      await appErrorRoot.tryCatch(async () => {
+      await appError.catch(async () => {
         await this.validateValidator(
           valueObj.hasAssignedValue,
           schema,
@@ -166,13 +160,13 @@ export class Validator {
 
     if (valueObj.hasAssignedValue) {
       for await (const validator of this.validators) {
-        await appErrorRoot.tryCatch(async () => {
+        await appError.catch(async () => {
           await this.validateValidator(valueObj.value, schema, validator[1]);
         });
       }
     }
 
-    appErrorRoot.end(this.validateValidators);
+    appError.end();
   }
 
   createValidators(
@@ -206,14 +200,12 @@ export class Validator {
     validatorsDataEntries.forEach(([validatorName, validatorData]) => {
       if (!(validatorName in schemaValue)) return;
 
-      const _validatorData =
-        Validator.createValidatorObjectAndCheckItsType(
-          schemaValue[validatorName as keyof typeof schemaValue],
-          validatorData
-        );
+      const _validatorData = Validator.createValidatorObjectAndCheckItsType(
+        schemaValue[validatorName as keyof typeof schemaValue],
+        validatorData
+      );
 
       this.validators.push([validatorName, _validatorData]);
     });
   }
 }
-

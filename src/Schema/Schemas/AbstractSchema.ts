@@ -1,8 +1,10 @@
+import { EventEmitter } from 'node:events';
+
 import {
   getTypeof,
   AppError,
-  TypedEventEmitter
-} from '@mustib/utils';
+  type TypedEventEmitter,
+} from '@mustib/utils/node';
 
 import { Validator } from '../Validator.js';
 
@@ -17,9 +19,8 @@ import type {
   ValidatorValueObj,
 } from '../../index.js';
 
-
 export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
-  declare private sealed?: boolean;
+  private declare sealed?: boolean;
 
   private _default = {
     hasDefault: false,
@@ -35,11 +36,12 @@ export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
   // will be assigned by init() method
   declare type: Type;
 
-  eventEmitter = new TypedEventEmitter<{ init: any }>();
+  eventEmitter = new EventEmitter() as TypedEventEmitter<{ init: any }>;
 
-  private initialize = (() => new Promise<void>((resolve) => {
-    this.eventEmitter.once('init', resolve);
-  }))();
+  private initialize = (() =>
+    new Promise<void>((resolve) => {
+      this.eventEmitter.once('init', resolve);
+    }))();
 
   abstract assignOrConvertTheRightValue(
     value: any,
@@ -108,12 +110,16 @@ export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
     this.validator = new Validator(schemaData);
     await this.setAndValidateDefaultValue(schemaData.schemaValue);
 
-    const sealed = typeof schemaData.schemaValue === 'object' && (schemaData.schemaValue as SharedSchemaTypeOptions).sealed
+    const sealed =
+      typeof schemaData.schemaValue === 'object' &&
+      (schemaData.schemaValue as SharedSchemaTypeOptions).sealed;
 
     this.sealed = sealed;
 
     if (sealed && !this._default.hasDefault) {
-      throw new Error(`sealed fields must have default values, and (${this.schemaFieldName}) field is sealed and there is no default value provided`)
+      throw new Error(
+        `sealed fields must have default values, and (${this.schemaFieldName}) field is sealed and there is no default value provided`
+      );
     }
 
     this.eventEmitter.emit('init');
@@ -122,11 +128,7 @@ export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
   private async setAndValidateDefaultValue(
     schemaValue: SchemaTypeData<Type>['schemaValue']
   ) {
-    if (
-      !isObject(schemaValue) ||
-      !('default' in schemaValue)
-    )
-      return;
+    if (!isObject(schemaValue) || !('default' in schemaValue)) return;
 
     try {
       const defaultValue = schemaValue.default;
@@ -151,7 +153,8 @@ export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
       this._default.hasDefault = true;
     } catch (error) {
       throw new Error(
-        `Error while adding and validating default value for ${this.schemaFieldName
+        `Error while adding and validating default value for ${
+          this.schemaFieldName
         } field, ${(error as any).message}`
       );
     }

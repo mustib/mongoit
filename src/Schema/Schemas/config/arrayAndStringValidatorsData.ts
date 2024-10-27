@@ -1,4 +1,4 @@
-import { ArrayAndStringSchemaTypeValidatorsData } from '../../types/index.js';
+import type { ArrayAndStringSchemaTypeValidatorsData } from '../../types/index.js';
 
 const maxLength: ArrayAndStringSchemaTypeValidatorsData['maxLength'] = {
   type: 'number',

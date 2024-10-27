@@ -1,19 +1,17 @@
-import { Document as MongoDocument } from 'mongodb';
+import { EventEmitter } from 'node:events';
 
-import {
-  AppErrorRoot,
-  TypedEventEmitter,
-  type UntypedObject
-} from "@mustib/utils";
+import { AppError, type UntypedObject } from '@mustib/utils/node';
 
 import { getSchemaTypeConstructor } from './utils/getSchemaTypeConstructor.js';
+
+import type { Document as MongoDocument } from 'mongodb';
 
 import type {
   MongoitSchema,
   SchemaConstructors,
   SchemaEvents,
   SchemaValidationType,
-  AppErrorTypes
+  AppErrorTypes,
 } from '../index.js';
 
 /**
@@ -108,16 +106,18 @@ export class Schema<T extends MongoDocument> {
 
     if (schemaEntries.length === 0) return validated;
 
-    const appErrorRoot = new AppErrorRoot<AppErrorTypes>();
+    const appError = new AppError<AppErrorTypes>({
+      stackTraceConstructor: this.validate,
+    });
 
-    const eventEmitter = new TypedEventEmitter() as SchemaEvents;
+    const eventEmitter = new EventEmitter() as SchemaEvents;
 
     for await (const [schemaNameKey, SchemaTypeClass] of schemaEntries) {
       const keyIsNotDefined = !(schemaNameKey in schema);
 
       if (keyIsNotDefined && validationType === 'PARTIAL') continue;
 
-      await appErrorRoot.tryCatch(async () => {
+      await appError.catch(async () => {
         const { hasAssignedValue, value } =
           await SchemaTypeClass.validateFieldValue(schema[schemaNameKey], {
             schema,
@@ -128,7 +128,7 @@ export class Schema<T extends MongoDocument> {
       });
     }
 
-    appErrorRoot.end(this.validate);
+    appError.end();
 
     eventEmitter.emit('validate', { validated });
 

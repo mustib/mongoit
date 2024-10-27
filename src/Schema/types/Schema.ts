@@ -1,4 +1,3 @@
-
 import type {
   StringSchema,
   NumberSchema,
@@ -10,7 +9,11 @@ import type {
   FileSchema,
 } from '../../index.js';
 
-import type { TypedEventEmitter, UntypedObject, Func } from "@mustib/utils";
+import type {
+  TypedEventEmitter,
+  UntypedObject,
+  Func,
+} from '@mustib/utils/node';
 
 /*
  *-------------------------------------------------------------*
@@ -37,16 +40,16 @@ export type ValidatorArrayWithOptionalErrorMessage<
   FieldType,
   ValidatorValueType extends ValueofSchemaValidators
 > = [
-    ValidatorValueType,
-    (
-      | string
-      | ((
+  ValidatorValueType,
+  (
+    | string
+    | ((
         value: FieldType,
         validatorValue: ValidatorValueType,
         meta: ValidatorMetaObject<Schema>
       ) => string)
-    )?
-  ];
+  )?
+];
 
 export type ValidatorObjectWithOptionalErrorMessage<
   Schema,
@@ -67,35 +70,35 @@ type RecursivePartial<T> = {
 
 export type SharedSchemaTypeValidators<Schema, Type> = {
   required?:
-  | boolean
-  | ValidatorArrayWithOptionalErrorMessage<Schema, Type, boolean>
-  | ValidatorObjectWithOptionalErrorMessage<Schema, Type, boolean>;
+    | boolean
+    | ValidatorArrayWithOptionalErrorMessage<Schema, Type, boolean>
+    | ValidatorObjectWithOptionalErrorMessage<Schema, Type, boolean>;
 
   default?:
-  | RecursivePartial<Type>
-  | (() => RecursivePartial<Type> | Promise<RecursivePartial<Type>>);
+    | RecursivePartial<Type>
+    | (() => RecursivePartial<Type> | Promise<RecursivePartial<Type>>);
 
   validator?:
-  | ((
-    value: Type,
-    meta: ValidatorMetaObject<Schema>
-  ) => boolean | Promise<boolean>)
-  | ValidatorArrayWithOptionalErrorMessage<
-    Schema,
-    Type,
-    (
-      value: Type,
-      meta: ValidatorMetaObject<Schema>
-    ) => boolean | Promise<boolean>
-  >
-  | ValidatorObjectWithOptionalErrorMessage<
-    Schema,
-    Type,
-    (
-      value: Type,
-      meta: ValidatorMetaObject<Schema>
-    ) => boolean | Promise<boolean>
-  >;
+    | ((
+        value: Type,
+        meta: ValidatorMetaObject<Schema>
+      ) => boolean | Promise<boolean>)
+    | ValidatorArrayWithOptionalErrorMessage<
+        Schema,
+        Type,
+        (
+          value: Type,
+          meta: ValidatorMetaObject<Schema>
+        ) => boolean | Promise<boolean>
+      >
+    | ValidatorObjectWithOptionalErrorMessage<
+        Schema,
+        Type,
+        (
+          value: Type,
+          meta: ValidatorMetaObject<Schema>
+        ) => boolean | Promise<boolean>
+      >;
 };
 
 export type SchemaTypeValidatorsData<
@@ -128,7 +131,7 @@ export type SharedSchemaTypeValidatorsData = {
   >;
 };
 
-export type SharedSchemaTypeOptions = Partial<{ sealed: boolean }>
+export type SharedSchemaTypeOptions = Partial<{ sealed: boolean }>;
 
 export type ReplaceTypeField<Obj> = {
   [Key in keyof Obj as Key extends 'type' ? '_typeField' : Key]: Obj[Key];
@@ -145,18 +148,18 @@ export type SchemaEvents = TypedEventEmitter<{
 
 export type MongoitSchemaDocument<Schema> = {
   [key in keyof Schema]: Required<Schema>[key] extends FileSchemaTypes
-  ? string | FileTypeValidatedFileValue['buffer']
-  : Required<Schema>[key] extends 'id'
-  ? any
-  : Schema[key];
+    ? string | FileTypeValidatedFileValue['buffer']
+    : Required<Schema>[key] extends 'id'
+    ? any
+    : Schema[key];
 };
 
 export type ValidatedMongoitSchemaDocument<Schema> = {
   [key in keyof Schema]: Required<Schema>[key] extends FileSchemaTypes
-  ? string
-  : Required<Schema>[key] extends 'id'
-  ? any
-  : Schema[key];
+    ? string
+    : Required<Schema>[key] extends 'id'
+    ? any
+    : Schema[key];
 };
 
 /*---------------------------------------------------------*/
@@ -171,10 +174,10 @@ export type ValidatedMongoitSchemaDocument<Schema> = {
 
 export type IdSchemaType<WithShorthandType extends boolean = true> =
   | (WithShorthandType extends true ? 'id' : never)
-  | SharedSchemaTypeOptions & {
-    type: 'id';
-    default?(): any;
-  };
+  | (SharedSchemaTypeOptions & {
+      type: 'id';
+      default?(): any;
+    });
 
 /*-------------------------------------------------------------*/
 
@@ -191,27 +194,28 @@ export type StringSchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? 'string' : never)
-  | SharedSchemaTypeOptions & ({
-    type: 'string';
+  | (SharedSchemaTypeOptions &
+      ({
+        type: 'string';
 
-    caseType?:
-    | 'upperCase'
-    | 'lowerCase'
-    | 'capitalize'
-    | ((value: string) => string);
+        caseType?:
+          | 'upperCase'
+          | 'lowerCase'
+          | 'capitalize'
+          | ((value: string) => string);
 
-    trim?: boolean;
+        trim?: boolean;
 
-    maxLength?:
-    | number
-    | ValidatorArrayWithOptionalErrorMessage<Schema, string, number>
-    | ValidatorObjectWithOptionalErrorMessage<Schema, string, number>;
+        maxLength?:
+          | number
+          | ValidatorArrayWithOptionalErrorMessage<Schema, string, number>
+          | ValidatorObjectWithOptionalErrorMessage<Schema, string, number>;
 
-    minLength?:
-    | number
-    | ValidatorArrayWithOptionalErrorMessage<Schema, string, number>
-    | ValidatorObjectWithOptionalErrorMessage<Schema, string, number>;
-  } & SharedSchemaTypeValidators<Schema, string>);
+        minLength?:
+          | number
+          | ValidatorArrayWithOptionalErrorMessage<Schema, string, number>
+          | ValidatorObjectWithOptionalErrorMessage<Schema, string, number>;
+      } & SharedSchemaTypeValidators<Schema, string>));
 
 export type StringSchemaTypeValidatorsData =
   ArrayAndStringSchemaTypeValidatorsData;
@@ -231,19 +235,20 @@ export type NumberSchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? 'number' : never)
-  | SharedSchemaTypeOptions & ({
-    type: 'number';
+  | (SharedSchemaTypeOptions &
+      ({
+        type: 'number';
 
-    min?:
-    | number
-    | ValidatorArrayWithOptionalErrorMessage<Schema, number, number>
-    | ValidatorObjectWithOptionalErrorMessage<Schema, number, number>;
+        min?:
+          | number
+          | ValidatorArrayWithOptionalErrorMessage<Schema, number, number>
+          | ValidatorObjectWithOptionalErrorMessage<Schema, number, number>;
 
-    max?:
-    | number
-    | ValidatorArrayWithOptionalErrorMessage<Schema, number, number>
-    | ValidatorObjectWithOptionalErrorMessage<Schema, number, number>;
-  } & SharedSchemaTypeValidators<Schema, number>);
+        max?:
+          | number
+          | ValidatorArrayWithOptionalErrorMessage<Schema, number, number>
+          | ValidatorObjectWithOptionalErrorMessage<Schema, number, number>;
+      } & SharedSchemaTypeValidators<Schema, number>));
 
 export type NumberSchemaTypeValidatorsData = {
   max: SchemaTypeValidatorsData<'number', number, number>;
@@ -265,9 +270,10 @@ export type BooleanSchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? 'bool' : never)
-  | SharedSchemaTypeOptions & ({
-    type: 'bool';
-  } & SharedSchemaTypeValidators<Schema, boolean>);
+  | (SharedSchemaTypeOptions &
+      ({
+        type: 'bool';
+      } & SharedSchemaTypeValidators<Schema, boolean>));
 
 /*-----------------------------------------------------------*/
 
@@ -284,9 +290,10 @@ export type DateSchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? 'date' : never)
-  | SharedSchemaTypeOptions & ({
-    type: 'date';
-  } & SharedSchemaTypeValidators<Schema, Date>);
+  | (SharedSchemaTypeOptions &
+      ({
+        type: 'date';
+      } & SharedSchemaTypeValidators<Schema, Date>));
 
 /*------------------------------------------------------------*/
 
@@ -304,29 +311,30 @@ export type ArraySchemaType<
   WithShorthandType extends boolean = true
 > =
   | (WithShorthandType extends true ? MongoitSchema<Required<Type>> : never)
-  | SharedSchemaTypeOptions & ({
-    type: MongoitSchema<Required<Type>, Schema>;
+  | (SharedSchemaTypeOptions &
+      ({
+        type: MongoitSchema<Required<Type>, Schema>;
 
-    length?:
-    | number
-    | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
-    | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
+        length?:
+          | number
+          | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
+          | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
 
-    maxLength?:
-    | number
-    | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
-    | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
+        maxLength?:
+          | number
+          | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
+          | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
 
-    minLength?:
-    | number
-    | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
-    | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
+        minLength?:
+          | number
+          | ValidatorArrayWithOptionalErrorMessage<Schema, Type, number>
+          | ValidatorObjectWithOptionalErrorMessage<Schema, Type, number>;
 
-    unique?:
-    | boolean
-    | ValidatorArrayWithOptionalErrorMessage<Schema, Type, boolean>
-    | ValidatorObjectWithOptionalErrorMessage<Schema, Type, boolean>;
-  } & SharedSchemaTypeValidators<Schema, Type>);
+        unique?:
+          | boolean
+          | ValidatorArrayWithOptionalErrorMessage<Schema, Type, boolean>
+          | ValidatorObjectWithOptionalErrorMessage<Schema, Type, boolean>;
+      } & SharedSchemaTypeValidators<Schema, Type>));
 
 export type ArraySchemaTypeValidatorsData =
   ArrayAndStringSchemaTypeValidatorsData & {
@@ -344,7 +352,10 @@ export type ArraySchemaTypeValidatorsData =
  *-------------------------------------------------------------*
  */
 
-export type ObjectSchemaType<Type extends object, Schema = Type> = SharedSchemaTypeOptions & {
+export type ObjectSchemaType<
+  Type extends object,
+  Schema = Type
+> = SharedSchemaTypeOptions & {
   type: MongoitSchema<Required<ReplaceTypeField<Type>>, Schema>;
 } & SharedSchemaTypeValidators<Schema, Type>;
 
@@ -361,37 +372,37 @@ export type ObjectSchemaType<Type extends object, Schema = Type> = SharedSchemaT
 export type FileSchemaData = {
   image: {
     extensions:
-    | 'apng'
-    | 'arw'
-    | 'avif'
-    | 'bmp'
-    | 'bpg'
-    | 'cr2'
-    | 'cr3'
-    | 'cur'
-    | 'dcm'
-    | 'dng'
-    | 'flif'
-    | 'gif'
-    | 'heic'
-    | 'icns'
-    | 'ico'
-    | 'j2c'
-    | 'jls'
-    | 'jp2'
-    | 'jpg'
-    | 'jpm'
-    | 'jpx'
-    | 'jxl'
-    | 'jxr'
-    | 'mj2'
-    | 'nef'
-    | 'orf'
-    | 'png'
-    | 'raf'
-    | 'rw2'
-    | 'tif'
-    | 'webp';
+      | 'apng'
+      | 'arw'
+      | 'avif'
+      | 'bmp'
+      | 'bpg'
+      | 'cr2'
+      | 'cr3'
+      | 'cur'
+      | 'dcm'
+      | 'dng'
+      | 'flif'
+      | 'gif'
+      | 'heic'
+      | 'icns'
+      | 'ico'
+      | 'j2c'
+      | 'jls'
+      | 'jp2'
+      | 'jpg'
+      | 'jpm'
+      | 'jpx'
+      | 'jxl'
+      | 'jxr'
+      | 'mj2'
+      | 'nef'
+      | 'orf'
+      | 'png'
+      | 'raf'
+      | 'rw2'
+      | 'tif'
+      | 'webp';
   };
 };
 
@@ -415,17 +426,17 @@ export type FileSchemaType<
    * maximum file size in bytes
    */
   maxSize?:
-  | number
-  | ValidatorArrayWithOptionalErrorMessage<
-    Schema,
-    FileTypeValidatedFileValue,
-    number
-  >
-  | ValidatorObjectWithOptionalErrorMessage<
-    Schema,
-    FileTypeValidatedFileValue,
-    number
-  >;
+    | number
+    | ValidatorArrayWithOptionalErrorMessage<
+        Schema,
+        FileTypeValidatedFileValue,
+        number
+      >
+    | ValidatorObjectWithOptionalErrorMessage<
+        Schema,
+        FileTypeValidatedFileValue,
+        number
+      >;
 
   saveSignal?: {
     afterValidate?(
@@ -447,26 +458,26 @@ export type FileSchemaType<
   };
 
   default?:
-  | RecursivePartial<string | ArrayBuffer | Uint8Array>
-  | (() =>
     | RecursivePartial<string | ArrayBuffer | Uint8Array>
-    | Promise<RecursivePartial<string | ArrayBuffer | Uint8Array>>);
+    | (() =>
+        | RecursivePartial<string | ArrayBuffer | Uint8Array>
+        | Promise<RecursivePartial<string | ArrayBuffer | Uint8Array>>);
 
   extensions?:
-  | ValidatorArrayWithOptionalErrorMessage<
-    Schema,
-    FileTypeValidatedFileValue,
-    FileSchemaData[Type]['extensions'][]
-  >
-  | ValidatorObjectWithOptionalErrorMessage<
-    Schema,
-    FileTypeValidatedFileValue,
-    FileSchemaData[Type]['extensions'][]
-  >;
+    | ValidatorArrayWithOptionalErrorMessage<
+        Schema,
+        FileTypeValidatedFileValue,
+        FileSchemaData[Type]['extensions'][]
+      >
+    | ValidatorObjectWithOptionalErrorMessage<
+        Schema,
+        FileTypeValidatedFileValue,
+        FileSchemaData[Type]['extensions'][]
+      >;
 } & Omit<
-  SharedSchemaTypeValidators<Schema, FileTypeValidatedFileValue>,
-  'default'
->;
+    SharedSchemaTypeValidators<Schema, FileTypeValidatedFileValue>,
+    'default'
+  >;
 
 export type FileSchemaTypeValidatorsData = {
   extensions: SchemaTypeValidatorsData<
@@ -486,22 +497,22 @@ export type FileSchemaTypeValidatorsData = {
 
 export type MongoitSchema<Schema, OriginalSchema = Schema> = ReplaceTypeField<{
   [key in keyof Schema]-?: Required<Schema>[key] extends FileSchemaTypes
-  ? FileSchemaType<Required<Schema>[key], OriginalSchema>
-  : Required<Schema>[key] extends 'id'
-  ? IdSchemaType
-  : Required<Schema>[key] extends string
-  ? StringSchemaType<OriginalSchema>
-  : Required<Schema>[key] extends number
-  ? NumberSchemaType<OriginalSchema>
-  : Required<Schema>[key] extends Date
-  ? DateSchemaType<OriginalSchema>
-  : Required<Schema>[key] extends boolean
-  ? BooleanSchemaType<OriginalSchema>
-  : Required<Schema>[key] extends Array<any>
-  ? ArraySchemaType<Required<Schema>[key], OriginalSchema>
-  : Required<Schema>[key] extends object
-  ? ObjectSchemaType<Required<Schema>[key], OriginalSchema>
-  : never;
+    ? FileSchemaType<Required<Schema>[key], OriginalSchema>
+    : Required<Schema>[key] extends 'id'
+    ? IdSchemaType
+    : Required<Schema>[key] extends string
+    ? StringSchemaType<OriginalSchema>
+    : Required<Schema>[key] extends number
+    ? NumberSchemaType<OriginalSchema>
+    : Required<Schema>[key] extends Date
+    ? DateSchemaType<OriginalSchema>
+    : Required<Schema>[key] extends boolean
+    ? BooleanSchemaType<OriginalSchema>
+    : Required<Schema>[key] extends Array<any>
+    ? ArraySchemaType<Required<Schema>[key], OriginalSchema>
+    : Required<Schema>[key] extends object
+    ? ObjectSchemaType<Required<Schema>[key], OriginalSchema>
+    : never;
 }>;
 
 export type SchemaValidationType = 'PARTIAL' | 'FULL' | 'OFF';
@@ -529,31 +540,31 @@ export type MongoitSchemaTypes =
 export type SchemaTypeData<T extends MongoitSchemaTypes> = {
   schemaFieldName: string;
   validatorsData: T extends FileSchemaTypes
-  ? FileSchemaTypeValidatorsData
-  : T extends 'string'
-  ? StringSchemaTypeValidatorsData
-  : T extends 'number'
-  ? NumberSchemaTypeValidatorsData
-  : T extends 'array'
-  ? ArraySchemaTypeValidatorsData
-  : Record<string, never>;
+    ? FileSchemaTypeValidatorsData
+    : T extends 'string'
+    ? StringSchemaTypeValidatorsData
+    : T extends 'number'
+    ? NumberSchemaTypeValidatorsData
+    : T extends 'array'
+    ? ArraySchemaTypeValidatorsData
+    : Record<string, never>;
   schemaValue: T extends FileSchemaTypes
-  ? FileSchemaType<T>
-  : T extends 'id'
-  ? IdSchemaType
-  : T extends 'string'
-  ? StringSchemaType
-  : T extends 'number'
-  ? NumberSchemaType
-  : T extends 'date'
-  ? DateSchemaType
-  : T extends 'bool'
-  ? BooleanSchemaType
-  : T extends 'array'
-  ? ArraySchemaType<any[]>
-  : T extends 'object'
-  ? ObjectSchemaType<object>
-  : never;
+    ? FileSchemaType<T>
+    : T extends 'id'
+    ? IdSchemaType
+    : T extends 'string'
+    ? StringSchemaType
+    : T extends 'number'
+    ? NumberSchemaType
+    : T extends 'date'
+    ? DateSchemaType
+    : T extends 'bool'
+    ? BooleanSchemaType
+    : T extends 'array'
+    ? ArraySchemaType<any[]>
+    : T extends 'object'
+    ? ObjectSchemaType<object>
+    : never;
 };
 
 export type SchemaTypesConstructorsAssignOrConvertTheRightValueOptions = {

@@ -1,9 +1,4 @@
-import {
-  getTypeof,
-  parseJson,
-  AppErrorRoot
-} from '@mustib/utils';
-
+import { getTypeof, parseJson, AppError } from '@mustib/utils/node';
 
 import { getSchemaTypeConstructor } from '../utils/getSchemaTypeConstructor.js';
 
@@ -33,12 +28,12 @@ const validatorsData: ArraySchemaTypeValidatorsData = {
   unique: {
     type: 'boolean',
     validator(value) {
-      return new Set(value).size === value.length
+      return new Set(value).size === value.length;
     },
     defaultErrorMessage(value, validatorValue, { fieldName }) {
       return `${fieldName} field must contain unique items, but instead got ${value}`;
     },
-  }
+  },
 };
 
 export class ArraySchema extends AbstractSchema<'array'> {
@@ -118,13 +113,13 @@ export class ArraySchema extends AbstractSchema<'array'> {
 
     const hasOneSchema = this.nestedSchema.length === 1;
 
-    const appErrorRoot = new AppErrorRoot();
+    const appErrorRoot = new AppError();
 
     const validateAndAddValue = (
       nestedSchemaIndex: number,
       nestedSchemaValue: any
     ) => {
-      return appErrorRoot.tryCatch(async () => {
+      return appErrorRoot.catch(async () => {
         const SchemaTypeConstructor = this.nestedSchema[nestedSchemaIndex];
         let validatedFieldValue: ValidatorValueObj;
 

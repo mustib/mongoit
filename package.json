@@ -24,7 +24,7 @@
   "author": "Muhammad Mustafa",
   "license": "ISC",
   "dependencies": {
-    "@mustib/utils": "^0.0.1",
+    "@mustib/utils": "^1.0.0",
     "file-type": "^18.5.0"
   },
   "peerDependencies": {

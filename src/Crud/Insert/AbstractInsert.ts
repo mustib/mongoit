@@ -1,4 +1,6 @@
-import { TypedEventEmitter } from '@mustib/utils';
+import EventEmitter from 'node:events';
+
+import type { TypedEventEmitter } from '@mustib/utils/node';
 
 import type {
   Filter,
@@ -7,7 +9,6 @@ import type {
   Document as MongoDocument,
   OptionalUnlessRequiredId,
 } from 'mongodb';
-
 
 import type {
   ExecOptions,
@@ -34,7 +35,9 @@ abstract class AbstractMongoDbInsert<
   Document extends MongoDocument,
   Type extends InsertType
 > {
-  protected eventEmitter = new TypedEventEmitter<{ insert: any }>();
+  protected eventEmitter = new EventEmitter() as TypedEventEmitter<{
+    insert: any;
+  }>;
 
   protected abstract collection: Collection<Document>;
 
@@ -86,10 +89,10 @@ abstract class AbstractMongoDbInsert<
     options?: Options
   ): Promise<
     Type extends 'insertMany'
-    ? InsertManyExecReturn<Options, ValidatedMongoitSchemaDocument<Document>>
-    : Type extends 'insertOne'
-    ? InsertOneExecReturn<Options, ValidatedMongoitSchemaDocument<Document>>
-    : never
+      ? InsertManyExecReturn<Options, ValidatedMongoitSchemaDocument<Document>>
+      : Type extends 'insertOne'
+      ? InsertOneExecReturn<Options, ValidatedMongoitSchemaDocument<Document>>
+      : never
   >;
 }
 
