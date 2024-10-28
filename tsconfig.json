@@ -1,12 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "baseUrl": "src",
-    "declaration": true,
-    "module": "NodeNext",
+    "baseUrl": "./",
     "rootDir": "./src",
-    "moduleResolution": "NodeNext",
-    "outDir": "./dist",
+    "moduleResolution": "Bundler",
     "noEmitOnError": true,
     "esModuleInterop": true,
     "strict": true,
