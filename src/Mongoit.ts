@@ -42,17 +42,6 @@ type MongoitConnectionOptions = {
  */
 export class Mongoit<Collections extends string[] = string[]> {
   /**
-   * @description this gets assigned in the constructor after successfully connecting MongoClient to the database
-   */
-  private _nativeMongoDbObject: Db | undefined;
-
-  private hasConnectedMongoClient = false;
-
-  private eventEmitter = new EventEmitter() as TypedEventEmitter<{
-    dbConnected: { db: Db };
-  }>;
-
-  /**
    * @description an object that contains all instantiated Mongoit classes
    */
   private static instantiatedMongoits = { byID: {} } as {
@@ -136,6 +125,14 @@ export class Mongoit<Collections extends string[] = string[]> {
     return mongoit;
   }
 
+  private eventEmitter = new EventEmitter() as TypedEventEmitter<{
+    dbConnected: { db: Db };
+  }>;
+
+  readonly db = new Promise<Db>((resolve) => {
+    this.eventEmitter.once('dbConnected', ({ db }) => resolve(db));
+  });
+
   /**
    *
    * @param uri mongo connection string
@@ -155,40 +152,10 @@ export class Mongoit<Collections extends string[] = string[]> {
       .connect()
       .then((client) => client.db(nativeMongoDbName, nativeMongoDbOptions))
       .then((db) => {
-        this._nativeMongoDbObject = db;
-        this.hasConnectedMongoClient = true;
         this.eventEmitter.emit('dbConnected', { db });
       });
 
     Mongoit.addToInstantiatedMongoits(this, mongoitID);
-  }
-
-  /**
-   * @description a getter method for the original mongo db object
-   */
-  get db() {
-    if (
-      !this.hasConnectedMongoClient ||
-      this._nativeMongoDbObject === undefined
-    )
-      AppError.throw(
-        'Undefined',
-        'database has not been connected yet, if you want to use it before it\'s connection to be ready, try using "dbAsPromise" instead'
-      );
-    return this._nativeMongoDbObject;
-  }
-
-  /**
-   * @description a getter method for the original mongo db object as a promise
-   */
-  get dbAsPromise(): Promise<Db> {
-    if (this.hasConnectedMongoClient)
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return Promise.resolve(this._nativeMongoDbObject!);
-
-    return new Promise((resolve) => {
-      this.eventEmitter.once('dbConnected', ({ db }) => resolve(db));
-    });
   }
 
   /**
@@ -201,9 +168,8 @@ export class Mongoit<Collections extends string[] = string[]> {
     name: Collections[number],
     options?: CollectionOptions<Schema>
   ) {
-    const db = this.dbAsPromise;
-    const collection = db.then((_db) =>
-      _db.collection<Schema>(name, options?.nativeMongoCollectionOptions)
+    const collection = this.db.then((db) =>
+      db.collection<Schema>(name, options?.nativeMongoCollectionOptions)
     );
 
     return new Collection<Schema>(collection, options?.MongoitCollection);

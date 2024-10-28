@@ -1,7 +1,7 @@
 {
   "name": "mongoit",
   "version": "0.0.0",
-  "description": "",
+  "description": "A robust MongoDB Object Data Modeling library for Node.js, providing a simple and convenient interface for performing CRUD operations, managing schema, validation, and sanitization.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -21,11 +21,30 @@
     "build": "rollup -c rollup.config.js",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mustib/mongoit"
+  },
+  "keywords": [
+    "nodejs",
+    "mongodb",
+    "driver",
+    "document",
+    "model",
+    "odb",
+    "crud",
+    "schema",
+    "validation",
+    "sanitization",
+    "database",
+    "nosql",
+    "query",
+    "db"
+  ],
   "author": "Muhammad Mustafa",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "@mustib/utils": "^1.0.0",
+    "@mustib/utils": "^1.0.1",
     "file-type": "^18.5.0",
     "rollup": "^4.24.1"
   },
