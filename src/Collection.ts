@@ -24,6 +24,7 @@ import type {
   CrudOptions,
   MongoitSchema,
   MongoitSchemaDocument,
+  ValidatedMongoitSchemaDocument,
 } from './index.js';
 
 type _useFieldsFromSchema<MongoitDocument extends Document> =
@@ -150,7 +151,7 @@ export class Collection<MongoitDocument extends Document> {
     return document;
   }
 
-  find<Doc extends Document = MongoitDocument>(
+  find<Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>>(
     document?: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
     options?: CrudOptions<Doc>['find']
   ) {
@@ -167,7 +168,9 @@ export class Collection<MongoitDocument extends Document> {
     return find;
   }
 
-  findOne<Doc extends Document = MongoitDocument>(
+  findOne<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(
     document?: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
     options?: CrudOptions<Doc>['findOne']
   ) {
@@ -184,14 +187,15 @@ export class Collection<MongoitDocument extends Document> {
     return findOne;
   }
 
-  findById<Doc extends Document = MongoitDocument>(
-    id: string,
-    options?: CrudOptions<Doc>['findOne']
-  ) {
+  findById<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(id: string, options?: CrudOptions<Doc>['findOne']) {
     return this.findOne({ _id: id } as never, options).exec();
   }
 
-  insert<Doc extends Document = MongoitDocument>(
+  insert<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(
     docs: OptionalUnlessRequiredId<MongoitSchemaDocument<Doc>>[],
     options?: CrudOptions<Doc>['insert']
   ) {
@@ -202,7 +206,9 @@ export class Collection<MongoitDocument extends Document> {
     return insert;
   }
 
-  insertOne<Doc extends Document = MongoitDocument>(
+  insertOne<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(
     document: OptionalUnlessRequiredId<MongoitSchemaDocument<Doc>>,
     options?: CrudOptions<Doc>['insertOne']
   ) {
@@ -217,7 +223,9 @@ export class Collection<MongoitDocument extends Document> {
     return insertOne;
   }
 
-  delete<Doc extends Document = MongoitDocument>(
+  delete<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(
     document: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
     options?: CrudOptions<Doc>['delete']
   ) {
@@ -237,7 +245,9 @@ export class Collection<MongoitDocument extends Document> {
     return _delete;
   }
 
-  deleteOne<Doc extends Document = MongoitDocument>(
+  deleteOne<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(
     document: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
     options?: CrudOptions<Doc>['delete']
   ) {
@@ -257,14 +267,15 @@ export class Collection<MongoitDocument extends Document> {
     return _delete;
   }
 
-  deleteById<Doc extends Document = MongoitDocument>(
-    id: string,
-    options?: CrudOptions<Doc>['delete']
-  ) {
+  deleteById<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(id: string, options?: CrudOptions<Doc>['delete']) {
     return this.deleteOne<Doc>({ _id: id } as never, options).exec();
   }
 
-  update<Doc extends Document = MongoitDocument>(
+  update<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(
     filterDocument: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
     updateDocument: UpdateFilterDocument<Doc> & _useFieldsFromSchema<Doc>,
     options?: CrudOptions<Doc>['update']
@@ -290,7 +301,9 @@ export class Collection<MongoitDocument extends Document> {
     return update;
   }
 
-  updateOne<Doc extends Document = MongoitDocument>(
+  updateOne<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(
     filterDocument: FilterDocumentWithId<Doc> & _useFieldsFromSchema<Doc>,
     updateDocument: UpdateFilterDocument<Doc> & _useFieldsFromSchema<Doc>,
     options?: CrudOptions<Doc>['update']
@@ -316,7 +329,9 @@ export class Collection<MongoitDocument extends Document> {
     return update;
   }
 
-  updateById<Doc extends Document = MongoitDocument>(
+  updateById<
+    Doc extends Document = ValidatedMongoitSchemaDocument<MongoitDocument>
+  >(
     id: string,
     updateDocument: UpdateFilterDocument<Doc> & _useFieldsFromSchema<Doc>,
     options?: CrudOptions<Doc>['update']
