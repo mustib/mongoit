@@ -2,25 +2,27 @@ import { ObjectId } from 'mongodb';
 
 import { QueryFilter } from './QueryFilter.js';
 
-import type { Document as MongoDocument } from 'mongodb';
+import type { Document } from 'mongodb';
 
 import type {
   Collection,
   FilterQueryObject,
-  FilterDocumentWithId
+  FilterDocumentWithId,
 } from '../../index.js';
 
 const convertToObjectIdIfValid = (id: any) =>
   ObjectId.isValid(id) ? new ObjectId(id) : id;
 
-abstract class AbstractMongoDbFilterDocument<Document extends MongoDocument> {
-  protected query: Document[] = [];
+abstract class AbstractMongoDbFilterDocument<MongoitDocument extends Document> {
+  protected query: MongoitDocument[] = [];
 
-  protected queryFilter: Promise<Document>[] = [];
+  protected queryFilter: Promise<MongoitDocument>[] = [];
 
-  protected abstract collection: Collection<Document>;
+  protected abstract collection: Collection<MongoitDocument>;
 
-  protected abstract filterDocument?: Promise<FilterDocumentWithId<Document>>;
+  protected abstract filterDocument?: Promise<
+    FilterDocumentWithId<MongoitDocument>
+  >;
 
   private filterDocumentAddedToQuery = false;
 
@@ -39,7 +41,7 @@ abstract class AbstractMongoDbFilterDocument<Document extends MongoDocument> {
       filterDocument._id = convertedObjectIdFromString;
     }
 
-    this.query.push(filterDocument as Document);
+    this.query.push(filterDocument as MongoitDocument);
     this.filterDocumentAddedToQuery = true;
   }
 

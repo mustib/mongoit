@@ -1,16 +1,20 @@
 import { AbstractFind } from './AbstractFind.js';
 
-import type { Document as MongoDocument } from 'mongodb';
+import type { Document } from 'mongodb';
 
-import type { Collection, CrudOptions, FilterDocumentWithId } from '../../index.js';
+import type {
+  Collection,
+  CrudOptions,
+  FilterDocumentWithId,
+} from '../../index.js';
 
 export class FindOne<
-  Document extends MongoDocument
-> extends AbstractFind<Document> {
+  MongoitDocument extends Document
+> extends AbstractFind<MongoitDocument> {
   constructor(
-    protected collection: Collection<Document>,
-    protected filterDocument?: Promise<FilterDocumentWithId<Document>>,
-    protected options?: CrudOptions<Document>['findOne']
+    protected collection: Collection<MongoitDocument>,
+    protected filterDocument?: Promise<FilterDocumentWithId<MongoitDocument>>,
+    protected options?: CrudOptions<MongoitDocument>['findOne']
   ) {
     super();
   }
@@ -25,4 +29,3 @@ export class FindOne<
     return doc;
   }
 }
-

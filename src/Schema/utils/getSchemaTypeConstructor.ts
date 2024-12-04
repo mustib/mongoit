@@ -14,7 +14,7 @@ import {
 
 import type { MongoitSchema, MongoitSchemaTypes } from '../../index.js';
 
-import type { Document as MongoDocument } from 'mongodb';
+import type { Document } from 'mongodb';
 
 const schemaTypeConstructorsObject = {
   string: StringSchema,
@@ -28,7 +28,7 @@ const schemaTypeConstructorsObject = {
 };
 
 export function getSchemaTypeConstructor(
-  schemaKeyValue: MongoitSchema<MongoDocument>[keyof MongoitSchema<MongoDocument>]
+  schemaKeyValue: MongoitSchema<Document>[keyof MongoitSchema<Document>]
 ) {
   const type =
     typeof schemaKeyValue === 'string'

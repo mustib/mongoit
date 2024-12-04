@@ -1,12 +1,12 @@
 import AbstractMongoDbFilterDocument from '../FilterDocument/AbstractFilterDocument.js';
 
-import type { Document as MongoDocument } from 'mongodb';
+import type { Document } from 'mongodb';
 
 import type { CrudOptions, SortQueryObject } from '../../index.js';
 
 import type { UntypedObject } from '@mustib/utils';
 
-function convertDocumentIdToString(doc: MongoDocument) {
+function convertDocumentIdToString(doc: Document) {
   if ('_id' in doc) {
     const _id = doc._id.toString();
     // eslint-disable-next-line no-param-reassign
@@ -18,15 +18,13 @@ function convertDocumentIdToString(doc: MongoDocument) {
 const sortDirections = ['asc', 'desc', 'ascending', 'descending', '1', '-1'];
 
 export abstract class AbstractFind<
-  Document extends MongoDocument
-> extends AbstractMongoDbFilterDocument<Document> {
-  protected query: Document[] = [];
+  MongoitDocument extends Document
+> extends AbstractMongoDbFilterDocument<MongoitDocument> {
+  protected query: MongoitDocument[] = [];
 
   protected sortObject?: UntypedObject;
 
-  protected abstract options?: CrudOptions<Document>[
-    | 'find'
-    | 'findOne'];
+  protected abstract options?: CrudOptions<MongoitDocument>['find' | 'findOne'];
 
   protected abstract readonly cursorLimit: number;
 
@@ -34,7 +32,7 @@ export abstract class AbstractFind<
     const collection = await this.collection.collection;
     const filterQuery = await this.createFilterQuery();
 
-    const cursor = collection.find<Document & { _id: string }>(
+    const cursor = collection.find<MongoitDocument & { _id: string }>(
       filterQuery,
       this.options?.nativeMongoOptions
     );
@@ -52,7 +50,7 @@ export abstract class AbstractFind<
     return cursor;
   }
 
-  sort(sortQueryObject: SortQueryObject<Document>) {
+  sort(sortQueryObject: SortQueryObject<MongoitDocument>) {
     const { target } = sortQueryObject;
 
     if (typeof target !== 'string') return this;

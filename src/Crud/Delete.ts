@@ -1,18 +1,22 @@
 import AbstractMongoDbFilterDocument from './FilterDocument/AbstractFilterDocument.js';
 
-import type { Document as MongoDocument } from 'mongodb';
+import type { Document } from 'mongodb';
 
-import type { CrudOptions, FilterDocumentWithId, Collection } from '../index.js';
+import type {
+  CrudOptions,
+  FilterDocumentWithId,
+  Collection,
+} from '../index.js';
 
 export class Delete<
-  Document extends MongoDocument
-> extends AbstractMongoDbFilterDocument<Document> {
-  protected query: Document[] = [];
+  MongoitDocument extends Document
+> extends AbstractMongoDbFilterDocument<MongoitDocument> {
+  protected query: MongoitDocument[] = [];
 
   constructor(
-    protected collection: Collection<Document>,
-    protected filterDocument: Promise<FilterDocumentWithId<Document>>,
-    protected options: CrudOptions<Document>['delete'] & {
+    protected collection: Collection<MongoitDocument>,
+    protected filterDocument: Promise<FilterDocumentWithId<MongoitDocument>>,
+    protected options: CrudOptions<MongoitDocument>['delete'] & {
       deleteType: 'deleteOne' | 'deleteMany';
     }
   ) {

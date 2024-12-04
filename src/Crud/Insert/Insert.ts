@@ -3,7 +3,7 @@ import AbstractMongoDbInsert from './AbstractInsert.js';
 import type {
   Filter,
   InsertManyResult,
-  Document as MongoDocument,
+  Document,
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
@@ -13,19 +13,18 @@ import type {
   ExecOptions,
   InsertManyExecReturn,
   MongoitSchemaDocument,
-  ValidatedMongoitSchemaDocument
+  ValidatedMongoitSchemaDocument,
 } from '../../index.js';
 
-
 export class Insert<
-  Document extends MongoDocument
-> extends AbstractMongoDbInsert<Document, 'insertMany'> {
+  MongoitDocument extends Document
+> extends AbstractMongoDbInsert<MongoitDocument, 'insertMany'> {
   constructor(
-    protected collection: Collection<Document>,
+    protected collection: Collection<MongoitDocument>,
     protected insertDocuments: OptionalUnlessRequiredId<
-      MongoitSchemaDocument<Document>
+      MongoitSchemaDocument<MongoitDocument>
     >[],
-    protected options: CrudOptions<Document>['insert']
+    protected options: CrudOptions<MongoitDocument>['insert']
   ) {
     super();
   }
@@ -36,7 +35,9 @@ export class Insert<
     for await (const document of this.insertDocuments) {
       const interceptedDocument =
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        await this.options!.interceptBeforeInserting!(document as Document);
+        await this.options!.interceptBeforeInserting!(
+          document as MongoitDocument
+        );
 
       interceptedDocuments.push(interceptedDocument);
     }
@@ -62,7 +63,7 @@ export class Insert<
 
       if (typeof interceptionFunction === 'function') {
         validatedDocument = await interceptionFunction(
-          validatedDocument as Document
+          validatedDocument as MongoitDocument
         );
       }
 
@@ -72,15 +73,18 @@ export class Insert<
     return validatedDocuments;
   }
 
-  protected getInsertedIds({ insertedIds }: InsertManyResult<Document>) {
+  protected getInsertedIds({ insertedIds }: InsertManyResult<MongoitDocument>) {
     const idsArray = Object.values(insertedIds).map((id) => ({ _id: id }));
-    return { $or: idsArray } as Filter<Document>;
+    return { $or: idsArray } as Filter<MongoitDocument>;
   }
 
   async exec<Options extends ExecOptions>(
     options?: Options
   ): Promise<
-    InsertManyExecReturn<Options, ValidatedMongoitSchemaDocument<Document>>
+    InsertManyExecReturn<
+      Options,
+      ValidatedMongoitSchemaDocument<MongoitDocument>
+    >
   > {
     const collection = await this.collection.collection;
     const insertDocument = await this.getInsertDocuments();

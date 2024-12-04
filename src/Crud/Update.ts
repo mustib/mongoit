@@ -1,25 +1,24 @@
 import AbstractMongoDbFilterDocument from './FilterDocument/AbstractFilterDocument.js';
 
-import type { Document as MongoDocument } from 'mongodb';
-
+import type { Document } from 'mongodb';
 
 import type {
   CrudOptions,
   UpdateFilterDocument,
   FilterDocumentWithId,
-  Collection
+  Collection,
 } from '../index.js';
 
 export class Update<
-  Document extends MongoDocument
-> extends AbstractMongoDbFilterDocument<Document> {
-  protected query: Document[] = [];
+  MongoitDocument extends Document
+> extends AbstractMongoDbFilterDocument<MongoitDocument> {
+  protected query: MongoitDocument[] = [];
 
   constructor(
-    protected collection: Collection<Document>,
-    protected filterDocument: Promise<FilterDocumentWithId<Document>>,
-    protected updateDocument: Promise<UpdateFilterDocument<Document>>,
-    protected options: CrudOptions<Document>['update'] & {
+    protected collection: Collection<MongoitDocument>,
+    protected filterDocument: Promise<FilterDocumentWithId<MongoitDocument>>,
+    protected updateDocument: Promise<UpdateFilterDocument<MongoitDocument>>,
+    protected options: CrudOptions<MongoitDocument>['update'] & {
       updateType: 'updateMany' | 'updateOne';
     }
   ) {

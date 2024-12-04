@@ -4,7 +4,7 @@ import { AppError, type UntypedObject } from '@mustib/utils/node';
 
 import { getSchemaTypeConstructor } from './utils/getSchemaTypeConstructor.js';
 
-import type { Document as MongoDocument } from 'mongodb';
+import type { Document } from 'mongodb';
 
 import type {
   MongoitSchema,
@@ -17,7 +17,7 @@ import type {
 /**
  * @description define a new mongoit schema structure
  */
-export class Schema<T extends MongoDocument> {
+export class Schema<T extends Document> {
   schema: {
     [key: string]: SchemaConstructors;
   } = {};

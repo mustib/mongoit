@@ -1,6 +1,6 @@
-import type { UpdateFilter, Document as MongoDocument } from 'mongodb';
+import type { UpdateFilter, Document } from 'mongodb';
 
-export type UpdateFilterDocument<Document extends MongoDocument> =
-  UpdateFilter<Document>['$set'] & {
-    _useMongoUpdateFilterOperators?: UpdateFilter<Document>;
+export type UpdateFilterDocument<MongoitDocument extends Document> =
+  UpdateFilter<MongoitDocument>['$set'] & {
+    _useMongoUpdateFilterOperators?: UpdateFilter<MongoitDocument>;
   };

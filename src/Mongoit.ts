@@ -6,12 +6,7 @@ import { type TypedEventEmitter, AppError } from '@mustib/utils/node';
 
 import { Collection } from './Collection.js';
 
-import type {
-  Db,
-  DbOptions,
-  MongoClientOptions,
-  Document as MongoDocument,
-} from 'mongodb';
+import type { Db, DbOptions, MongoClientOptions, Document } from 'mongodb';
 
 import type { CollectionOptions } from './index.js';
 
@@ -164,7 +159,7 @@ export class Mongoit<Collections extends string[] = string[]> {
    * @param options an optional object to configure both the native mongo collection and instantiated Collection class
    * @returns new Collection()
    */
-  getCollection<Schema extends MongoDocument & { _id?: string }>(
+  getCollection<Schema extends Document & { _id?: string }>(
     name: Collections[number],
     options?: CollectionOptions<Schema>
   ) {

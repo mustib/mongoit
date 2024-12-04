@@ -1,5 +1,7 @@
-import type { Filter, Document as MongoDocument } from 'mongodb';
+import type { Filter, Document } from 'mongodb';
 
-export type FilterDocumentWithId<Document extends MongoDocument> = {
-  [K in keyof Filter<Document>]: K extends '_id' ? string : Filter<Document>[K];
+export type FilterDocumentWithId<MongoitDocument extends Document> = {
+  [K in keyof Filter<MongoitDocument>]: K extends '_id'
+    ? string
+    : Filter<MongoitDocument>[K];
 };

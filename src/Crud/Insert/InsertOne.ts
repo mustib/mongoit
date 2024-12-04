@@ -3,10 +3,9 @@ import AbstractMongoDbInsert from './AbstractInsert.js';
 import type {
   Filter,
   InsertOneResult,
-  Document as MongoDocument,
+  Document,
   OptionalUnlessRequiredId,
 } from 'mongodb';
-
 
 import type {
   CrudOptions,
@@ -18,14 +17,14 @@ import type {
 } from '../../index.js';
 
 export class InsertOne<
-  Document extends MongoDocument
-> extends AbstractMongoDbInsert<Document, 'insertOne'> {
+  MongoitDocument extends Document
+> extends AbstractMongoDbInsert<MongoitDocument, 'insertOne'> {
   constructor(
-    protected collection: Collection<Document>,
+    protected collection: Collection<MongoitDocument>,
     protected insertDocuments: OptionalUnlessRequiredId<
-      MongoitSchemaDocument<Document>
+      MongoitSchemaDocument<MongoitDocument>
     >,
-    protected options: CrudOptions<Document>['insertOne']
+    protected options: CrudOptions<MongoitDocument>['insertOne']
   ) {
     super();
   }
@@ -33,10 +32,10 @@ export class InsertOne<
   protected async interceptInsertion() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const interceptedDocument = await this.options!.interceptBeforeInserting!(
-      this.insertDocuments as Document
+      this.insertDocuments as MongoitDocument
     );
 
-    return interceptedDocument as OptionalUnlessRequiredId<Document>;
+    return interceptedDocument as OptionalUnlessRequiredId<MongoitDocument>;
   }
 
   protected async validateAndInterceptInsertion() {
@@ -54,21 +53,24 @@ export class InsertOne<
 
     if (typeof interceptionFunction === 'function') {
       return interceptionFunction(
-        validatedDocument as Document
-      ) as OptionalUnlessRequiredId<Document>;
+        validatedDocument as MongoitDocument
+      ) as OptionalUnlessRequiredId<MongoitDocument>;
     }
 
-    return validatedDocument as OptionalUnlessRequiredId<Document>;
+    return validatedDocument as OptionalUnlessRequiredId<MongoitDocument>;
   }
 
-  protected getInsertedIds(insertResult: InsertOneResult<Document>) {
-    return { _id: insertResult.insertedId } as Filter<Document>;
+  protected getInsertedIds(insertResult: InsertOneResult<MongoitDocument>) {
+    return { _id: insertResult.insertedId } as Filter<MongoitDocument>;
   }
 
   async exec<Options extends ExecOptions>(
     options?: Options
   ): Promise<
-    InsertOneExecReturn<Options, ValidatedMongoitSchemaDocument<Document>>
+    InsertOneExecReturn<
+      Options,
+      ValidatedMongoitSchemaDocument<MongoitDocument>
+    >
   > {
     const collection = await this.collection.collection;
     const insertDocument = await this.getInsertDocuments();

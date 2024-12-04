@@ -6,7 +6,7 @@ import type {
   Filter,
   InsertManyResult,
   InsertOneResult,
-  Document as MongoDocument,
+  Document,
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
@@ -24,44 +24,44 @@ type InsertType = 'insertOne' | 'insertMany';
 
 type InsertDocumentsType<
   Type extends InsertType,
-  Document extends MongoDocument
+  MongoitDocument extends Document
 > = Type extends 'insertMany'
-  ? OptionalUnlessRequiredId<Document>[]
+  ? OptionalUnlessRequiredId<MongoitDocument>[]
   : Type extends 'insertOne'
-  ? OptionalUnlessRequiredId<Document>
+  ? OptionalUnlessRequiredId<MongoitDocument>
   : never;
 
 abstract class AbstractMongoDbInsert<
-  Document extends MongoDocument,
+  MongoitDocument extends Document,
   Type extends InsertType
 > {
   protected eventEmitter = new EventEmitter() as TypedEventEmitter<{
     insert: any;
   }>;
 
-  protected abstract collection: Collection<Document>;
+  protected abstract collection: Collection<MongoitDocument>;
 
   protected abstract insertDocuments: InsertDocumentsType<
     Type,
-    MongoitSchemaDocument<Document>
+    MongoitSchemaDocument<MongoitDocument>
   >;
 
   protected abstract options: Type extends 'insertMany'
-    ? CrudOptions<Document>['insert']
+    ? CrudOptions<MongoitDocument>['insert']
     : Type extends 'insertOne'
-    ? CrudOptions<Document>['insertOne']
+    ? CrudOptions<MongoitDocument>['insertOne']
     : never;
 
   protected abstract interceptInsertion(): Promise<
-    InsertDocumentsType<Type, Document>
+    InsertDocumentsType<Type, MongoitDocument>
   >;
 
   protected abstract validateAndInterceptInsertion(): Promise<
-    InsertDocumentsType<Type, Document>
+    InsertDocumentsType<Type, MongoitDocument>
   >;
 
   protected async getInsertDocuments(): Promise<
-    InsertDocumentsType<Type, Document>
+    InsertDocumentsType<Type, MongoitDocument>
   > {
     const hasInterception =
       typeof this.options?.interceptBeforeInserting === 'function';
@@ -79,19 +79,25 @@ abstract class AbstractMongoDbInsert<
 
   protected abstract getInsertedIds(
     insertResult: Type extends 'insertMany'
-      ? InsertManyResult<Document>
+      ? InsertManyResult<MongoitDocument>
       : Type extends 'insertOne'
-      ? InsertOneResult<Document>
+      ? InsertOneResult<MongoitDocument>
       : never
-  ): Filter<Document>;
+  ): Filter<MongoitDocument>;
 
   abstract exec<Options extends ExecOptions>(
     options?: Options
   ): Promise<
     Type extends 'insertMany'
-      ? InsertManyExecReturn<Options, ValidatedMongoitSchemaDocument<Document>>
+      ? InsertManyExecReturn<
+          Options,
+          ValidatedMongoitSchemaDocument<MongoitDocument>
+        >
       : Type extends 'insertOne'
-      ? InsertOneExecReturn<Options, ValidatedMongoitSchemaDocument<Document>>
+      ? InsertOneExecReturn<
+          Options,
+          ValidatedMongoitSchemaDocument<MongoitDocument>
+        >
       : never
   >;
 }

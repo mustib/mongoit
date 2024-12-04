@@ -1,8 +1,4 @@
-import type {
-  InsertOneResult,
-  Document as MongoDocument,
-  InsertManyResult,
-} from 'mongodb';
+import type { InsertOneResult, Document, InsertManyResult } from 'mongodb';
 
 export type ExecOptions = {
   /**
@@ -13,18 +9,18 @@ export type ExecOptions = {
 
 export type InsertOneExecReturn<
   Options extends ExecOptions,
-  Document extends MongoDocument
+  MongoitDocument extends Document
 > = Options['returnInserted'] extends false
-  ? InsertOneResult<Document>
-  : Document & {
+  ? InsertOneResult<MongoitDocument>
+  : MongoitDocument & {
       _id: string;
     };
 
 export type InsertManyExecReturn<
   Options extends ExecOptions,
-  Document extends MongoDocument
+  MongoitDocument extends Document
 > = Options['returnInserted'] extends true
-  ? (Document & {
+  ? (MongoitDocument & {
       _id: string;
     })[]
-  : InsertManyResult<Document>;
+  : InsertManyResult<MongoitDocument>;

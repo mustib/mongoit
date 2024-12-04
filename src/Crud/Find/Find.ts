@@ -2,9 +2,13 @@ import { getTypeof } from '@mustib/utils';
 
 import { AbstractFind } from './AbstractFind.js';
 
-import type { Document as MongoDocument } from 'mongodb';
+import type { Document } from 'mongodb';
 
-import type { Collection, CrudOptions, FilterDocumentWithId } from '../../index.js'
+import type {
+  Collection,
+  CrudOptions,
+  FilterDocumentWithId,
+} from '../../index.js';
 
 type FindExecOptions = {
   returnDetails?: boolean;
@@ -12,20 +16,20 @@ type FindExecOptions = {
 
 type FindExecReturn<
   Options extends FindExecOptions,
-  Document extends MongoDocument
+  MongoitDocument extends Document
 > = Promise<
   Options['returnDetails'] extends false
-  ? {
-    documents: (Document & {
-      _id: string;
-    })[];
-  }
-  : ReturnType<Find<Document>['execDetails']>
+    ? {
+        documents: (MongoitDocument & {
+          _id: string;
+        })[];
+      }
+    : ReturnType<Find<MongoitDocument>['execDetails']>
 >;
 
 export class Find<
-  Document extends MongoDocument
-> extends AbstractFind<Document> {
+  MongoitDocument extends Document
+> extends AbstractFind<MongoitDocument> {
   protected cursorLimit = 20;
 
   protected pageNumber = 1;
@@ -35,9 +39,9 @@ export class Find<
   }
 
   constructor(
-    protected collection: Collection<Document>,
-    protected filterDocument?: Promise<FilterDocumentWithId<Document>>,
-    protected options?: CrudOptions<Document>['find']
+    protected collection: Collection<MongoitDocument>,
+    protected filterDocument?: Promise<FilterDocumentWithId<MongoitDocument>>,
+    protected options?: CrudOptions<MongoitDocument>['find']
   ) {
     super();
 
@@ -53,8 +57,7 @@ export class Find<
     if (getTypeof(pageNumber) === 'number' && pageNumber > 0) {
       this.pageNumber = pageNumber;
 
-      if (+_resultsPerPage > 0)
-        this.cursorLimit = +_resultsPerPage
+      if (+_resultsPerPage > 0) this.cursorLimit = +_resultsPerPage;
     }
 
     return this;
@@ -69,7 +72,7 @@ export class Find<
   }
 
   protected async execDetails(
-    documents: (Document & {
+    documents: (MongoitDocument & {
       _id: string;
     })[]
   ) {
@@ -94,7 +97,7 @@ export class Find<
   // TODO: Implement cursor paradigms. REFERENCE https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/read-operations/cursor/
   async exec<Options extends FindExecOptions>(
     options?: Options
-  ): FindExecReturn<Options, Document> {
+  ): FindExecReturn<Options, MongoitDocument> {
     const cursor = await this.createCursor();
     cursor.skip(this.cursorSkipCount);
     const documents = await cursor.toArray();
