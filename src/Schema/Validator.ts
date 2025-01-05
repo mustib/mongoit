@@ -1,5 +1,7 @@
 import { getTypeof, AppError, type UntypedObject } from '@mustib/utils/node';
 
+import { errorsScopes } from '../errorsScopes.js';
+
 import type {
   SchemaTypeValidatorsData,
   SchemaTypeData,
@@ -140,7 +142,9 @@ export class Validator {
       errorMessage = validatorObj.message(value, validatorValue, meta);
     } else errorMessage = validatorObj.message;
 
-    AppError.throw<AppErrorTypes>('Validation', errorMessage);
+    AppError.throw<AppErrorTypes>('Validation', errorMessage, {
+      pushOptions: { scope: [errorsScopes.schemaValidation] },
+    });
   }
 
   async validateValidators(valueObj: ValidatorValueObj, schema: UntypedObject) {

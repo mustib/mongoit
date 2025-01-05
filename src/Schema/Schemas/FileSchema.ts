@@ -15,7 +15,7 @@ import type {
   FileTypeValidatedFileValue,
   SchemaEvents,
   SchemaTypesConstructorsValidateFieldValueOptions,
-  ReplaceInString
+  ReplaceInString,
 } from '../../index.js';
 
 const saveSignals: {
@@ -32,10 +32,11 @@ const validatorsData: FileSchemaTypeValidatorsData = {
     type: 'array',
 
     defaultErrorMessage(value, validatorValue, { fieldName }) {
-      return `unsupported extension "${value.ext
-        }" for ${fieldName} field only supported extensions are (${validatorValue.join(
-          ', '
-        )})`;
+      return `unsupported extension "${
+        value.ext
+      }" for ${fieldName} field only supported extensions are (${validatorValue.join(
+        ', '
+      )})`;
     },
 
     validator(value, validatorValue) {
@@ -66,8 +67,8 @@ export class FileSchema extends AbstractSchema<FileSchemaTypes> {
     return typeof this._fileName === 'string'
       ? this._fileName
       : typeof this._fileName === 'function'
-        ? this._fileName()
-        : `${Date.now().toString(36)}${randomUUID()
+      ? this._fileName()
+      : `${Date.now().toString(36)}${randomUUID()
           .replaceAll('-', '')
           .toString()}.jpg`;
   }
@@ -104,7 +105,8 @@ export class FileSchema extends AbstractSchema<FileSchemaTypes> {
         break;
       case 'string':
         if (fs.existsSync(_value))
-          await checkValue(fs.readFileSync(_value).buffer);
+          // as any to fix rollup dts plugin build error
+          await checkValue(fs.readFileSync(_value).buffer as any);
         break;
       default:
         break;
@@ -137,11 +139,9 @@ export class FileSchema extends AbstractSchema<FileSchemaTypes> {
     _value: any,
     options: SchemaTypesConstructorsValidateFieldValueOptions
   ) {
-    const validated =
-      await AbstractSchema.prototype.validateFieldValue.bind(this)(
-        _value,
-        options
-      );
+    const validated = await AbstractSchema.prototype.validateFieldValue.bind(
+      this
+    )(_value, options);
 
     if (validated.hasAssignedValue) {
       const { fileName } = this;

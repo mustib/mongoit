@@ -8,6 +8,8 @@ import {
 
 import { Validator } from '../Validator.js';
 
+import { errorsScopes } from '../../errorsScopes.js';
+
 import { isObject } from '../../utils/isObject.js';
 
 import type {
@@ -90,7 +92,8 @@ export abstract class AbstractSchema<Type extends MongoitSchemaTypes> {
     ) {
       AppError.throw(
         'Type',
-        `${valueType} type can not be assigned to ${this.type} in ${this.schemaFieldName} field`
+        `${valueType} type can not be assigned to ${this.type} in ${this.schemaFieldName} field`,
+        { pushOptions: { scope: [errorsScopes.schemaValidation] } }
       );
     }
 
