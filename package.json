@@ -46,13 +46,13 @@
   "license": "MIT",
   "dependencies": {
     "@mustib/utils": "^2.0.0",
-    "file-type": "^18.5.0",
-    "rollup": "^4.24.1"
+    "file-type": "^18.5.0"
   },
   "peerDependencies": {
     "mongodb": ">= 5.3.0"
   },
   "devDependencies": {
+    "rollup": "^4.24.1",
     "@rollup/plugin-typescript": "^12.1.1",
     "@types/node": "^18.15.3",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
