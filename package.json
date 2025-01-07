@@ -17,7 +17,8 @@
   ],
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
-    "prebuild": "npm run lint && npx rimraf ./dist",
+    "type": "npx tsc --noEmit",
+    "prebuild": "npm run lint && npm run type && npx rimraf ./dist",
     "build": "rollup -c rollup.config.js",
     "prepublishOnly": "npm run build"
   },
